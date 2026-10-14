@@ -12,6 +12,11 @@ const config: Config = {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      fontFamily: {
+        sans: ['"Plus Jakarta Sans"', 'Outfit', '"Hind Siliguri"', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['Outfit', '"Plus Jakarta Sans"', 'sans-serif'],
+        brand: ['"Plus Jakarta Sans"', 'Montserrat', 'sans-serif'],
+      },
     },
   },
   plugins: [],

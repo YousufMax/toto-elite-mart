@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 135 38">
+  <g fill="none" fill-rule="evenodd">
+    <!-- Bank Pillar Icon -->
+    <rect x="2" y="3" width="38" height="32" rx="5" fill="#1E293B"/>
+    <path d="M21 7 L9 13 L33 13 Z" fill="#F8FAFC"/>
+    <rect x="11" y="15" width="3.5" height="11" fill="#F8FAFC"/>
+    <rect x="19.2" y="15" width="3.5" height="11" fill="#F8FAFC"/>
+    <rect x="27.5" y="15" width="3.5" height="11" fill="#F8FAFC"/>
+    <rect x="9" y="28" width="24" height="2.5" fill="#F8FAFC"/>
+
+    <!-- Text -->
+    <text x="46" y="17" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="12" font-weight="900" fill="#0F172A" letter-spacing="-0.3">BANK T/T</text>
+    <text x="46" y="31" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="10" font-weight="800" fill="#64748B" letter-spacing="0.5">TRANSFER</text>
+  </g>
+</svg>

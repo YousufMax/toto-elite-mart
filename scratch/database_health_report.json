@@ -1,0 +1,172 @@
+{
+  "timestamp": "2026-10-11T13:15:01.550Z",
+  "tests": [
+    {
+      "category": "Storage",
+      "name": "Prisma Schema File Found",
+      "passed": true,
+      "details": "E:\\Downloads\\toto elite mart websie\\prisma\\schema.prisma",
+      "score": 100
+    },
+    {
+      "category": "Storage",
+      "name": "Local Store JSON Found",
+      "passed": true,
+      "details": "E:\\Downloads\\toto elite mart websie\\data\\local-store.json",
+      "score": 100
+    },
+    {
+      "category": "Integrity",
+      "name": "Local Store JSON Syntax Valid",
+      "passed": true,
+      "details": "35991 bytes",
+      "score": 100
+    },
+    {
+      "category": "Schema",
+      "name": "Collection \"products\"",
+      "passed": true,
+      "details": "10 records",
+      "score": 100
+    },
+    {
+      "category": "Schema",
+      "name": "Collection \"categories\"",
+      "passed": true,
+      "details": "5 records",
+      "score": 100
+    },
+    {
+      "category": "Schema",
+      "name": "Collection \"orders\"",
+      "passed": true,
+      "details": "8 records",
+      "score": 100
+    },
+    {
+      "category": "Schema",
+      "name": "Collection \"users\"",
+      "passed": true,
+      "details": "4 records",
+      "score": 100
+    },
+    {
+      "category": "Schema",
+      "name": "Collection \"expenses\"",
+      "passed": true,
+      "details": "2 records",
+      "score": 100
+    },
+    {
+      "category": "Schema",
+      "name": "Collection \"banners\"",
+      "passed": true,
+      "details": "4 records",
+      "score": 100
+    },
+    {
+      "category": "Schema",
+      "name": "Collection \"coupons\"",
+      "passed": true,
+      "details": "2 records",
+      "score": 100
+    },
+    {
+      "category": "Schema",
+      "name": "Collection \"movements\"",
+      "passed": true,
+      "details": "17 records",
+      "score": 100
+    },
+    {
+      "category": "Relational",
+      "name": "Product SKU Uniqueness",
+      "passed": true,
+      "details": "0 duplicate SKUs detected",
+      "score": 100
+    },
+    {
+      "category": "Relational",
+      "name": "Category Reference Integrity",
+      "passed": true,
+      "details": "0 orphaned product categories",
+      "score": 100
+    },
+    {
+      "category": "DataQuality",
+      "name": "Product Pricing Valid (> 0)",
+      "passed": true,
+      "details": "0 invalid price entries",
+      "score": 100
+    },
+    {
+      "category": "Relational",
+      "name": "Order Items Integrity",
+      "passed": true,
+      "details": "0 orders missing items",
+      "score": 100
+    },
+    {
+      "category": "DataQuality",
+      "name": "Order Total Amount Sanity",
+      "passed": true,
+      "details": "0 invalid totals",
+      "score": 100
+    },
+    {
+      "category": "Security",
+      "name": "Active Super Admin Presence",
+      "passed": true,
+      "details": "Root administrator exists",
+      "score": 100
+    },
+    {
+      "category": "Security",
+      "name": "Bcrypt Password Hash Quality",
+      "passed": true,
+      "details": "0 unhashed passwords",
+      "score": 100
+    },
+    {
+      "category": "Postgres",
+      "name": "PostgreSQL Live Connection",
+      "passed": false,
+      "details": "\nInvalid `prisma.$queryRaw()` invocation:\n\n\nAuthentication failed against database server, the provided database credentials for `postgres` are not valid.\n\nPlease make sure to provide valid database credentials for the database server at the configured address.",
+      "score": 0
+    },
+    {
+      "category": "FaultTolerance",
+      "name": "Automatic JSON Persistence Engine Active",
+      "passed": true,
+      "details": "Zero downtime fallback active",
+      "score": 100
+    }
+  ],
+  "metrics": {
+    "totalTests": 20,
+    "passedTests": 19,
+    "failedTests": 1,
+    "rawScore": 95,
+    "weightedHealth": 94,
+    "integrityScore": 100,
+    "relationalScore": 100,
+    "faultToleranceScore": 100,
+    "postgresScore": 40,
+    "collections": {
+      "products": 10,
+      "categories": 5,
+      "orders": 8,
+      "users": 4,
+      "expenses": 2,
+      "banners": 4,
+      "coupons": 2,
+      "movements": 17
+    },
+    "pgConnected": false,
+    "pgErrorDetail": ""
+  },
+  "errors": [],
+  "warnings": [
+    "PostgreSQL server connection: \nInvalid `prisma.$queryRaw()` invocation:\n\n\nAuthentication failed against database server, the provided database credentials for `postgres` are not valid.\n\nPlease make sure to provide valid database credentials for the database server at the configured address."
+  ]
+}

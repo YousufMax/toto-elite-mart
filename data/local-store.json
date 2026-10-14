@@ -1,0 +1,3164 @@
+{
+  "fallbackInitialized": true,
+  "categories": [
+    {
+      "id": "cat-1",
+      "name": "Smart Gadgets & Audio",
+      "slug": "smart-gadgets",
+      "description": "TWS earbuds, smartwatches, power banks & mobile accessories.",
+      "imageUrl": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80",
+      "sortOrder": 1
+    },
+    {
+      "id": "cat-2",
+      "name": "Fashion & Lifestyle",
+      "slug": "fashion-lifestyle",
+      "description": "Premium panjabis, polo shirts, stylish watches & genuine leather wallets.",
+      "imageUrl": "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=600&auto=format&fit=crop&q=80",
+      "sortOrder": 2
+    },
+    {
+      "id": "cat-3",
+      "name": "Organic & Food Essentials",
+      "slug": "organic-food",
+      "description": "100% pure Sundarban honey, mustard oil, premium ghee & nuts.",
+      "imageUrl": "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=600&auto=format&fit=crop&q=80",
+      "sortOrder": 3
+    },
+    {
+      "id": "cat-4",
+      "name": "Home & Kitchen Appliances",
+      "slug": "home-kitchen",
+      "description": "Modern blenders, electric kettles, cookware & air fryers.",
+      "imageUrl": "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=600&auto=format&fit=crop&q=80",
+      "sortOrder": 4
+    },
+    {
+      "id": "cat-5",
+      "name": "Beauty & Personal Care",
+      "slug": "beauty-personal-care",
+      "description": "Authentic skincare, hair oils, grooming kits & organic soaps.",
+      "imageUrl": "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&auto=format&fit=crop&q=80",
+      "sortOrder": 5
+    }
+  ],
+  "products": [
+    {
+      "id": "prod-1791997338037",
+      "name": "Head Phone HOCO ANC",
+      "slug": "head-phone-hoco-anc",
+      "sku": "HDP 456",
+      "description": null,
+      "categoryId": "cat-1",
+      "category": {
+        "id": "cat-1",
+        "name": "Smart Gadgets & Audio",
+        "slug": "smart-gadgets",
+        "description": "TWS earbuds, smartwatches, power banks & mobile accessories.",
+        "imageUrl": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80",
+        "sortOrder": 1
+      },
+      "purchaseCost": 2000,
+      "sellingPrice": 4500,
+      "salePrice": 3000,
+      "stockQuantity": 18,
+      "lowStockThreshold": 5,
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "tags": null,
+      "isArchived": false,
+      "createdAt": "2026-10-14T17:02:18.037Z",
+      "updatedAt": "2026-10-14T17:02:18.037Z",
+      "colorVariants": [
+        {
+          "id": "var-1791997338037-0",
+          "productId": "prod-1791997338037",
+          "name": "Black",
+          "colorCode": "#000000",
+          "price": 3000,
+          "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiMajuxHisiIhUTsq_JzvvXQJD82dveusJha4o5pT-8g&s=10",
+          "stockQuantity": 9,
+          "isActive": true,
+          "sortOrder": 0,
+          "createdAt": "2026-10-14T17:02:18.037Z",
+          "updatedAt": "2026-10-14T17:02:18.037Z"
+        },
+        {
+          "id": "var-1791997338037-1",
+          "productId": "prod-1791997338037",
+          "name": "White",
+          "colorCode": "#FFFFFF",
+          "price": 3500,
+          "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROLLZi1k2IRLFp_vf7qclb4_NGsl-bTDZU-VHW08Qjvg&s=10",
+          "stockQuantity": 9,
+          "isActive": true,
+          "sortOrder": 1,
+          "createdAt": "2026-10-14T17:02:18.037Z",
+          "updatedAt": "2026-10-14T17:02:18.037Z"
+        }
+      ],
+      "images": [
+        {
+          "id": "img-1791997338037-0",
+          "url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRDmtidwBHGn8sXYBScnj8i3tgHtoYWM2792cKOoKfmg&s=10",
+          "fileId": null,
+          "isPrimary": true,
+          "sortOrder": 0
+        },
+        {
+          "id": "img-1791997338037-1",
+          "url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiMajuxHisiIhUTsq_JzvvXQJD82dveusJha4o5pT-8g&s=10",
+          "fileId": null,
+          "isPrimary": false,
+          "sortOrder": 1
+        },
+        {
+          "id": "img-1791997338037-2",
+          "url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROLLZi1k2IRLFp_vf7qclb4_NGsl-bTDZU-VHW08Qjvg&s=10",
+          "fileId": null,
+          "isPrimary": false,
+          "sortOrder": 2
+        }
+      ]
+    },
+    {
+      "id": "prod-1791994778690",
+      "name": "Water Frish",
+      "slug": "water-frish",
+      "sku": "WTR 654",
+      "description": "",
+      "categoryId": "cat-4",
+      "category": {
+        "id": "cat-4",
+        "name": "Home & Kitchen Appliances",
+        "slug": "home-kitchen",
+        "description": "Modern blenders, electric kettles, cookware & air fryers.",
+        "imageUrl": "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=600&auto=format&fit=crop&q=80",
+        "sortOrder": 4
+      },
+      "purchaseCost": 3000,
+      "sellingPrice": 5000,
+      "salePrice": 3987,
+      "stockQuantity": 20,
+      "lowStockThreshold": 5,
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "tags": null,
+      "isArchived": false,
+      "createdAt": "2026-10-14T16:19:38.690Z",
+      "updatedAt": "2026-10-14T16:23:01.057Z",
+      "colorVariants": [
+        {
+          "id": "var-1791994778690-0",
+          "productId": "prod-1791994778690",
+          "name": "Emerald",
+          "colorCode": "#10B981",
+          "price": 6000,
+          "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRO3NeAvUuARLJrarINsa3EPFlBi2ljVXTI-_sfwoPZ_w&s=10",
+          "stockQuantity": 10,
+          "isActive": true,
+          "sortOrder": 0,
+          "createdAt": "2026-10-14T16:23:01.057Z",
+          "updatedAt": "2026-10-14T16:23:01.057Z"
+        },
+        {
+          "id": "var-prod-1791994778690-1791994860034-1",
+          "productId": "prod-1791994778690",
+          "name": "Gold",
+          "colorCode": "#d81818",
+          "price": 7000,
+          "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQpoLtVKKdbuKoyCKyj9vxlk3RtXoUy8Z6YthBX3SuZsQ&s=10",
+          "stockQuantity": 10,
+          "isActive": true,
+          "sortOrder": 1,
+          "createdAt": "2026-10-14T16:23:01.057Z",
+          "updatedAt": "2026-10-14T16:23:01.057Z"
+        }
+      ],
+      "images": [
+        {
+          "id": "img-prod-1791994778690-1791994981057-0",
+          "productId": "prod-1791994778690",
+          "url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRR_GpeJl6UD_-TTvBf3ToNORhd3dX920IBlsk6sKWJtw&s=10",
+          "fileId": null,
+          "isPrimary": true,
+          "sortOrder": 0
+        },
+        {
+          "id": "img-prod-1791994778690-1791994981057-1",
+          "productId": "prod-1791994778690",
+          "url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_nXPfGY2INdA26bcYID3E-FpSbpI7XkKRlPquRTmFFA&s=10",
+          "fileId": null,
+          "isPrimary": false,
+          "sortOrder": 1
+        },
+        {
+          "id": "img-prod-1791994778690-1791994981057-2",
+          "productId": "prod-1791994778690",
+          "url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSujKJf--HPtE3D7vOeAKrEwDXhKBp107B3qT11TIAuwQ&s=10",
+          "fileId": null,
+          "isPrimary": false,
+          "sortOrder": 2
+        },
+        {
+          "id": "img-prod-1791994778690-1791994981057-3",
+          "productId": "prod-1791994778690",
+          "url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxLZoxpLAiXLvcU0PXiyex9BI3aC9d3J6M2439KDdNTg&s=10",
+          "fileId": null,
+          "isPrimary": false,
+          "sortOrder": 3
+        }
+      ]
+    },
+    {
+      "id": "prod-1791994558945",
+      "name": "Water",
+      "slug": "water",
+      "sku": "WTR 343",
+      "description": null,
+      "categoryId": "cat-4",
+      "category": {
+        "id": "cat-4",
+        "name": "Home & Kitchen Appliances",
+        "slug": "home-kitchen",
+        "description": "Modern blenders, electric kettles, cookware & air fryers.",
+        "imageUrl": "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=600&auto=format&fit=crop&q=80",
+        "sortOrder": 4
+      },
+      "purchaseCost": 3000,
+      "sellingPrice": 5000,
+      "salePrice": 4491,
+      "stockQuantity": 27,
+      "lowStockThreshold": 5,
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "tags": null,
+      "isArchived": false,
+      "createdAt": "2026-10-14T16:15:58.945Z",
+      "updatedAt": "2026-10-14T16:15:58.945Z",
+      "colorVariants": [
+        {
+          "id": "var-1791994558945-0",
+          "productId": "prod-1791994558945",
+          "name": "Rose Gold",
+          "colorCode": "#F472B6",
+          "price": null,
+          "imageUrl": null,
+          "stockQuantity": 7,
+          "isActive": true,
+          "sortOrder": 0,
+          "createdAt": "2026-10-14T16:15:58.945Z",
+          "updatedAt": "2026-10-14T16:15:58.945Z"
+        },
+        {
+          "id": "var-1791994558945-1",
+          "productId": "prod-1791994558945",
+          "name": "Midnight Blue",
+          "colorCode": "#1E3A8A",
+          "price": null,
+          "imageUrl": null,
+          "stockQuantity": 10,
+          "isActive": true,
+          "sortOrder": 1,
+          "createdAt": "2026-10-14T16:15:58.945Z",
+          "updatedAt": "2026-10-14T16:15:58.945Z"
+        },
+        {
+          "id": "var-1791994558945-2",
+          "productId": "prod-1791994558945",
+          "name": "Forest Green",
+          "colorCode": "#15803D",
+          "price": null,
+          "imageUrl": null,
+          "stockQuantity": 10,
+          "isActive": true,
+          "sortOrder": 2,
+          "createdAt": "2026-10-14T16:15:58.945Z",
+          "updatedAt": "2026-10-14T16:15:58.945Z"
+        }
+      ],
+      "images": [
+        {
+          "id": "img-1791994558945-0",
+          "url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSBFi94MiFg_wyKhEdgZVBFynOnRlFy6DvaNaPaLGj4wg&s=10",
+          "fileId": null,
+          "isPrimary": true,
+          "sortOrder": 0
+        }
+      ]
+    },
+    {
+      "id": "prod-1791834001382",
+      "name": "Laptop",
+      "slug": "laptop",
+      "sku": "LAP:89",
+      "description": "",
+      "categoryId": "cat-1",
+      "category": {
+        "id": "cat-1",
+        "name": "Smart Gadgets & Audio",
+        "slug": "smart-gadgets",
+        "description": "TWS earbuds, smartwatches, power banks & mobile accessories.",
+        "imageUrl": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80",
+        "sortOrder": 1
+      },
+      "purchaseCost": 700,
+      "sellingPrice": 1500,
+      "salePrice": 1000,
+      "stockQuantity": 37,
+      "lowStockThreshold": 5,
+      "status": "ACTIVE",
+      "isFeatured": false,
+      "tags": null,
+      "isArchived": false,
+      "createdAt": "2026-10-12T19:40:01.382Z",
+      "updatedAt": "2026-10-12T20:24:28.261Z",
+      "colorVariants": [
+        {
+          "id": "var-prod-1791834001382-1791836668261-0",
+          "productId": "prod-1791834001382",
+          "name": "Crimson Red",
+          "colorCode": "#DC2626",
+          "price": 100,
+          "imageUrl": null,
+          "stockQuantity": 11,
+          "isActive": true,
+          "sortOrder": 0,
+          "createdAt": "2026-10-12T20:24:28.261Z",
+          "updatedAt": "2026-10-12T20:24:28.261Z"
+        },
+        {
+          "id": "var-prod-1791834001382-1791836668261-1",
+          "productId": "prod-1791834001382",
+          "name": "Yellow",
+          "colorCode": "#EAB308",
+          "price": 121,
+          "imageUrl": null,
+          "stockQuantity": 9,
+          "isActive": true,
+          "sortOrder": 1,
+          "createdAt": "2026-10-12T20:24:28.261Z",
+          "updatedAt": "2026-10-12T20:24:28.261Z"
+        },
+        {
+          "id": "var-prod-1791834001382-1791836668261-2",
+          "productId": "prod-1791834001382",
+          "name": "Black",
+          "colorCode": "#000000",
+          "price": 98,
+          "imageUrl": null,
+          "stockQuantity": 17,
+          "isActive": true,
+          "sortOrder": 2,
+          "createdAt": "2026-10-12T20:24:28.261Z",
+          "updatedAt": "2026-10-12T20:24:28.261Z"
+        }
+      ],
+      "images": [
+        {
+          "id": "img-prod-1791834001382-1791836543544-0",
+          "productId": "prod-1791834001382",
+          "url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQd0h4yihoL9_Yw8SvXGJ1OenS4QLFD8VYLoVk82CoiSA&s=10",
+          "fileId": null,
+          "isPrimary": true,
+          "sortOrder": 0
+        }
+      ]
+    },
+    {
+      "id": "prod-1791833597889",
+      "name": "Luxury Velvet Embroidered Kurti",
+      "slug": "luxury-velvet-embroidered-kurti",
+      "sku": "TEM-KUR-099",
+      "description": "Premium handcrafted velvet kurti with intricate embroidery.",
+      "categoryId": "cat-2",
+      "category": {
+        "id": "cat-2",
+        "name": "Fashion & Lifestyle",
+        "slug": "fashion-lifestyle",
+        "description": "Premium panjabis, polo shirts, stylish watches & genuine leather wallets.",
+        "imageUrl": "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=600&auto=format&fit=crop&q=80",
+        "sortOrder": 2
+      },
+      "purchaseCost": 1500,
+      "sellingPrice": 2800,
+      "salePrice": 2450,
+      "stockQuantity": 35,
+      "lowStockThreshold": 5,
+      "status": "ACTIVE",
+      "isFeatured": true,
+      "tags": null,
+      "isArchived": false,
+      "createdAt": "2026-10-12T19:33:17.890Z",
+      "updatedAt": "2026-10-12T19:33:17.890Z",
+      "colorVariants": [
+        {
+          "id": "var-1791833597890-0",
+          "productId": "prod-1791833597890",
+          "name": "Royal Navy",
+          "colorCode": "#0F172A",
+          "imageUrl": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=600",
+          "stockQuantity": 15,
+          "isActive": true,
+          "sortOrder": 0,
+          "createdAt": "2026-10-12T19:33:17.890Z",
+          "updatedAt": "2026-10-12T19:33:17.890Z",
+          "price": null
+        },
+        {
+          "id": "var-1791833597890-1",
+          "productId": "prod-1791833597890",
+          "name": "Crimson Red",
+          "colorCode": "#DC2626",
+          "imageUrl": "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=600",
+          "stockQuantity": 11,
+          "isActive": true,
+          "sortOrder": 1,
+          "createdAt": "2026-10-12T19:33:17.890Z",
+          "updatedAt": "2026-10-12T19:33:17.890Z",
+          "price": null
+        },
+        {
+          "id": "var-1791833597890-2",
+          "productId": "prod-1791833597890",
+          "name": "Emerald Green",
+          "colorCode": "#10B981",
+          "imageUrl": "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=600",
+          "stockQuantity": 9,
+          "isActive": true,
+          "sortOrder": 2,
+          "createdAt": "2026-10-12T19:33:17.890Z",
+          "updatedAt": "2026-10-12T19:33:17.890Z",
+          "price": null
+        }
+      ],
+      "images": [
+        {
+          "id": "img-1791833597890-0",
+          "url": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=600",
+          "fileId": null,
+          "isPrimary": true,
+          "sortOrder": 0
+        },
+        {
+          "id": "img-1791833597890-1",
+          "url": "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=600",
+          "fileId": null,
+          "isPrimary": false,
+          "sortOrder": 1
+        },
+        {
+          "id": "img-1791833597890-2",
+          "url": "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=600",
+          "fileId": null,
+          "isPrimary": false,
+          "sortOrder": 2
+        }
+      ]
+    },
+    {
+      "id": "prod-1",
+      "name": "Pro ANC Wireless Earbuds with ENC Mic",
+      "slug": "pro-anc-wireless-earbuds-with-enc-mic",
+      "sku": "TEM-TWS-001",
+      "description": "Active Noise Cancellation up to 35dB, 40 hours total playtime with charging case, Bluetooth 5.3, IPX5 water resistance. Ultra-low latency for gaming.",
+      "categorySlug": "smart-gadgets",
+      "purchaseCost": 1100,
+      "sellingPrice": 1850,
+      "salePrice": 1599,
+      "stockQuantity": 44,
+      "lowStockThreshold": 10,
+      "isFeatured": true,
+      "tags": "earbuds, audio, bluetooth, wireless, anc",
+      "images": [
+        {
+          "id": "img-prod-1-1791832035892-0",
+          "productId": "prod-1",
+          "url": "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=800&auto=format&fit=crop&q=80",
+          "fileId": null,
+          "isPrimary": true,
+          "sortOrder": 0
+        },
+        {
+          "id": "img-prod-1-1791832035892-1",
+          "productId": "prod-1",
+          "url": "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=800&auto=format&fit=crop&q=80",
+          "fileId": null,
+          "isPrimary": false,
+          "sortOrder": 1
+        }
+      ],
+      "categoryId": "cat-1",
+      "category": {
+        "id": "cat-1",
+        "name": "Smart Gadgets & Audio",
+        "slug": "smart-gadgets",
+        "description": "TWS earbuds, smartwatches, power banks & mobile accessories.",
+        "imageUrl": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80",
+        "sortOrder": 1
+      },
+      "status": "ACTIVE",
+      "isArchived": false,
+      "createdAt": "2026-10-11T11:27:40.589Z",
+      "updatedAt": "2026-10-12T19:07:15.893Z",
+      "colorVariants": [
+        {
+          "id": "var-tws-1",
+          "productId": "prod-1",
+          "name": "Matte Black",
+          "colorCode": "#111827",
+          "imageUrl": "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=800&auto=format&fit=crop&q=80",
+          "stockQuantity": 24,
+          "isActive": true,
+          "sortOrder": 0,
+          "createdAt": "2026-10-12T19:07:15.893Z",
+          "updatedAt": "2026-10-12T19:07:15.893Z",
+          "price": null
+        },
+        {
+          "id": "var-tws-2",
+          "productId": "prod-1",
+          "name": "Pearl White",
+          "colorCode": "#F8FAFC",
+          "imageUrl": "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=800&auto=format&fit=crop&q=80",
+          "stockQuantity": 15,
+          "isActive": true,
+          "sortOrder": 1,
+          "createdAt": "2026-10-12T19:07:15.893Z",
+          "updatedAt": "2026-10-12T19:07:15.893Z",
+          "price": null
+        },
+        {
+          "id": "var-tws-3",
+          "productId": "prod-1",
+          "name": "Midnight Blue",
+          "colorCode": "#1E3A8A",
+          "imageUrl": "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=800&auto=format&fit=crop&q=80",
+          "stockQuantity": 5,
+          "isActive": true,
+          "sortOrder": 2,
+          "createdAt": "2026-10-12T19:07:15.893Z",
+          "updatedAt": "2026-10-12T19:07:15.893Z",
+          "price": null
+        }
+      ]
+    },
+    {
+      "id": "prod-2",
+      "name": "AMOLED Smart Watch with BT Calling",
+      "slug": "amoled-smart-watch-bt-calling",
+      "sku": "TEM-SWT-002",
+      "description": "1.43\" HD AMOLED Always-On Display, crystal clear Bluetooth calling, 120+ sports modes, 24/7 heart rate & SpO2 monitor. Zinc alloy metallic body.",
+      "categorySlug": "smart-gadgets",
+      "purchaseCost": 1800,
+      "sellingPrice": 2890,
+      "salePrice": 2490,
+      "stockQuantity": 26,
+      "lowStockThreshold": 5,
+      "isFeatured": true,
+      "tags": "smartwatch, fitness, amoled, bluetooth call",
+      "images": [
+        {
+          "id": "img-prod-2-0",
+          "productId": "prod-2",
+          "url": "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=800&auto=format&fit=crop&q=80",
+          "fileId": "file-prod-2-0",
+          "isPrimary": true,
+          "sortOrder": 0
+        },
+        {
+          "id": "img-prod-2-1",
+          "productId": "prod-2",
+          "url": "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=800&auto=format&fit=crop&q=80",
+          "fileId": "file-prod-2-1",
+          "isPrimary": false,
+          "sortOrder": 1
+        }
+      ],
+      "categoryId": "cat-1",
+      "category": {
+        "id": "cat-1",
+        "name": "Smart Gadgets & Audio",
+        "slug": "smart-gadgets",
+        "description": "TWS earbuds, smartwatches, power banks & mobile accessories.",
+        "imageUrl": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80",
+        "sortOrder": 1
+      },
+      "status": "ACTIVE",
+      "isArchived": false,
+      "createdAt": "2026-10-11T11:27:40.589Z",
+      "updatedAt": "2026-10-11T11:27:40.589Z",
+      "colorVariants": [
+        {
+          "id": "var-swt-1",
+          "productId": "prod-2",
+          "name": "Space Black",
+          "colorCode": "#18181B",
+          "imageUrl": "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=800&auto=format&fit=crop&q=80",
+          "stockQuantity": 12,
+          "isActive": true,
+          "sortOrder": 0,
+          "createdAt": "2026-10-12T18:52:42.201Z",
+          "updatedAt": "2026-10-12T18:52:42.201Z",
+          "price": null
+        },
+        {
+          "id": "var-swt-2",
+          "productId": "prod-2",
+          "name": "Silver Chrome",
+          "colorCode": "#CBD5E1",
+          "imageUrl": "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=800&auto=format&fit=crop&q=80",
+          "stockQuantity": 10,
+          "isActive": true,
+          "sortOrder": 1,
+          "createdAt": "2026-10-12T18:52:42.201Z",
+          "updatedAt": "2026-10-12T18:52:42.201Z",
+          "price": null
+        },
+        {
+          "id": "var-swt-3",
+          "productId": "prod-2",
+          "name": "Rose Gold",
+          "colorCode": "#FB7185",
+          "imageUrl": "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=800&auto=format&fit=crop&q=80",
+          "stockQuantity": 4,
+          "isActive": true,
+          "sortOrder": 2,
+          "createdAt": "2026-10-12T18:52:42.201Z",
+          "updatedAt": "2026-10-12T18:52:42.201Z",
+          "price": null
+        }
+      ]
+    },
+    {
+      "id": "prod-3",
+      "name": "20000mAh 22.5W Fast Charging Power Bank",
+      "slug": "20000mah-fast-charging-power-bank",
+      "sku": "TEM-PB-003",
+      "description": "PD 20W + QC 3.0 dual fast charging ports, smart LED digital display showing exact battery percentage, airplane safe, multi-layer circuit protection.",
+      "categorySlug": "smart-gadgets",
+      "purchaseCost": 950,
+      "sellingPrice": 1650,
+      "salePrice": 1399,
+      "stockQuantity": 61,
+      "lowStockThreshold": 12,
+      "isFeatured": false,
+      "tags": "powerbank, charger, mobile accessory, travel",
+      "images": [
+        {
+          "id": "img-prod-3-0",
+          "productId": "prod-3",
+          "url": "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=800&auto=format&fit=crop&q=80",
+          "fileId": "file-prod-3-0",
+          "isPrimary": true,
+          "sortOrder": 0
+        }
+      ],
+      "categoryId": "cat-1",
+      "category": {
+        "id": "cat-1",
+        "name": "Smart Gadgets & Audio",
+        "slug": "smart-gadgets",
+        "description": "TWS earbuds, smartwatches, power banks & mobile accessories.",
+        "imageUrl": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80",
+        "sortOrder": 1
+      },
+      "status": "ACTIVE",
+      "isArchived": false,
+      "createdAt": "2026-10-11T11:27:40.589Z",
+      "updatedAt": "2026-10-11T11:27:40.589Z",
+      "colorVariants": []
+    },
+    {
+      "id": "prod-4",
+      "name": "Premium Semi-Pure Silk Designer Panjabi",
+      "slug": "premium-semi-pure-silk-designer-panjabi",
+      "sku": "TEM-PAN-004",
+      "description": "Exquisite jacquard weaving with embroidered collar & placket. Breathable and comfortable for festive occasions, weddings and Eid.",
+      "categorySlug": "fashion-lifestyle",
+      "purchaseCost": 1400,
+      "sellingPrice": 2450,
+      "salePrice": 2150,
+      "stockQuantity": 29,
+      "lowStockThreshold": 6,
+      "isFeatured": true,
+      "tags": "panjabi, eid collection, traditional, fashion",
+      "images": [
+        {
+          "id": "img-prod-4-0",
+          "productId": "prod-4",
+          "url": "https://images.unsplash.com/photo-1597983073493-88cd35cf93b0?w=800&auto=format&fit=crop&q=80",
+          "fileId": "file-prod-4-0",
+          "isPrimary": true,
+          "sortOrder": 0
+        }
+      ],
+      "categoryId": "cat-2",
+      "category": {
+        "id": "cat-2",
+        "name": "Fashion & Lifestyle",
+        "slug": "fashion-lifestyle",
+        "description": "Premium panjabis, polo shirts, stylish watches & genuine leather wallets.",
+        "imageUrl": "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=600&auto=format&fit=crop&q=80",
+        "sortOrder": 2
+      },
+      "status": "ACTIVE",
+      "isArchived": false,
+      "createdAt": "2026-10-11T11:27:40.589Z",
+      "updatedAt": "2026-10-11T11:27:40.589Z",
+      "colorVariants": [
+        {
+          "id": "var-pan-1",
+          "productId": "prod-4",
+          "name": "Royal Navy",
+          "colorCode": "#0F172A",
+          "imageUrl": "https://images.unsplash.com/photo-1597983073493-88cd35cf93b0?w=800&auto=format&fit=crop&q=80",
+          "stockQuantity": 11,
+          "isActive": true,
+          "sortOrder": 0,
+          "createdAt": "2026-10-12T18:52:42.201Z",
+          "updatedAt": "2026-10-12T18:52:42.201Z",
+          "price": null
+        },
+        {
+          "id": "var-pan-2",
+          "productId": "prod-4",
+          "name": "Emerald Green",
+          "colorCode": "#065F46",
+          "imageUrl": "https://images.unsplash.com/photo-1597983073493-88cd35cf93b0?w=800&auto=format&fit=crop&q=80",
+          "stockQuantity": 10,
+          "isActive": true,
+          "sortOrder": 1,
+          "createdAt": "2026-10-12T18:52:42.201Z",
+          "updatedAt": "2026-10-12T18:52:42.201Z",
+          "price": null
+        },
+        {
+          "id": "var-pan-3",
+          "productId": "prod-4",
+          "name": "Crimson Maroon",
+          "colorCode": "#831843",
+          "imageUrl": "https://images.unsplash.com/photo-1597983073493-88cd35cf93b0?w=800&auto=format&fit=crop&q=80",
+          "stockQuantity": 8,
+          "isActive": true,
+          "sortOrder": 2,
+          "createdAt": "2026-10-12T18:52:42.201Z",
+          "updatedAt": "2026-10-12T18:52:42.201Z",
+          "price": null
+        }
+      ]
+    },
+    {
+      "id": "prod-5",
+      "name": "Genuine Cowhide Leather Bi-fold Wallet",
+      "slug": "genuine-cowhide-leather-bifold-wallet",
+      "sku": "TEM-WAL-005",
+      "description": "100% full grain genuine leather with RFID blocking protection. 8 card slots, 2 currency compartments, and dedicated coin pocket.",
+      "categorySlug": "fashion-lifestyle",
+      "purchaseCost": 550,
+      "sellingPrice": 1150,
+      "salePrice": 890,
+      "stockQuantity": 3,
+      "lowStockThreshold": 8,
+      "isFeatured": false,
+      "tags": "wallet, leather, accessories, gift",
+      "images": [
+        {
+          "id": "img-prod-5-0",
+          "productId": "prod-5",
+          "url": "https://images.unsplash.com/photo-1627123424574-724758594e93?w=800&auto=format&fit=crop&q=80",
+          "fileId": "file-prod-5-0",
+          "isPrimary": true,
+          "sortOrder": 0
+        }
+      ],
+      "categoryId": "cat-2",
+      "category": {
+        "id": "cat-2",
+        "name": "Fashion & Lifestyle",
+        "slug": "fashion-lifestyle",
+        "description": "Premium panjabis, polo shirts, stylish watches & genuine leather wallets.",
+        "imageUrl": "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=600&auto=format&fit=crop&q=80",
+        "sortOrder": 2
+      },
+      "status": "ACTIVE",
+      "isArchived": false,
+      "createdAt": "2026-10-11T11:27:40.589Z",
+      "updatedAt": "2026-10-11T11:27:40.589Z",
+      "colorVariants": []
+    },
+    {
+      "id": "prod-6",
+      "name": "Pure Raw Sundarban Wild Honey (500g)",
+      "slug": "pure-raw-sundarban-wild-honey-500g",
+      "sku": "TEM-HNY-006",
+      "description": "Directly collected from the deep mangrove forest of Sundarban. Unprocessed, unheated, free from artificial sugar or chemical preservatives.",
+      "categorySlug": "organic-food",
+      "purchaseCost": 450,
+      "sellingPrice": 850,
+      "salePrice": 750,
+      "stockQuantity": 47,
+      "lowStockThreshold": 15,
+      "isFeatured": true,
+      "tags": "honey, organic, sundarban, natural food",
+      "images": [
+        {
+          "id": "img-prod-6-0",
+          "productId": "prod-6",
+          "url": "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=800&auto=format&fit=crop&q=80",
+          "fileId": "file-prod-6-0",
+          "isPrimary": true,
+          "sortOrder": 0
+        }
+      ],
+      "categoryId": "cat-3",
+      "category": {
+        "id": "cat-3",
+        "name": "Organic & Food Essentials",
+        "slug": "organic-food",
+        "description": "100% pure Sundarban honey, mustard oil, premium ghee & nuts.",
+        "imageUrl": "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=600&auto=format&fit=crop&q=80",
+        "sortOrder": 3
+      },
+      "status": "ACTIVE",
+      "isArchived": false,
+      "createdAt": "2026-10-11T11:27:40.589Z",
+      "updatedAt": "2026-10-11T11:27:40.589Z",
+      "colorVariants": []
+    },
+    {
+      "id": "prod-7",
+      "name": "Cold Pressed Wood Pressed Mustard Oil (1 Litre)",
+      "slug": "cold-pressed-mustard-oil-1l",
+      "sku": "TEM-OIL-007",
+      "description": "Traditional Ghani wood-pressed pure mustard oil from premium Bangladeshi mustard seeds. Rich pungent aroma and natural health benefits.",
+      "categorySlug": "organic-food",
+      "purchaseCost": 220,
+      "sellingPrice": 380,
+      "salePrice": 340,
+      "stockQuantity": 79,
+      "lowStockThreshold": 20,
+      "isFeatured": false,
+      "tags": "mustard oil, ghani, organic, cooking",
+      "images": [
+        {
+          "id": "img-prod-7-0",
+          "productId": "prod-7",
+          "url": "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=800&auto=format&fit=crop&q=80",
+          "fileId": "file-prod-7-0",
+          "isPrimary": true,
+          "sortOrder": 0
+        }
+      ],
+      "categoryId": "cat-3",
+      "category": {
+        "id": "cat-3",
+        "name": "Organic & Food Essentials",
+        "slug": "organic-food",
+        "description": "100% pure Sundarban honey, mustard oil, premium ghee & nuts.",
+        "imageUrl": "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=600&auto=format&fit=crop&q=80",
+        "sortOrder": 3
+      },
+      "status": "ACTIVE",
+      "isArchived": false,
+      "createdAt": "2026-10-11T11:27:40.589Z",
+      "updatedAt": "2026-10-11T11:27:40.589Z",
+      "colorVariants": []
+    },
+    {
+      "id": "prod-8",
+      "name": "Digital Touch Screen Air Fryer 5.5L",
+      "slug": "digital-touch-screen-air-fryer-5-5l",
+      "sku": "TEM-AF-008",
+      "description": "85% less oil frying, 360-degree rapid air heating, 8 preset cooking programs, non-stick detachable basket, easy dishwasher safe cleanup.",
+      "categorySlug": "home-kitchen",
+      "purchaseCost": 3800,
+      "sellingPrice": 6200,
+      "salePrice": 5490,
+      "stockQuantity": 15,
+      "lowStockThreshold": 4,
+      "isFeatured": true,
+      "tags": "air fryer, kitchen, appliance, healthy cooking",
+      "images": [
+        {
+          "id": "img-prod-8-0",
+          "productId": "prod-8",
+          "url": "https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?w=800&auto=format&fit=crop&q=80",
+          "fileId": "file-prod-8-0",
+          "isPrimary": true,
+          "sortOrder": 0
+        }
+      ],
+      "categoryId": "cat-4",
+      "category": {
+        "id": "cat-4",
+        "name": "Home & Kitchen Appliances",
+        "slug": "home-kitchen",
+        "description": "Modern blenders, electric kettles, cookware & air fryers.",
+        "imageUrl": "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=600&auto=format&fit=crop&q=80",
+        "sortOrder": 4
+      },
+      "status": "ACTIVE",
+      "isArchived": false,
+      "createdAt": "2026-10-11T11:27:40.589Z",
+      "updatedAt": "2026-10-11T11:27:40.589Z",
+      "colorVariants": []
+    },
+    {
+      "id": "prod-9",
+      "name": "1.8L Double Wall Stainless Steel Electric Kettle",
+      "slug": "double-wall-electric-kettle-1-8l",
+      "sku": "TEM-KET-009",
+      "description": "1500W rapid boil, food-grade 304 stainless steel interior, anti-scalding cool-touch exterior, auto shut-off & boil-dry protection.",
+      "categorySlug": "home-kitchen",
+      "purchaseCost": 750,
+      "sellingPrice": 1350,
+      "salePrice": 1150,
+      "stockQuantity": 34,
+      "lowStockThreshold": 8,
+      "isFeatured": false,
+      "tags": "kettle, tea, appliances, kitchen",
+      "images": [
+        {
+          "id": "img-prod-9-0",
+          "productId": "prod-9",
+          "url": "https://images.unsplash.com/photo-1594213114663-d94db9e1f126?w=800&auto=format&fit=crop&q=80",
+          "fileId": "file-prod-9-0",
+          "isPrimary": true,
+          "sortOrder": 0
+        }
+      ],
+      "categoryId": "cat-4",
+      "category": {
+        "id": "cat-4",
+        "name": "Home & Kitchen Appliances",
+        "slug": "home-kitchen",
+        "description": "Modern blenders, electric kettles, cookware & air fryers.",
+        "imageUrl": "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=600&auto=format&fit=crop&q=80",
+        "sortOrder": 4
+      },
+      "status": "ACTIVE",
+      "isArchived": false,
+      "createdAt": "2026-10-11T11:27:40.589Z",
+      "updatedAt": "2026-10-11T11:27:40.589Z",
+      "colorVariants": []
+    },
+    {
+      "id": "prod-1791700536997",
+      "name": "Cooker",
+      "slug": "rice-cooker-eg-45",
+      "sku": "EG-45",
+      "description": "Multifunctional premium electric cooker with non-stick inner pot, automatic keep-warm mode, and energy-saving fast heating.",
+      "categorySlug": "home-kitchen",
+      "purchaseCost": 1200,
+      "sellingPrice": 2000,
+      "salePrice": 1700,
+      "stockQuantity": 15,
+      "lowStockThreshold": 5,
+      "isFeatured": true,
+      "tags": "cooker, rice cooker, kitchen essentials, electric",
+      "images": [
+        {
+          "id": "img-prod-1791700536997-0",
+          "productId": "prod-1791700536997",
+          "url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSjpBzss83dv8MZQncjUSnrqblwMgw2NZAKxkdh5PUbiA&s=10",
+          "fileId": "file-prod-1791700536997-0",
+          "isPrimary": true,
+          "sortOrder": 0
+        }
+      ],
+      "categoryId": "cat-4",
+      "category": {
+        "id": "cat-4",
+        "name": "Home & Kitchen Appliances",
+        "slug": "home-kitchen",
+        "description": "Modern blenders, electric kettles, cookware & air fryers.",
+        "imageUrl": "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=600&auto=format&fit=crop&q=80",
+        "sortOrder": 4
+      },
+      "status": "ACTIVE",
+      "isArchived": false,
+      "createdAt": "2026-10-11T11:27:40.589Z",
+      "updatedAt": "2026-10-11T11:27:40.589Z",
+      "colorVariants": []
+    }
+  ],
+  "orders": [
+    {
+      "id": "ord-1792000473263",
+      "orderNumber": "TEM-2026-94990",
+      "customerName": "yousuf ali",
+      "customerPhone": "01623363623",
+      "deliveryAddress": "azizer mor, boyra bazar, khulna, bangladesh",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "Inside Dhaka",
+      "subtotal": 21853,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 0,
+      "totalAmount": 21853,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "items": [
+        {
+          "productId": "prod-1791994558945",
+          "productName": "Water",
+          "sku": "WTR 343",
+          "selectedColor": "Rose Gold",
+          "variantId": "var-1791994558945-0",
+          "unitPrice": 4491,
+          "purchaseCost": 3000,
+          "quantity": 3,
+          "totalPrice": 13473
+        },
+        {
+          "productId": "prod-2",
+          "productName": "AMOLED Smart Watch with BT Calling",
+          "sku": "TEM-SWT-002",
+          "selectedColor": "Space Black",
+          "variantId": "var-swt-1",
+          "unitPrice": 2490,
+          "purchaseCost": 1800,
+          "quantity": 2,
+          "totalPrice": 4980
+        },
+        {
+          "productId": "prod-1791700536997",
+          "productName": "Cooker",
+          "sku": "EG-45",
+          "selectedColor": null,
+          "variantId": null,
+          "unitPrice": 1700,
+          "purchaseCost": 1200,
+          "quantity": 2,
+          "totalPrice": 3400
+        }
+      ],
+      "createdAt": "2026-10-14T17:54:33.263Z",
+      "updatedAt": "2026-10-14T17:54:33.263Z"
+    },
+    {
+      "id": "ord-1792000275290",
+      "orderNumber": "TEM-2026-51110",
+      "customerName": "yousuf ali",
+      "customerPhone": "01623363623",
+      "deliveryAddress": "azizer mor, boyra bazar, khulna, bangladesh",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "Outside Dhaka",
+      "subtotal": 3000,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 0,
+      "totalAmount": 3000,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "items": [
+        {
+          "productId": "prod-1791997338037",
+          "productName": "Head Phone HOCO ANC",
+          "sku": "HDP 456",
+          "selectedColor": "Black",
+          "variantId": "var-1791997338037-0",
+          "unitPrice": 3000,
+          "purchaseCost": 2000,
+          "quantity": 1,
+          "totalPrice": 3000
+        }
+      ],
+      "createdAt": "2026-10-14T17:51:15.290Z",
+      "updatedAt": "2026-10-14T17:51:15.290Z"
+    },
+    {
+      "id": "ord-1791997379409",
+      "orderNumber": "TEM-2026-19361",
+      "customerName": "Yousuf Ali",
+      "customerPhone": "01623363623",
+      "deliveryAddress": "Boyra Jessore Road, Khulna, Bangladesh",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "Outside Dhaka",
+      "subtotal": 3500,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 120,
+      "totalAmount": 3620,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "items": [
+        {
+          "productId": "prod-1791997338037",
+          "productName": "Head Phone HOCO ANC",
+          "sku": "HDP 456",
+          "selectedColor": "White",
+          "variantId": "var-1791997338037-1",
+          "unitPrice": 3500,
+          "purchaseCost": 2000,
+          "quantity": 1,
+          "totalPrice": 3500
+        }
+      ],
+      "createdAt": "2026-10-14T17:02:59.409Z",
+      "updatedAt": "2026-10-14T17:02:59.409Z"
+    },
+    {
+      "id": "ord-1791837645193",
+      "orderNumber": "TEM-2026-63809",
+      "customerName": "Yousuf Ali",
+      "customerPhone": "01623363623",
+      "deliveryAddress": "Azizer Mor, Boyra Bazar, Khulna, Bangladesh",
+      "deliveryCity": "Khulna",
+      "deliveryZone": "Outside Dhaka",
+      "subtotal": 5750,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 120,
+      "totalAmount": 5870,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "items": [
+        {
+          "productId": "prod-1791833597889",
+          "productName": "Luxury Velvet Embroidered Kurti",
+          "sku": "TEM-KUR-099",
+          "selectedColor": "Emerald Green",
+          "variantId": "var-1791833597890-2",
+          "unitPrice": 2450,
+          "purchaseCost": 1500,
+          "quantity": 1,
+          "totalPrice": 2450
+        },
+        {
+          "productId": "prod-1791833597889",
+          "productName": "Luxury Velvet Embroidered Kurti",
+          "sku": "TEM-KUR-099",
+          "selectedColor": "Crimson Red",
+          "variantId": "var-1791833597890-1",
+          "unitPrice": 2450,
+          "purchaseCost": 1500,
+          "quantity": 1,
+          "totalPrice": 2450
+        },
+        {
+          "productId": "prod-1791834001382",
+          "productName": "Laptop",
+          "sku": "LAP:89",
+          "selectedColor": "Crimson Red",
+          "variantId": "var-prod-1791834001382-1791836668261-0",
+          "unitPrice": 100,
+          "purchaseCost": 700,
+          "quantity": 1,
+          "totalPrice": 100
+        },
+        {
+          "productId": "prod-6",
+          "productName": "Pure Raw Sundarban Wild Honey (500g)",
+          "sku": "TEM-HNY-006",
+          "selectedColor": null,
+          "variantId": null,
+          "unitPrice": 750,
+          "purchaseCost": 450,
+          "quantity": 1,
+          "totalPrice": 750
+        }
+      ],
+      "createdAt": "2026-10-12T20:40:45.193Z",
+      "updatedAt": "2026-10-12T20:40:45.193Z"
+    },
+    {
+      "id": "ord-1791837569510",
+      "orderNumber": "TEM-2026-30276",
+      "customerName": "saaafi",
+      "customerPhone": "01623363623",
+      "deliveryAddress": "azizer mor, boyra bazar, khulna, bangladesh",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "Inside Dhaka",
+      "subtotal": 4600,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 60,
+      "totalAmount": 4660,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "items": [
+        {
+          "productId": "prod-4",
+          "productName": "Premium Semi-Pure Silk Designer Panjabi",
+          "sku": "TEM-PAN-004",
+          "selectedColor": "Royal Navy",
+          "variantId": "var-pan-1",
+          "unitPrice": 2150,
+          "purchaseCost": 1400,
+          "quantity": 1,
+          "totalPrice": 2150
+        },
+        {
+          "productId": "prod-1791833597889",
+          "productName": "Luxury Velvet Embroidered Kurti",
+          "sku": "TEM-KUR-099",
+          "selectedColor": "Crimson Red",
+          "variantId": "var-1791833597890-1",
+          "unitPrice": 2450,
+          "purchaseCost": 1500,
+          "quantity": 1,
+          "totalPrice": 2450
+        }
+      ],
+      "createdAt": "2026-10-12T20:39:29.510Z",
+      "updatedAt": "2026-10-12T20:39:29.510Z"
+    },
+    {
+      "id": "ord-1791837193603",
+      "orderNumber": "TEM-2026-44956",
+      "customerName": "yousuf ali",
+      "customerPhone": "01623363623",
+      "deliveryAddress": "azizer mor, boyra bazar, khulna, bangladesh",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "Outside Dhaka",
+      "subtotal": 5650,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 120,
+      "totalAmount": 5770,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "items": [
+        {
+          "productId": "prod-1791833597889",
+          "productName": "Luxury Velvet Embroidered Kurti",
+          "sku": "TEM-KUR-099",
+          "selectedColor": "Emerald Green",
+          "variantId": "var-1791833597890-2",
+          "unitPrice": 2450,
+          "purchaseCost": 1500,
+          "quantity": 1,
+          "totalPrice": 2450
+        },
+        {
+          "productId": "prod-1791833597889",
+          "productName": "Luxury Velvet Embroidered Kurti",
+          "sku": "TEM-KUR-099",
+          "selectedColor": "Crimson Red",
+          "variantId": "var-1791833597890-1",
+          "unitPrice": 2450,
+          "purchaseCost": 1500,
+          "quantity": 1,
+          "totalPrice": 2450
+        },
+        {
+          "productId": "prod-6",
+          "productName": "Pure Raw Sundarban Wild Honey (500g)",
+          "sku": "TEM-HNY-006",
+          "selectedColor": null,
+          "variantId": null,
+          "unitPrice": 750,
+          "purchaseCost": 450,
+          "quantity": 1,
+          "totalPrice": 750
+        }
+      ],
+      "createdAt": "2026-10-12T20:33:13.603Z",
+      "updatedAt": "2026-10-12T20:33:13.603Z"
+    },
+    {
+      "id": "ord-1791836977660",
+      "orderNumber": "TEM-2026-20208",
+      "customerName": "Test Customer Unknown Color",
+      "customerPhone": "01711223355",
+      "deliveryAddress": "House 5, Mirpur 10",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "Inside Dhaka",
+      "subtotal": 100,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 60,
+      "totalAmount": 160,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "items": [
+        {
+          "productId": "prod-1791834001382",
+          "productName": "Laptop",
+          "sku": "LAP:89",
+          "selectedColor": "Crimson Red",
+          "variantId": "var-prod-1791834001382-1791836668261-0",
+          "unitPrice": 100,
+          "purchaseCost": 700,
+          "quantity": 1,
+          "totalPrice": 100
+        }
+      ],
+      "createdAt": "2026-10-12T20:29:37.660Z",
+      "updatedAt": "2026-10-12T20:29:37.660Z"
+    },
+    {
+      "id": "ord-1791836974428",
+      "orderNumber": "TEM-2026-80658",
+      "customerName": "Test Customer No Color",
+      "customerPhone": "01711223344",
+      "deliveryAddress": "House 12, Road 4, Sector 10, Uttara",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "Inside Dhaka",
+      "subtotal": 100,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 60,
+      "totalAmount": 160,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "items": [
+        {
+          "productId": "prod-1791834001382",
+          "productName": "Laptop",
+          "sku": "LAP:89",
+          "selectedColor": "Crimson Red",
+          "variantId": "var-prod-1791834001382-1791836668261-0",
+          "unitPrice": 100,
+          "purchaseCost": 700,
+          "quantity": 1,
+          "totalPrice": 100
+        }
+      ],
+      "createdAt": "2026-10-12T20:29:34.428Z",
+      "updatedAt": "2026-10-12T20:29:34.428Z"
+    },
+    {
+      "id": "ord-1791836671012",
+      "orderNumber": "TEM-2026-81060",
+      "customerName": "Customer Black",
+      "customerPhone": "01912345678",
+      "deliveryAddress": "Dhanmondi, Dhaka",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "Inside Dhaka",
+      "subtotal": 294,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 60,
+      "totalAmount": 354,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "items": [
+        {
+          "productId": "prod-1791834001382",
+          "productName": "Laptop",
+          "sku": "LAP:89",
+          "selectedColor": "Black",
+          "variantId": "var-prod-1791834001382-1791836668261-2",
+          "unitPrice": 98,
+          "purchaseCost": 700,
+          "quantity": 3,
+          "totalPrice": 294
+        }
+      ],
+      "createdAt": "2026-10-12T20:24:31.012Z",
+      "updatedAt": "2026-10-12T20:24:31.012Z"
+    },
+    {
+      "id": "ord-1791836670811",
+      "orderNumber": "TEM-2026-55416",
+      "customerName": "Customer Yellow",
+      "customerPhone": "01812345678",
+      "deliveryAddress": "Uttara, Dhaka",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "Inside Dhaka",
+      "subtotal": 121,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 60,
+      "totalAmount": 181,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "items": [
+        {
+          "productId": "prod-1791834001382",
+          "productName": "Laptop",
+          "sku": "LAP:89",
+          "selectedColor": "Yellow",
+          "variantId": "var-prod-1791834001382-1791836668261-1",
+          "unitPrice": 121,
+          "purchaseCost": 700,
+          "quantity": 1,
+          "totalPrice": 121
+        }
+      ],
+      "createdAt": "2026-10-12T20:24:30.811Z",
+      "updatedAt": "2026-10-12T20:24:30.811Z"
+    },
+    {
+      "id": "ord-1791836668451",
+      "orderNumber": "TEM-2026-61115",
+      "customerName": "Customer Red",
+      "customerPhone": "01712345678",
+      "deliveryAddress": "Banani, Dhaka",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "Inside Dhaka",
+      "subtotal": 200,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 60,
+      "totalAmount": 260,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "items": [
+        {
+          "productId": "prod-1791834001382",
+          "productName": "Laptop",
+          "sku": "LAP:89",
+          "selectedColor": "Crimson Red",
+          "variantId": "var-prod-1791834001382-1791836668261-0",
+          "unitPrice": 100,
+          "purchaseCost": 700,
+          "quantity": 2,
+          "totalPrice": 200
+        }
+      ],
+      "createdAt": "2026-10-12T20:24:28.451Z",
+      "updatedAt": "2026-10-12T20:24:28.451Z"
+    },
+    {
+      "id": "ord-1791836632042",
+      "orderNumber": "TEM-2026-28926",
+      "customerName": "Customer Red",
+      "customerPhone": "01712345678",
+      "deliveryAddress": "Banani, Dhaka",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "Inside Dhaka",
+      "subtotal": 11332,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 60,
+      "totalAmount": 11392,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "items": [
+        {
+          "productId": "prod-1791834001382",
+          "productName": "Laptop",
+          "sku": "LAP:89",
+          "selectedColor": "Crimson Red",
+          "variantId": "var-1791834001383-1",
+          "unitPrice": 5666,
+          "purchaseCost": 700,
+          "quantity": 2,
+          "totalPrice": 11332
+        }
+      ],
+      "createdAt": "2026-10-12T20:23:52.042Z",
+      "updatedAt": "2026-10-12T20:23:52.042Z"
+    },
+    {
+      "id": "ord-1791833700044",
+      "orderNumber": "TEM-2026-57246",
+      "customerName": "Ayesha Rahman",
+      "customerPhone": "01711223344",
+      "deliveryAddress": "Road 11, Banani, Dhaka",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "inside_dhaka",
+      "subtotal": 4900,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 60,
+      "totalAmount": 4960,
+      "paymentMethod": "cod",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "items": [
+        {
+          "productId": "prod-1791833597889",
+          "productName": "Luxury Velvet Embroidered Kurti",
+          "sku": "TEM-KUR-099",
+          "selectedColor": "Crimson Red",
+          "variantId": "var-1791833597890-1",
+          "unitPrice": 2450,
+          "purchaseCost": 1500,
+          "quantity": 2,
+          "totalPrice": 4900
+        }
+      ],
+      "createdAt": "2026-10-12T19:35:00.044Z",
+      "updatedAt": "2026-10-12T19:35:00.044Z"
+    },
+    {
+      "id": "ord-1791831745719",
+      "orderNumber": "TEM-2026-95436",
+      "customerName": "Test Customer",
+      "customerPhone": "01712345678",
+      "deliveryAddress": "House 1, Road 2, Dhanmondi, Dhaka",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "inside_dhaka",
+      "subtotal": 1599,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 60,
+      "totalAmount": 1659,
+      "paymentMethod": "cod",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "items": [
+        {
+          "productId": "prod-1",
+          "productName": "Pro ANC Wireless Earbuds with ENC Mic",
+          "sku": "TEM-TWS-001",
+          "selectedColor": "Matte Black",
+          "variantId": "var-tws-1",
+          "unitPrice": 1599,
+          "purchaseCost": 1100,
+          "quantity": 1,
+          "totalPrice": 1599
+        }
+      ],
+      "createdAt": "2026-10-12T19:02:25.719Z",
+      "updatedAt": "2026-10-12T19:02:25.719Z"
+    },
+    {
+      "id": "ord-1791828811903",
+      "orderNumber": "TEM-2026-79220",
+      "customerName": "Coupon Test Customer",
+      "customerPhone": "01812345678",
+      "deliveryAddress": "House 12, Road 4, Banani",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "Inside Dhaka",
+      "subtotal": 1599,
+      "discount": 100,
+      "couponCode": "WELCOME100",
+      "deliveryFee": 60,
+      "totalAmount": 1559,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "items": [
+        {
+          "productId": "prod-1",
+          "productName": "Pro ANC Wireless Earbuds with ENC Mic",
+          "sku": "TEM-TWS-001",
+          "unitPrice": 1599,
+          "purchaseCost": 1100,
+          "quantity": 1,
+          "totalPrice": 1599
+        }
+      ],
+      "createdAt": "2026-10-12T18:13:31.903Z",
+      "updatedAt": "2026-10-12T18:13:31.903Z"
+    },
+    {
+      "id": "ord-1791827249509",
+      "orderNumber": "TEM-2026-94512",
+      "customerName": "Yousuf Rahman",
+      "customerPhone": "01623363623",
+      "deliveryAddress": "Benapole Jashore Khulna",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "Outside Dhaka",
+      "subtotal": 4089,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 120,
+      "totalAmount": 4209,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "items": [
+        {
+          "productId": "prod-2",
+          "productName": "AMOLED Smart Watch with BT Calling",
+          "sku": "TEM-SWT-002",
+          "unitPrice": 2490,
+          "purchaseCost": 1800,
+          "quantity": 1,
+          "totalPrice": 2490
+        },
+        {
+          "productId": "prod-1",
+          "productName": "Pro ANC Wireless Earbuds with ENC Mic",
+          "sku": "TEM-TWS-001",
+          "unitPrice": 1599,
+          "purchaseCost": 1100,
+          "quantity": 1,
+          "totalPrice": 1599
+        }
+      ],
+      "createdAt": "2026-10-12T17:47:29.509Z",
+      "updatedAt": "2026-10-12T17:47:29.509Z"
+    },
+    {
+      "id": "ord-1791745525953",
+      "orderNumber": "TEM-2026-67777",
+      "customerName": "yousuf ali",
+      "customerPhone": "01623363623",
+      "deliveryAddress": "azizer mor, boyra bazar, khulna, bangladesh",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "Inside Dhaka",
+      "subtotal": 10539,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 60,
+      "totalAmount": 10599,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "items": [
+        {
+          "productId": "prod-2",
+          "productName": "AMOLED Smart Watch with BT Calling",
+          "sku": "TEM-SWT-002",
+          "unitPrice": 2490,
+          "purchaseCost": 1800,
+          "quantity": 1,
+          "totalPrice": 2490
+        },
+        {
+          "productId": "prod-1",
+          "productName": "Pro ANC Wireless Earbuds with ENC Mic",
+          "sku": "TEM-TWS-001",
+          "unitPrice": 1599,
+          "purchaseCost": 1100,
+          "quantity": 1,
+          "totalPrice": 1599
+        },
+        {
+          "productId": "prod-4",
+          "productName": "Premium Semi-Pure Silk Designer Panjabi",
+          "sku": "TEM-PAN-004",
+          "unitPrice": 2150,
+          "purchaseCost": 1400,
+          "quantity": 3,
+          "totalPrice": 6450
+        }
+      ],
+      "createdAt": "2026-10-11T19:05:25.953Z",
+      "updatedAt": "2026-10-11T19:05:25.953Z"
+    },
+    {
+      "id": "ord-1791735729746",
+      "orderNumber": "TEM-2026-69776",
+      "customerName": "yousuf ali",
+      "customerPhone": "01623363623",
+      "deliveryAddress": "azizer mor, boyra bazar, khulna, bangladesh",
+      "deliveryCity": "KHULNA",
+      "deliveryZone": "Outside Dhaka",
+      "subtotal": 2150,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 120,
+      "totalAmount": 2270,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PROCESSING",
+      "notes": null,
+      "items": [
+        {
+          "productId": "prod-4",
+          "productName": "Premium Semi-Pure Silk Designer Panjabi",
+          "sku": "TEM-PAN-004",
+          "unitPrice": 2150,
+          "purchaseCost": 1400,
+          "quantity": 1,
+          "totalPrice": 2150
+        }
+      ],
+      "createdAt": "2026-10-11T16:22:09.746Z",
+      "updatedAt": "2026-10-11T18:41:29.918Z"
+    },
+    {
+      "id": "ord-1791734328655",
+      "orderNumber": "TEM-2026-94975",
+      "customerName": "Test Payment Customer",
+      "customerPhone": "01712345678",
+      "deliveryAddress": "House 10, Road 4, Dhanmondi",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "Inside Dhaka",
+      "subtotal": 1599,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 60,
+      "totalAmount": 1659,
+      "paymentMethod": "BKASH",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": "[bKash Payment] Sender: 01712345678 | TrxID: TXTEST98765 | Sent to: 01623363623 (Personal)",
+      "items": [
+        {
+          "productId": "prod-1",
+          "productName": "Pro ANC Wireless Earbuds with ENC Mic",
+          "sku": "TEM-TWS-001",
+          "unitPrice": 1599,
+          "purchaseCost": 1100,
+          "quantity": 1,
+          "totalPrice": 1599
+        }
+      ],
+      "createdAt": "2026-10-11T15:58:48.655Z",
+      "updatedAt": "2026-10-11T15:58:48.655Z"
+    },
+    {
+      "id": "ord-1791734202919",
+      "orderNumber": "TEM-2026-76180",
+      "customerName": "max",
+      "customerPhone": "01623363623",
+      "deliveryAddress": "azizer mor, boyra bazar, khulna, bangladesh",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "Inside Dhaka",
+      "subtotal": 2150,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 60,
+      "totalAmount": 2210,
+      "paymentMethod": "NAGAD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": "[Nagad Payment] Sender: 8383292929 | TrxID: 7743838383 | Sent to: 01407752016 (Personal)",
+      "items": [
+        {
+          "productId": "prod-4",
+          "productName": "Premium Semi-Pure Silk Designer Panjabi",
+          "sku": "TEM-PAN-004",
+          "unitPrice": 2150,
+          "purchaseCost": 1400,
+          "quantity": 1,
+          "totalPrice": 2150
+        }
+      ],
+      "createdAt": "2026-10-11T15:56:42.919Z",
+      "updatedAt": "2026-10-11T15:56:42.919Z"
+    },
+    {
+      "id": "ord-1791729062462",
+      "orderNumber": "TEM-2026-15946",
+      "customerName": "yousuf ali",
+      "customerPhone": "01623363623",
+      "deliveryAddress": "azizer mor, boyra bazar, khulna, bangladesh",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "Outside Dhaka",
+      "subtotal": 750,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 120,
+      "totalAmount": 870,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "items": [
+        {
+          "productId": "prod-6",
+          "productName": "Pure Raw Sundarban Wild Honey (500g)",
+          "sku": "TEM-HNY-006",
+          "unitPrice": 750,
+          "purchaseCost": 450,
+          "quantity": 1,
+          "totalPrice": 750
+        }
+      ],
+      "createdAt": "2026-10-11T14:31:02.462Z",
+      "updatedAt": "2026-10-11T14:31:02.462Z"
+    },
+    {
+      "id": "ord-1791728917727",
+      "orderNumber": "TEM-2026-51753",
+      "customerName": "Google Sheets Live Tester",
+      "customerPhone": "01855667788",
+      "deliveryAddress": "House 88, Road 2, Gulshan 1",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "Inside Dhaka",
+      "subtotal": 1599,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 60,
+      "totalAmount": 1659,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "items": [
+        {
+          "productId": "prod-1",
+          "productName": "Pro ANC Wireless Earbuds with ENC Mic",
+          "sku": "TEM-TWS-001",
+          "unitPrice": 1599,
+          "purchaseCost": 1100,
+          "quantity": 1,
+          "totalPrice": 1599
+        }
+      ],
+      "createdAt": "2026-10-11T14:28:37.727Z",
+      "updatedAt": "2026-10-11T14:28:37.727Z"
+    },
+    {
+      "id": "ord-1791728677720",
+      "orderNumber": "TEM-2026-59005",
+      "customerName": "yousuf ali",
+      "customerPhone": "01623363623",
+      "deliveryAddress": "azizer mor, boyra bazar, khulna, bangladesh",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "Inside Dhaka",
+      "subtotal": 2490,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 60,
+      "totalAmount": 2550,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "items": [
+        {
+          "productId": "prod-2",
+          "productName": "AMOLED Smart Watch with BT Calling",
+          "sku": "TEM-SWT-002",
+          "unitPrice": 2490,
+          "purchaseCost": 1800,
+          "quantity": 1,
+          "totalPrice": 2490
+        }
+      ],
+      "createdAt": "2026-10-11T14:24:37.720Z",
+      "updatedAt": "2026-10-11T14:24:37.720Z"
+    },
+    {
+      "id": "ord-1791728616649",
+      "orderNumber": "TEM-2026-56906",
+      "customerName": "yousuf ali",
+      "customerPhone": "01623363623",
+      "deliveryAddress": "azizer mor, boyra bazar, khulna, bangladesh",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "Inside Dhaka",
+      "subtotal": 1700,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 60,
+      "totalAmount": 1760,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "items": [
+        {
+          "productId": "prod-1791700536997",
+          "productName": "Cooker",
+          "sku": "EG-45",
+          "unitPrice": 1700,
+          "purchaseCost": 1200,
+          "quantity": 1,
+          "totalPrice": 1700
+        }
+      ],
+      "createdAt": "2026-10-11T14:23:36.649Z",
+      "updatedAt": "2026-10-11T14:23:36.649Z"
+    },
+    {
+      "id": "ord-1791727984208",
+      "orderNumber": "TEM-2026-24322",
+      "customerName": "yousuf ali",
+      "customerPhone": "01623363623",
+      "deliveryAddress": "azizer mor, boyra bazar, khulna, bangladesh",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "Outside Dhaka",
+      "subtotal": 750,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 120,
+      "totalAmount": 870,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "items": [
+        {
+          "productId": "prod-6",
+          "productName": "Pure Raw Sundarban Wild Honey (500g)",
+          "sku": "TEM-HNY-006",
+          "unitPrice": 750,
+          "purchaseCost": 450,
+          "quantity": 1,
+          "totalPrice": 750
+        }
+      ],
+      "createdAt": "2026-10-11T14:13:04.208Z",
+      "updatedAt": "2026-10-11T14:13:04.208Z"
+    },
+    {
+      "id": "ord-1791727906523",
+      "orderNumber": "TEM-2026-79574",
+      "customerName": "Yousuf Ali",
+      "customerPhone": "01623363623",
+      "deliveryAddress": "Boyra Jessore Road, Khulna, Bangladesh",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "Outside Dhaka",
+      "subtotal": 2490,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 120,
+      "totalAmount": 2610,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "items": [
+        {
+          "productId": "prod-2",
+          "productName": "AMOLED Smart Watch with BT Calling",
+          "sku": "TEM-SWT-002",
+          "unitPrice": 2490,
+          "purchaseCost": 1800,
+          "quantity": 1,
+          "totalPrice": 2490
+        }
+      ],
+      "createdAt": "2026-10-11T14:11:46.523Z",
+      "updatedAt": "2026-10-11T14:11:46.523Z"
+    },
+    {
+      "id": "ord-1791727719765",
+      "orderNumber": "TEM-2026-24894",
+      "customerName": "yousuf ali",
+      "customerPhone": "01623363623",
+      "deliveryAddress": "azizer mor, boyra bazar, khulna, bangladesh",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "Inside Dhaka",
+      "subtotal": 4980,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 60,
+      "totalAmount": 5040,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "items": [
+        {
+          "productId": "prod-2",
+          "productName": "AMOLED Smart Watch with BT Calling",
+          "sku": "TEM-SWT-002",
+          "unitPrice": 2490,
+          "purchaseCost": 1800,
+          "quantity": 2,
+          "totalPrice": 4980
+        }
+      ],
+      "createdAt": "2026-10-11T14:08:39.766Z",
+      "updatedAt": "2026-10-11T14:08:39.766Z"
+    },
+    {
+      "id": "ord-1791727479923",
+      "orderNumber": "TEM-2026-98958",
+      "customerName": "Google Sheets Live Tester",
+      "customerPhone": "01855667788",
+      "deliveryAddress": "House 88, Road 2, Gulshan 1",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "Inside Dhaka",
+      "subtotal": 1599,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 60,
+      "totalAmount": 1659,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "items": [
+        {
+          "productId": "prod-1",
+          "productName": "Pro ANC Wireless Earbuds with ENC Mic",
+          "sku": "TEM-TWS-001",
+          "unitPrice": 1599,
+          "purchaseCost": 1100,
+          "quantity": 1,
+          "totalPrice": 1599
+        }
+      ],
+      "createdAt": "2026-10-11T14:04:39.923Z",
+      "updatedAt": "2026-10-11T14:04:39.923Z"
+    },
+    {
+      "id": "ord-1791723309461",
+      "orderNumber": "TEM-2026-84136",
+      "customerName": "Test Deletion Customer",
+      "customerPhone": "01799887766",
+      "deliveryAddress": "Banani Road 11, Dhaka",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "Inside Dhaka",
+      "subtotal": 3198,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 60,
+      "totalAmount": 3258,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "items": [
+        {
+          "productId": "prod-1",
+          "productName": "Pro ANC Wireless Earbuds with ENC Mic",
+          "sku": "TEM-TWS-001",
+          "unitPrice": 1599,
+          "purchaseCost": 1100,
+          "quantity": 2,
+          "totalPrice": 3198
+        }
+      ],
+      "createdAt": "2026-10-11T12:55:09.461Z",
+      "updatedAt": "2026-10-11T12:55:09.461Z"
+    },
+    {
+      "id": "ord-1791719464657",
+      "orderNumber": "TEM-2026-65817",
+      "customerName": "Samim",
+      "customerPhone": "01623363623",
+      "deliveryAddress": "azizer mor, boyra bazar, khulna, bangladesh",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "Inside Dhaka",
+      "subtotal": 890,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 60,
+      "totalAmount": 950,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "items": [
+        {
+          "productId": "prod-5",
+          "productName": "Genuine Cowhide Leather Bi-fold Wallet",
+          "sku": "TEM-WAL-005",
+          "unitPrice": 890,
+          "purchaseCost": 550,
+          "quantity": 1,
+          "totalPrice": 890
+        }
+      ],
+      "createdAt": "2026-10-11T11:51:04.658Z",
+      "updatedAt": "2026-10-11T11:51:04.658Z"
+    },
+    {
+      "id": "ord-1791719415620",
+      "orderNumber": "TEM-2026-19787",
+      "customerName": "Yousuf Ali",
+      "customerPhone": "01623363623",
+      "deliveryAddress": "Boyra Jessore Road, Khulna, Bangladesh",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "Inside Dhaka",
+      "subtotal": 2150,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 60,
+      "totalAmount": 2210,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "items": [
+        {
+          "productId": "prod-4",
+          "productName": "Premium Semi-Pure Silk Designer Panjabi",
+          "sku": "TEM-PAN-004",
+          "unitPrice": 2150,
+          "purchaseCost": 1400,
+          "quantity": 1,
+          "totalPrice": 2150
+        }
+      ],
+      "createdAt": "2026-10-11T11:50:15.620Z",
+      "updatedAt": "2026-10-11T11:50:15.620Z"
+    },
+    {
+      "id": "ord-1791719325265",
+      "orderNumber": "TEM-2026-72439",
+      "customerName": "Yousuf Ali",
+      "customerPhone": "01623363623",
+      "deliveryAddress": "Boyra Jessore Road, Khulna, Bangladesh",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "Inside Dhaka",
+      "subtotal": 1700,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 60,
+      "totalAmount": 1760,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "items": [
+        {
+          "productId": "prod-1791700536997",
+          "productName": "Cooker",
+          "sku": "EG-45",
+          "unitPrice": 1700,
+          "purchaseCost": 1200,
+          "quantity": 1,
+          "totalPrice": 1700
+        }
+      ],
+      "createdAt": "2026-10-11T11:48:45.265Z",
+      "updatedAt": "2026-10-11T11:48:45.265Z"
+    },
+    {
+      "id": "ord-1791719188079",
+      "orderNumber": "TEM-2026-33807",
+      "customerName": "yousuf ali",
+      "customerPhone": "01623363623",
+      "deliveryAddress": "azizer mor, boyra bazar, khulna, bangladesh",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "Inside Dhaka",
+      "subtotal": 7528,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 60,
+      "totalAmount": 7588,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "items": [
+        {
+          "productId": "prod-1791700536997",
+          "productName": "Cooker",
+          "sku": "EG-45",
+          "unitPrice": 1700,
+          "purchaseCost": 1200,
+          "quantity": 1,
+          "totalPrice": 1700
+        },
+        {
+          "productId": "prod-3",
+          "productName": "20000mAh 22.5W Fast Charging Power Bank",
+          "sku": "TEM-PB-003",
+          "unitPrice": 1399,
+          "purchaseCost": 950,
+          "quantity": 1,
+          "totalPrice": 1399
+        },
+        {
+          "productId": "prod-7",
+          "productName": "Cold Pressed Wood Pressed Mustard Oil (1 Litre)",
+          "sku": "TEM-OIL-007",
+          "unitPrice": 340,
+          "purchaseCost": 220,
+          "quantity": 1,
+          "totalPrice": 340
+        },
+        {
+          "productId": "prod-2",
+          "productName": "AMOLED Smart Watch with BT Calling",
+          "sku": "TEM-SWT-002",
+          "unitPrice": 2490,
+          "purchaseCost": 1800,
+          "quantity": 1,
+          "totalPrice": 2490
+        },
+        {
+          "productId": "prod-1",
+          "productName": "Pro ANC Wireless Earbuds with ENC Mic",
+          "sku": "TEM-TWS-001",
+          "unitPrice": 1599,
+          "purchaseCost": 1100,
+          "quantity": 1,
+          "totalPrice": 1599
+        }
+      ],
+      "createdAt": "2026-10-11T11:46:28.079Z",
+      "updatedAt": "2026-10-11T11:46:28.079Z"
+    },
+    {
+      "id": "ord-1791718416446",
+      "orderNumber": "TEM-2026-13175",
+      "customerName": "mehejabin",
+      "customerPhone": "01314272981",
+      "deliveryAddress": "azizer mor, boyra bazar, khulna, bangladesh",
+      "deliveryCity": "Khulna",
+      "deliveryZone": "Outside Dhaka",
+      "subtotal": 4300,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 120,
+      "totalAmount": 4420,
+      "paymentMethod": "BKASH",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": "jamai amaka free daw gift",
+      "items": [
+        {
+          "productId": "prod-4",
+          "productName": "Premium Semi-Pure Silk Designer Panjabi",
+          "sku": "TEM-PAN-004",
+          "unitPrice": 2150,
+          "purchaseCost": 1400,
+          "quantity": 2,
+          "totalPrice": 4300
+        }
+      ],
+      "createdAt": "2026-10-11T11:33:36.446Z",
+      "updatedAt": "2026-10-11T11:33:36.446Z"
+    }
+  ],
+  "expenses": [
+    {
+      "id": "exp-1",
+      "expenseDate": "2026-10-11T11:27:40.589Z",
+      "category": "Packaging",
+      "description": "Custom corrugated boxes & bubble wrap roll",
+      "amount": 4500,
+      "paymentMethod": "COD",
+      "createdAt": "2026-10-11T11:27:40.589Z"
+    },
+    {
+      "id": "exp-2",
+      "expenseDate": "2026-10-08T11:27:40.589Z",
+      "category": "Logistics",
+      "description": "Pathao courier hub delivery shipment settlement",
+      "amount": 1850,
+      "paymentMethod": "BKASH",
+      "createdAt": "2026-10-08T11:27:40.589Z"
+    }
+  ],
+  "banners": [
+    {
+      "id": "ban-1",
+      "title": "Grand Opening Special — Toto Elite Mart",
+      "subtitle": "Flat ৳1000 off on your first order! Use code WELCOME100",
+      "imageUrl": "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=1600&auto=format&fit=crop&q=80",
+      "targetUrl": "/shop",
+      "sortOrder": 1,
+      "isActive": true
+    },
+    {
+      "id": "ban-2",
+      "title": "Top Gadgets & Audio Gear",
+      "subtitle": "Experience true wireless freedom with ANC earbuds & smartwatches.",
+      "imageUrl": "https://images.unsplash.com/photo-1550009158-9ebf69173e03?w=1600&auto=format&fit=crop&q=80",
+      "targetUrl": "/shop?category=smart-gadgets",
+      "sortOrder": 2
+    },
+    {
+      "id": "ban-3",
+      "title": "100% Pure Organic Delights",
+      "subtitle": "From Sundarban wild honey to traditional wood-pressed oils.",
+      "imageUrl": "https://images.unsplash.com/photo-1506484381205-f7945653044d?w=1600&auto=format&fit=crop&q=80",
+      "targetUrl": "/shop?category=organic-food",
+      "sortOrder": 3
+    },
+    {
+      "id": "ban-1791718060589",
+      "title": "Big Sales",
+      "subtitle": "Only 10 day",
+      "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7nahmNZdSTftvjFvGtjca1yqfv6pxsLvOTjd7LhuUgw&s=10",
+      "fileId": null,
+      "targetUrl": "/shop",
+      "sortOrder": 4,
+      "isActive": true
+    }
+  ],
+  "coupons": [
+    {
+      "id": "coup-1791829404395",
+      "code": "MAX 50",
+      "discountType": "PERCENTAGE",
+      "discountValue": 50,
+      "minOrderValue": 10,
+      "maxDiscountValue": null,
+      "usageLimit": 100,
+      "startDate": "2026-10-12T12:22:00.000Z",
+      "endDate": "2026-10-14T12:22:00.000Z",
+      "isActive": true,
+      "timesUsed": 0,
+      "createdAt": "2026-10-12T18:23:24.395Z",
+      "updatedAt": "2026-10-12T18:34:46.790Z"
+    }
+  ],
+  "movements": [
+    {
+      "id": "mov-1791718158772",
+      "productId": "prod-1791700536997",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 20,
+      "newStock": 19,
+      "reason": "Customer order TEM-2026-38930",
+      "referenceId": "ord-1791718158772",
+      "createdAt": "2026-10-11T11:29:18.772Z"
+    },
+    {
+      "id": "mov-1791718158772",
+      "productId": "prod-3",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -2,
+      "previousStock": 62,
+      "newStock": 60,
+      "reason": "Customer order TEM-2026-38930",
+      "referenceId": "ord-1791718158772",
+      "createdAt": "2026-10-11T11:29:18.772Z"
+    },
+    {
+      "id": "mov-1791718158772",
+      "productId": "prod-7",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 80,
+      "newStock": 79,
+      "reason": "Customer order TEM-2026-38930",
+      "referenceId": "ord-1791718158772",
+      "createdAt": "2026-10-11T11:29:18.772Z"
+    },
+    {
+      "id": "mov-1791718158772",
+      "productId": "prod-2",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 28,
+      "newStock": 27,
+      "reason": "Customer order TEM-2026-38930",
+      "referenceId": "ord-1791718158772",
+      "createdAt": "2026-10-11T11:29:18.772Z"
+    },
+    {
+      "id": "mov-1791718158772",
+      "productId": "prod-1",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -6,
+      "previousStock": 45,
+      "newStock": 39,
+      "reason": "Customer order TEM-2026-38930",
+      "referenceId": "ord-1791718158772",
+      "createdAt": "2026-10-11T11:29:18.772Z"
+    },
+    {
+      "id": "mov-1791718416447",
+      "productId": "prod-4",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -2,
+      "previousStock": 30,
+      "newStock": 28,
+      "reason": "Customer order TEM-2026-13175",
+      "referenceId": "ord-1791718416446",
+      "createdAt": "2026-10-11T11:33:36.447Z"
+    },
+    {
+      "id": "mov-1791719188079",
+      "productId": "prod-1791700536997",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 19,
+      "newStock": 18,
+      "reason": "Customer order TEM-2026-33807",
+      "referenceId": "ord-1791719188079",
+      "createdAt": "2026-10-11T11:46:28.079Z"
+    },
+    {
+      "id": "mov-1791719188079",
+      "productId": "prod-3",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 60,
+      "newStock": 59,
+      "reason": "Customer order TEM-2026-33807",
+      "referenceId": "ord-1791719188079",
+      "createdAt": "2026-10-11T11:46:28.079Z"
+    },
+    {
+      "id": "mov-1791719188079",
+      "productId": "prod-7",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 79,
+      "newStock": 78,
+      "reason": "Customer order TEM-2026-33807",
+      "referenceId": "ord-1791719188079",
+      "createdAt": "2026-10-11T11:46:28.079Z"
+    },
+    {
+      "id": "mov-1791719188079",
+      "productId": "prod-2",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 27,
+      "newStock": 26,
+      "reason": "Customer order TEM-2026-33807",
+      "referenceId": "ord-1791719188079",
+      "createdAt": "2026-10-11T11:46:28.079Z"
+    },
+    {
+      "id": "mov-1791719188079",
+      "productId": "prod-1",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 39,
+      "newStock": 38,
+      "reason": "Customer order TEM-2026-33807",
+      "referenceId": "ord-1791719188079",
+      "createdAt": "2026-10-11T11:46:28.079Z"
+    },
+    {
+      "id": "mov-1791719325270",
+      "productId": "prod-1791700536997",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 18,
+      "newStock": 17,
+      "reason": "Customer order TEM-2026-72439",
+      "referenceId": "ord-1791719325265",
+      "createdAt": "2026-10-11T11:48:45.270Z"
+    },
+    {
+      "id": "mov-1791719415622",
+      "productId": "prod-4",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 28,
+      "newStock": 27,
+      "reason": "Customer order TEM-2026-19787",
+      "referenceId": "ord-1791719415620",
+      "createdAt": "2026-10-11T11:50:15.622Z"
+    },
+    {
+      "id": "mov-1791719464661",
+      "productId": "prod-5",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 4,
+      "newStock": 3,
+      "reason": "Customer order TEM-2026-65817",
+      "referenceId": "ord-1791719464657",
+      "createdAt": "2026-10-11T11:51:04.661Z"
+    },
+    {
+      "id": "mov-1791723309464",
+      "productId": "prod-1",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -2,
+      "previousStock": 38,
+      "newStock": 36,
+      "reason": "Customer order TEM-2026-84136",
+      "referenceId": "ord-1791723309461",
+      "createdAt": "2026-10-11T12:55:09.464Z"
+    },
+    {
+      "id": "mov-1791723399947",
+      "productId": "prod-1",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -2,
+      "previousStock": 36,
+      "newStock": 34,
+      "reason": "Customer order TEM-2026-54594",
+      "referenceId": "ord-1791723399943",
+      "createdAt": "2026-10-11T12:56:39.947Z"
+    },
+    {
+      "id": "mov-1791723403125-prod-1",
+      "productId": "prod-1",
+      "movementType": "ORDER_CANCEL_RELEASE",
+      "quantity": 2,
+      "previousStock": 34,
+      "newStock": 36,
+      "reason": "Deleted order TEM-2026-54594 - stock restored",
+      "referenceId": "ord-1791723399943",
+      "createdAt": "2026-10-11T12:56:43.125Z"
+    },
+    {
+      "id": "mov-1791727479925",
+      "productId": "prod-1",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 36,
+      "newStock": 35,
+      "reason": "Customer order TEM-2026-98958",
+      "referenceId": "ord-1791727479923",
+      "createdAt": "2026-10-11T14:04:39.925Z"
+    },
+    {
+      "id": "mov-1791727719770",
+      "productId": "prod-2",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -2,
+      "previousStock": 26,
+      "newStock": 24,
+      "reason": "Customer order TEM-2026-24894",
+      "referenceId": "ord-1791727719765",
+      "createdAt": "2026-10-11T14:08:39.770Z"
+    },
+    {
+      "id": "mov-1791727906531",
+      "productId": "prod-2",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 24,
+      "newStock": 23,
+      "reason": "Customer order TEM-2026-79574",
+      "referenceId": "ord-1791727906523",
+      "createdAt": "2026-10-11T14:11:46.531Z"
+    },
+    {
+      "id": "mov-1791727984211",
+      "productId": "prod-6",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 50,
+      "newStock": 49,
+      "reason": "Customer order TEM-2026-24322",
+      "referenceId": "ord-1791727984208",
+      "createdAt": "2026-10-11T14:13:04.211Z"
+    },
+    {
+      "id": "mov-1791728616652",
+      "productId": "prod-1791700536997",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 17,
+      "newStock": 16,
+      "reason": "Customer order TEM-2026-56906",
+      "referenceId": "ord-1791728616649",
+      "createdAt": "2026-10-11T14:23:36.652Z"
+    },
+    {
+      "id": "mov-1791728677722",
+      "productId": "prod-2",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 23,
+      "newStock": 22,
+      "reason": "Customer order TEM-2026-59005",
+      "referenceId": "ord-1791728677720",
+      "createdAt": "2026-10-11T14:24:37.722Z"
+    },
+    {
+      "id": "mov-1791728917729",
+      "productId": "prod-1",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 35,
+      "newStock": 34,
+      "reason": "Customer order TEM-2026-51753",
+      "referenceId": "ord-1791728917727",
+      "createdAt": "2026-10-11T14:28:37.729Z"
+    },
+    {
+      "id": "mov-1791729062548",
+      "productId": "prod-6",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 49,
+      "newStock": 48,
+      "reason": "Customer order TEM-2026-15946",
+      "referenceId": "ord-1791729062462",
+      "createdAt": "2026-10-11T14:31:02.548Z"
+    },
+    {
+      "id": "mov-1791734202922",
+      "productId": "prod-4",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 27,
+      "newStock": 26,
+      "reason": "Customer order TEM-2026-76180",
+      "referenceId": "ord-1791734202919",
+      "createdAt": "2026-10-11T15:56:42.922Z"
+    },
+    {
+      "id": "mov-1791734328657",
+      "productId": "prod-1",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 34,
+      "newStock": 33,
+      "reason": "Customer order TEM-2026-94975",
+      "referenceId": "ord-1791734328655",
+      "createdAt": "2026-10-11T15:58:48.657Z"
+    },
+    {
+      "id": "mov-1791735729749",
+      "productId": "prod-4",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 26,
+      "newStock": 25,
+      "reason": "Customer order TEM-2026-69776",
+      "referenceId": "ord-1791735729746",
+      "createdAt": "2026-10-11T16:22:09.749Z"
+    },
+    {
+      "id": "mov-1791735765365-prod-1",
+      "productId": "prod-1",
+      "movementType": "ORDER_CANCEL_RELEASE",
+      "quantity": 1,
+      "previousStock": 33,
+      "newStock": 34,
+      "reason": "Deleted order TEM-2026-10001 - stock restored",
+      "referenceId": "ord-1001",
+      "createdAt": "2026-10-11T16:22:45.365Z"
+    },
+    {
+      "id": "mov-1791735776036-prod-1791700536997",
+      "productId": "prod-1791700536997",
+      "movementType": "ORDER_CANCEL_RELEASE",
+      "quantity": 1,
+      "previousStock": 16,
+      "newStock": 17,
+      "reason": "Deleted order TEM-2026-38930 - stock restored",
+      "referenceId": "ord-1791718158772",
+      "createdAt": "2026-10-11T16:22:56.036Z"
+    },
+    {
+      "id": "mov-1791735776036-prod-3",
+      "productId": "prod-3",
+      "movementType": "ORDER_CANCEL_RELEASE",
+      "quantity": 2,
+      "previousStock": 59,
+      "newStock": 61,
+      "reason": "Deleted order TEM-2026-38930 - stock restored",
+      "referenceId": "ord-1791718158772",
+      "createdAt": "2026-10-11T16:22:56.036Z"
+    },
+    {
+      "id": "mov-1791735776036-prod-7",
+      "productId": "prod-7",
+      "movementType": "ORDER_CANCEL_RELEASE",
+      "quantity": 1,
+      "previousStock": 78,
+      "newStock": 79,
+      "reason": "Deleted order TEM-2026-38930 - stock restored",
+      "referenceId": "ord-1791718158772",
+      "createdAt": "2026-10-11T16:22:56.036Z"
+    },
+    {
+      "id": "mov-1791735776036-prod-2",
+      "productId": "prod-2",
+      "movementType": "ORDER_CANCEL_RELEASE",
+      "quantity": 1,
+      "previousStock": 22,
+      "newStock": 23,
+      "reason": "Deleted order TEM-2026-38930 - stock restored",
+      "referenceId": "ord-1791718158772",
+      "createdAt": "2026-10-11T16:22:56.036Z"
+    },
+    {
+      "id": "mov-1791735776036-prod-1",
+      "productId": "prod-1",
+      "movementType": "ORDER_CANCEL_RELEASE",
+      "quantity": 6,
+      "previousStock": 34,
+      "newStock": 40,
+      "reason": "Deleted order TEM-2026-38930 - stock restored",
+      "referenceId": "ord-1791718158772",
+      "createdAt": "2026-10-11T16:22:56.036Z"
+    },
+    {
+      "id": "mov-1791827249514",
+      "productId": "prod-2",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 23,
+      "newStock": 22,
+      "reason": "Customer order TEM-2026-94512",
+      "referenceId": "ord-1791827249509",
+      "createdAt": "2026-10-12T17:47:29.514Z"
+    },
+    {
+      "id": "mov-1791827249514",
+      "productId": "prod-1",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 40,
+      "newStock": 39,
+      "reason": "Customer order TEM-2026-94512",
+      "referenceId": "ord-1791827249509",
+      "createdAt": "2026-10-12T17:47:29.514Z"
+    },
+    {
+      "id": "mov-1791828811906",
+      "productId": "prod-1",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 39,
+      "newStock": 38,
+      "reason": "Customer order TEM-2026-79220",
+      "referenceId": "ord-1791828811903",
+      "createdAt": "2026-10-12T18:13:31.906Z"
+    },
+    {
+      "id": "mov-1791831745722",
+      "productId": "prod-1",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 38,
+      "newStock": 37,
+      "reason": "Customer order TEM-2026-95436 (Color: Matte Black)",
+      "referenceId": "ord-1791831745719",
+      "createdAt": "2026-10-12T19:02:25.722Z"
+    },
+    {
+      "id": "mov-1791833700045",
+      "productId": "prod-1791833597889",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -2,
+      "previousStock": 40,
+      "newStock": 38,
+      "reason": "Customer order TEM-2026-57246 (Color: Crimson Red)",
+      "referenceId": "ord-1791833700044",
+      "createdAt": "2026-10-12T19:35:00.045Z"
+    },
+    {
+      "id": "mov-1791836632046",
+      "productId": "prod-1791834001382",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -2,
+      "previousStock": 10,
+      "newStock": 8,
+      "reason": "Customer order TEM-2026-28926 (Color: Crimson Red)",
+      "referenceId": "ord-1791836632042",
+      "createdAt": "2026-10-12T20:23:52.046Z"
+    },
+    {
+      "id": "mov-1791836668453",
+      "productId": "prod-1791834001382",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -2,
+      "previousStock": 8,
+      "newStock": 6,
+      "reason": "Customer order TEM-2026-61115 (Color: Crimson Red)",
+      "referenceId": "ord-1791836668451",
+      "createdAt": "2026-10-12T20:24:28.453Z"
+    },
+    {
+      "id": "mov-1791836670813",
+      "productId": "prod-1791834001382",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 6,
+      "newStock": 5,
+      "reason": "Customer order TEM-2026-55416 (Color: Yellow)",
+      "referenceId": "ord-1791836670811",
+      "createdAt": "2026-10-12T20:24:30.813Z"
+    },
+    {
+      "id": "mov-1791836671014",
+      "productId": "prod-1791834001382",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -3,
+      "previousStock": 5,
+      "newStock": 2,
+      "reason": "Customer order TEM-2026-81060 (Color: Black)",
+      "referenceId": "ord-1791836671012",
+      "createdAt": "2026-10-12T20:24:31.014Z"
+    },
+    {
+      "id": "mov-1791836974430",
+      "productId": "prod-1791834001382",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 2,
+      "newStock": 1,
+      "reason": "Customer order TEM-2026-80658 (Color: Crimson Red)",
+      "referenceId": "ord-1791836974428",
+      "createdAt": "2026-10-12T20:29:34.430Z"
+    },
+    {
+      "id": "mov-1791836977661",
+      "productId": "prod-1791834001382",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 1,
+      "newStock": 0,
+      "reason": "Customer order TEM-2026-20208 (Color: Crimson Red)",
+      "referenceId": "ord-1791836977660",
+      "createdAt": "2026-10-12T20:29:37.661Z"
+    },
+    {
+      "id": "mov-1791837193610",
+      "productId": "prod-1791833597889",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 38,
+      "newStock": 37,
+      "reason": "Customer order TEM-2026-44956 (Color: Emerald Green)",
+      "referenceId": "ord-1791837193603",
+      "createdAt": "2026-10-12T20:33:13.610Z"
+    },
+    {
+      "id": "mov-1791837193610",
+      "productId": "prod-1791833597889",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 37,
+      "newStock": 36,
+      "reason": "Customer order TEM-2026-44956 (Color: Crimson Red)",
+      "referenceId": "ord-1791837193603",
+      "createdAt": "2026-10-12T20:33:13.610Z"
+    },
+    {
+      "id": "mov-1791837193610",
+      "productId": "prod-6",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 48,
+      "newStock": 47,
+      "reason": "Customer order TEM-2026-44956",
+      "referenceId": "ord-1791837193603",
+      "createdAt": "2026-10-12T20:33:13.610Z"
+    },
+    {
+      "id": "mov-1791837569524",
+      "productId": "prod-4",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 25,
+      "newStock": 29,
+      "reason": "Customer order TEM-2026-30276 (Color: Royal Navy)",
+      "referenceId": "ord-1791837569510",
+      "createdAt": "2026-10-12T20:39:29.524Z"
+    },
+    {
+      "id": "mov-1791837569524",
+      "productId": "prod-1791833597889",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 36,
+      "newStock": 35,
+      "reason": "Customer order TEM-2026-30276 (Color: Crimson Red)",
+      "referenceId": "ord-1791837569510",
+      "createdAt": "2026-10-12T20:39:29.524Z"
+    },
+    {
+      "id": "mov-1791997379410",
+      "productId": "prod-1791997338037",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 20,
+      "newStock": 19,
+      "reason": "Customer order TEM-2026-19361 (Color: White)",
+      "referenceId": "ord-1791997379409",
+      "createdAt": "2026-10-14T17:02:59.410Z"
+    },
+    {
+      "id": "mov-1792000275293",
+      "productId": "prod-1791997338037",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 19,
+      "newStock": 18,
+      "reason": "Customer order TEM-2026-51110 (Color: Black)",
+      "referenceId": "ord-1792000275290",
+      "createdAt": "2026-10-14T17:51:15.293Z"
+    },
+    {
+      "id": "mov-1792000473265",
+      "productId": "prod-1791994558945",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -3,
+      "previousStock": 30,
+      "newStock": 27,
+      "reason": "Customer order TEM-2026-94990 (Color: Rose Gold)",
+      "referenceId": "ord-1792000473263",
+      "createdAt": "2026-10-14T17:54:33.265Z"
+    },
+    {
+      "id": "mov-1792000473265",
+      "productId": "prod-2",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -2,
+      "previousStock": 28,
+      "newStock": 26,
+      "reason": "Customer order TEM-2026-94990 (Color: Space Black)",
+      "referenceId": "ord-1792000473263",
+      "createdAt": "2026-10-14T17:54:33.265Z"
+    },
+    {
+      "id": "mov-1792000473265",
+      "productId": "prod-1791700536997",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -2,
+      "previousStock": 17,
+      "newStock": 15,
+      "reason": "Customer order TEM-2026-94990",
+      "referenceId": "ord-1792000473263",
+      "createdAt": "2026-10-14T17:54:33.265Z"
+    }
+  ],
+  "users": [
+    {
+      "id": "usr-1791734805950",
+      "email": "tanvir@totoelitemart.com",
+      "passwordHash": "$2b$12$2tvczZWnxgzZXFBxvqb5.OJ/8QC4dCH/nvlhCLta5LyU/Ux5TAIrO",
+      "fullName": "Tanvir",
+      "phone": "01623363623",
+      "role": "STAFF",
+      "status": "ACTIVE",
+      "customPermissions": [
+        "orders:read",
+        "orders:status"
+      ],
+      "createdAt": "2026-10-11T16:06:45.950Z",
+      "updatedAt": "2026-10-11T16:06:45.950Z"
+    },
+    {
+      "id": "usr-1791721378664",
+      "email": "sabbir.1791721378240@totoelitemart.com",
+      "passwordHash": "$2b$12$NxQaffEgNLcVbuu6qpH8c.PRV5R1nl8AsyLDfO0hGZMuxnjw9Jr2a",
+      "fullName": "Sabbir Rahman Senior",
+      "phone": "01799887766",
+      "role": "MANAGER",
+      "status": "ACTIVE",
+      "customPermissions": [
+        "expenses:read",
+        "inventory:write",
+        "banners:read",
+        "integrations:read"
+      ],
+      "createdAt": "2026-10-11T12:22:58.664Z",
+      "updatedAt": "2026-10-11T12:22:59.545Z"
+    },
+    {
+      "id": "usr-1791721153126",
+      "email": "sabbir.1791721152678@totoelitemart.com",
+      "passwordHash": "$2b$12$dZDVk.N7q4F/pxxQSe4dGOT61mZB4Q3Mo3bs14F3y5OOiUBYBhvXi",
+      "fullName": "Sabbir Rahman Senior",
+      "phone": "01799887766",
+      "role": "MANAGER",
+      "status": "ACTIVE",
+      "customPermissions": [
+        "expenses:read",
+        "inventory:write",
+        "banners:read",
+        "integrations:read"
+      ],
+      "createdAt": "2026-10-11T12:19:13.126Z",
+      "updatedAt": "2026-10-11T12:19:17.675Z"
+    },
+    {
+      "id": "usr-admin-1",
+      "email": "admin@totoelitemart.com",
+      "passwordHash": "$2b$12$qCxEAM12GHcyLL6uF5nqweyh5Bpgq.hPdpsYg./H9JTBZYtbEN3PS",
+      "fullName": "Super Administrator",
+      "phone": "01711000000",
+      "role": "SUPER_ADMIN",
+      "status": "ACTIVE",
+      "createdAt": "2026-10-11T11:27:40.589Z",
+      "updatedAt": "2026-10-11T12:30:41.228Z"
+    },
+    {
+      "id": "usr-order-1",
+      "email": "orders@totoelitemart.com",
+      "passwordHash": "$2b$12$/aVAESRy4y2KLMhqMOl9uOYupyRLxX9yAVFACBCgV3DlObuDSDn6S",
+      "fullName": "Order Operations Manager",
+      "phone": "01811000000",
+      "role": "ORDER_MANAGER",
+      "status": "ACTIVE",
+      "createdAt": "2026-10-11T11:27:40.589Z"
+    }
+  ],
+  "settings": {
+    "freeDeliveryEnabled": true,
+    "freeDeliveryThreshold": 1500,
+    "freeDeliveryBannerText": "Add ৳{remaining} more for FREE Delivery! 🚚",
+    "freeDeliveryUnlockedText": "🎉 You have unlocked FREE Delivery!",
+    "cardStepperEnabled": true,
+    "reviewAutoApprove": true
+  },
+  "reviews": [
+    {
+      "id": "rev-1792004686737-866",
+      "productId": "prod-1791700536997",
+      "customerName": "kazim",
+      "customerPhone": null,
+      "rating": 5,
+      "comment": "not bad very good",
+      "images": [],
+      "isVerified": true,
+      "status": "APPROVED",
+      "createdAt": "2026-10-14T19:04:46.737Z"
+    },
+    {
+      "id": "rev-1792004590368-911",
+      "productId": "prod-9",
+      "customerName": "sbbir",
+      "customerPhone": null,
+      "rating": 3,
+      "comment": "very bad product",
+      "images": [],
+      "isVerified": true,
+      "status": "APPROVED",
+      "createdAt": "2026-10-14T19:03:10.368Z"
+    },
+    {
+      "id": "rev-1792003918268-173",
+      "productId": "prod-1791994558945",
+      "customerName": "Test Water Buyer",
+      "customerPhone": null,
+      "rating": 5,
+      "comment": "Great water dispenser machine! Very satisfied.",
+      "images": [],
+      "isVerified": true,
+      "status": "APPROVED",
+      "createdAt": "2026-10-14T18:51:58.268Z"
+    },
+    {
+      "id": "rev-1792003560716-691",
+      "productId": "prod-1791994778690",
+      "customerName": "Mk alif",
+      "customerPhone": null,
+      "rating": 5,
+      "comment": "very good product",
+      "images": [],
+      "isVerified": true,
+      "status": "APPROVED",
+      "createdAt": "2026-10-14T18:46:00.716Z"
+    },
+    {
+      "id": "rev-1792003440967-251",
+      "productId": "prod-1791994778690",
+      "customerName": "Md sakib",
+      "customerPhone": null,
+      "rating": 5,
+      "comment": "Very good  product",
+      "images": [],
+      "isVerified": true,
+      "status": "APPROVED",
+      "createdAt": "2026-10-14T18:44:00.967Z"
+    },
+    {
+      "id": "rev-1792003269775-707",
+      "productId": "prod-8",
+      "customerName": "assim",
+      "customerPhone": null,
+      "rating": 5,
+      "comment": "very good",
+      "images": [],
+      "isVerified": true,
+      "status": "APPROVED",
+      "createdAt": "2026-10-14T18:41:09.775Z"
+    },
+    {
+      "id": "rev-1792003185644-659",
+      "productId": "prod-1791997338037",
+      "customerName": "Samim",
+      "customerPhone": null,
+      "rating": 5,
+      "comment": "Very  good",
+      "images": [],
+      "isVerified": true,
+      "status": "APPROVED",
+      "createdAt": "2026-10-14T18:39:45.644Z"
+    },
+    {
+      "id": "rev-1792000149627-846",
+      "productId": "prod-1791997338037",
+      "customerName": "sakib",
+      "customerPhone": null,
+      "rating": 5,
+      "comment": "very nice",
+      "images": [],
+      "isVerified": true,
+      "status": "APPROVED",
+      "createdAt": "2026-10-14T17:49:09.627Z"
+    },
+    {
+      "id": "rev-1791999869819-424",
+      "productId": "prod-1",
+      "customerName": "Test Buyer Mahfuz",
+      "customerPhone": "01700000000",
+      "rating": 5,
+      "comment": "Excellent mart packaging and delivered on time!",
+      "images": [
+        "https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=800"
+      ],
+      "isVerified": true,
+      "status": "APPROVED",
+      "createdAt": "2026-10-14T17:44:29.819Z"
+    },
+    {
+      "id": "rev-seed-1",
+      "productId": "prod-1",
+      "customerName": "Tanvir Ahmed",
+      "customerPhone": "01712******",
+      "rating": 5,
+      "comment": "The active noise cancellation is remarkably good for this price. Battery easily lasts 2 days of heavy usage. Toto Elite Mart delivered to Khulna within 48 hours!",
+      "images": [
+        "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=600"
+      ],
+      "isVerified": true,
+      "status": "APPROVED",
+      "createdAt": "2026-10-10T10:00:00.000Z"
+    },
+    {
+      "id": "rev-seed-2",
+      "productId": "prod-1",
+      "customerName": "Nusrat Jahan",
+      "customerPhone": "01819******",
+      "rating": 5,
+      "comment": "Great sound quality and bass. Premium matte finish feels solid in hand. Very satisfied with Toto Elite Mart packaging!",
+      "images": [
+        "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=600"
+      ],
+      "isVerified": true,
+      "status": "APPROVED",
+      "createdAt": "2026-10-11T14:30:00.000Z"
+    },
+    {
+      "id": "rev-seed-3",
+      "productId": "prod-6",
+      "customerName": "Kamrul Islam",
+      "customerPhone": "01911******",
+      "rating": 5,
+      "comment": "১০০% খাঁটি সুন্দরবনের মধু! স্বাদ ও প্রাকৃতিক ঘ্রাণ অসাধারণ। বাজারের ভেজাল মধুর চেয়ে সম্পূর্ণ আলাদা। ডেলিভারি সার্ভিসও চমৎকার।",
+      "images": [
+        "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=600"
+      ],
+      "isVerified": true,
+      "status": "APPROVED",
+      "createdAt": "2026-10-12T16:00:00.000Z"
+    },
+    {
+      "id": "rev-seed-4",
+      "productId": "prod-1791833597889",
+      "customerName": "Farhana Akter",
+      "customerPhone": "01623******",
+      "rating": 5,
+      "comment": "কাপড় ও এমব্রয়ডারি কোয়ালিটি অত্যন্ত প্রিমিয়াম। ছবির চেয়ে বাস্তবে আরো বেশি সুন্দর! সাইজ একদম পারফেক্ট।",
+      "images": [
+        "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=600"
+      ],
+      "isVerified": true,
+      "status": "APPROVED",
+      "createdAt": "2026-10-13T12:00:00.000Z"
+    },
+    {
+      "id": "rev-seed-5",
+      "productId": "prod-1791994778690",
+      "customerName": "Sultana Razia",
+      "customerPhone": "01552******",
+      "rating": 5,
+      "comment": "Water dispenser is working perfectly. Fast delivery and original product received. Highly recommended!",
+      "images": [
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRR_GpeJl6UD_-TTvBf3ToNORhd3dX920IBlsk6sKWJtw&s=10"
+      ],
+      "isVerified": true,
+      "status": "APPROVED",
+      "createdAt": "2026-10-14T09:00:00.000Z"
+    }
+  ]
+}
