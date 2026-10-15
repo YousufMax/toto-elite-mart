@@ -164,7 +164,16 @@ export default async function ProductPage({ params }: { params: { slug: string }
             </div>
             <div>
               <h4 className="text-xs font-bold text-slate-900">Order by Phone</h4>
-              <p className="text-[11px] text-slate-500">Call +880 1712-000000 anytime.</p>
+              <p className="text-[11px] text-slate-500">
+                Call{" "}
+                <a
+                  href="tel:+8809697192016"
+                  className="font-semibold text-slate-700 hover:text-amber-600 underline underline-offset-2 font-mono"
+                >
+                  +880 9697-192016
+                </a>{" "}
+                anytime.
+              </p>
             </div>
           </div>
         </div>

@@ -326,7 +326,13 @@ export default function Header() {
                 <span>100% Genuine & Cash on Delivery</span>
               </div>
               <div className="text-[10px] text-slate-400">
-                Hotline: <span className="font-mono text-slate-700 font-bold">01623363623</span>
+                Hotline:{" "}
+                <a
+                  href="tel:+8809697192016"
+                  className="font-mono text-slate-700 font-bold hover:text-amber-600 transition"
+                >
+                  +880 9697-192016
+                </a>
               </div>
             </div>
           </div>

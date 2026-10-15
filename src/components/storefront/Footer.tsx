@@ -215,11 +215,11 @@ export default function Footer() {
 
               <div className="flex flex-wrap items-center gap-3">
                 <a
-                  href="tel:01623363623"
+                  href="tel:+8809697192016"
                   className="font-mono text-base sm:text-lg font-black text-slate-950 hover:text-amber-600 transition flex items-center gap-1.5"
                 >
                   <PhoneCall className="w-4 h-4 text-amber-500" />
-                  <span>01623363623</span>
+                  <span>+880 9697-192016</span>
                 </a>
                 <span className="text-slate-300">|</span>
                 <a
@@ -457,7 +457,7 @@ export default function Footer() {
               <div className="flex items-center gap-2 flex-wrap">
                 {/* Facebook */}
                 <a
-                  href="https://facebook.com"
+                  href="https://www.facebook.com/totoelitemart/"
                   target="_blank"
                   rel="noopener noreferrer"
                   title="Facebook"

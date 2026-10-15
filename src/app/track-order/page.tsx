@@ -225,11 +225,11 @@ function TrackOrderContent() {
               Need help or urgent update regarding this shipment?
             </span>
             <a
-              href="tel:+8801712000000"
-              className="font-bold text-slate-900 hover:text-amber-600 flex items-center gap-1.5"
+              href="tel:+8809697192016"
+              className="font-bold text-slate-900 hover:text-amber-600 flex items-center gap-1.5 font-mono"
             >
               <PhoneCall className="w-3.5 h-3.5" />
-              Call +880 1712-000000
+              Call +880 9697-192016
             </a>
           </div>
         </div>

@@ -29,7 +29,12 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <span className="block font-bold text-slate-900">Direct Hotline:</span>
-                  <p className="text-sm font-semibold text-slate-800 mt-0.5">+880 1712-000000</p>
+                  <a
+                    href="tel:+8809697192016"
+                    className="text-sm font-semibold text-slate-800 hover:text-amber-600 transition mt-0.5 inline-block font-mono"
+                  >
+                    +880 9697-192016
+                  </a>
                   <p className="text-[11px] text-slate-400">Available Saturday to Thursday (10:00 AM – 10:00 PM)</p>
                 </div>
               </div>
