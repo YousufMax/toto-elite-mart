@@ -32,6 +32,11 @@ interface GlobalMemoryStore {
   fraudBlacklist?: string[];
   fraudWhitelist?: string[];
   flashSaleCampaigns?: any[];
+  deletedRecordIds?: string[];
+  flashSalesSeeded?: boolean;
+  reviewsSeeded?: boolean;
+  ordersSeeded?: boolean;
+  expensesSeeded?: boolean;
 }
 
 export function saveStoreToDisk() {
@@ -39,9 +44,15 @@ export function saveStoreToDisk() {
     const store = getStore();
     const dir = path.dirname(STORE_FILE);
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(STORE_FILE, JSON.stringify(store, null, 2), 'utf-8');
+    const tmpFile = `${STORE_FILE}.tmp.${Date.now()}`;
+    fs.writeFileSync(tmpFile, JSON.stringify(store, null, 2), 'utf-8');
+    fs.renameSync(tmpFile, STORE_FILE);
   } catch (e) {
-    // ignore
+    try {
+      fs.writeFileSync(STORE_FILE, JSON.stringify(getStore(), null, 2), 'utf-8');
+    } catch {
+      // ignore
+    }
   }
 }
 
@@ -50,7 +61,7 @@ function loadStoreFromDisk(): GlobalMemoryStore | null {
     if (fs.existsSync(STORE_FILE)) {
       const content = fs.readFileSync(STORE_FILE, 'utf-8');
       const parsed = JSON.parse(content);
-      if (parsed && Array.isArray(parsed.products) && parsed.products.length > 0) {
+      if (parsed && Array.isArray(parsed.products)) {
         // Ensure colorVariants is initialized on all products
         for (const p of parsed.products) {
           if (!p.colorVariants || p.colorVariants.length === 0) {
@@ -118,6 +129,7 @@ function getStore(): GlobalMemoryStore {
         coupons: SEED_COUPONS.map((c) => ({ ...c, isActive: true })),
         movements: [],
         users: [],
+        deletedRecordIds: [],
         settings: {
           freeDeliveryEnabled: true,
           freeDeliveryThreshold: 1500,
@@ -127,11 +139,15 @@ function getStore(): GlobalMemoryStore {
           reviewAutoApprove: true,
         },
         reviews: [],
+        flashSaleCampaigns: [],
       };
     }
   }
 
   const currentStore = (globalThis as any).__totoGlobalMemoryStore;
+  if (!Array.isArray(currentStore.deletedRecordIds)) {
+    currentStore.deletedRecordIds = [];
+  }
   if (!currentStore.settings) {
     currentStore.settings = { ...DEFAULT_STORE_SETTINGS };
   } else {
@@ -146,7 +162,8 @@ function getStore(): GlobalMemoryStore {
   if (!Array.isArray(currentStore.fraudWhitelist)) {
     currentStore.fraudWhitelist = [];
   }
-  if (!Array.isArray(currentStore.flashSaleCampaigns) || currentStore.flashSaleCampaigns.length === 0) {
+  if (!Array.isArray(currentStore.flashSaleCampaigns) && !currentStore.flashSalesSeeded) {
+    currentStore.flashSalesSeeded = true;
     const now = new Date();
     const threeDaysLater = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
     currentStore.flashSaleCampaigns = [
@@ -206,7 +223,8 @@ function getStore(): GlobalMemoryStore {
       },
     ];
   }
-  if (!Array.isArray(currentStore.reviews) || currentStore.reviews.length === 0) {
+  if (!Array.isArray(currentStore.reviews) && !currentStore.reviewsSeeded) {
+    currentStore.reviewsSeeded = true;
     currentStore.reviews = [
       {
         id: 'rev-seed-1',
@@ -403,6 +421,9 @@ async function initMemoryFallback() {
   ];
 
   for (const sp of SEED_PRODUCTS) {
+    if (store.deletedRecordIds && (store.deletedRecordIds.includes(sp.id) || store.deletedRecordIds.includes(sp.sku))) {
+      continue;
+    }
     const exists = store.products.some((p) => p.id === sp.id || p.sku === sp.sku);
     if (!exists) {
       const cat = store.categories.find((c) => c.slug === sp.categorySlug);
@@ -440,7 +461,8 @@ async function initMemoryFallback() {
   }
 
   // Seed sample initial order
-  if (store.orders.length === 0) {
+  if (store.orders.length === 0 && !store.ordersSeeded) {
+    store.ordersSeeded = true;
     const sampleOrderItems = [
       {
         id: 'item-1',
@@ -479,7 +501,8 @@ async function initMemoryFallback() {
   }
 
   // Seed sample expenses
-  if (store.expenses.length === 0) {
+  if (store.expenses.length === 0 && !store.expensesSeeded) {
+    store.expensesSeeded = true;
     store.expenses = [
       {
         id: 'exp-1',
@@ -506,26 +529,30 @@ async function initMemoryFallback() {
   saveStoreToDisk();
 }
 
-let dbConnectionChecked = false;
-let dbConnectedState = false;
+let dbConnectedState: boolean | null = null;
+let lastDbCheck = 0;
 
 /**
  * Check if PostgreSQL database is reachable
  */
 export async function isDatabaseConnected(): Promise<boolean> {
   const dbUrl = process.env.DATABASE_URL;
-  if (!dbUrl || dbUrl.includes('localhost:5432/toto_elite_mart') || dbUrl.startsWith('mock_')) {
+  if (!dbUrl || dbUrl.startsWith('mock_')) {
     return false;
   }
-  if (dbConnectionChecked) return dbConnectedState;
+  const now = Date.now();
+  if (dbConnectedState !== null && now - lastDbCheck < 5000) {
+    return dbConnectedState;
+  }
   try {
     await prisma.$queryRaw`SELECT 1`;
     dbConnectedState = true;
-    dbConnectionChecked = true;
+    lastDbCheck = now;
     return true;
-  } catch {
+  } catch (err: any) {
+    console.warn('[DB_CONNECTION_NOTICE] Falling back to high-durability memory store:', err?.message || err);
     dbConnectedState = false;
-    dbConnectionChecked = true;
+    lastDbCheck = now;
     return false;
   }
 }
@@ -781,10 +808,15 @@ export async function updateCategory(id: string, data: {
   if (data.description !== undefined) cat.description = data.description;
   if (data.imageUrl !== undefined) cat.imageUrl = data.imageUrl;
   if (data.sortOrder !== undefined) cat.sortOrder = Number(data.sortOrder);
+  saveStoreToDisk();
   return cat;
 }
 
 export async function deleteCategory(id: string) {
+  const store = getStore();
+  if (!store.deletedRecordIds) store.deletedRecordIds = [];
+  if (!store.deletedRecordIds.includes(id)) store.deletedRecordIds.push(id);
+
   const isConnected = await isDatabaseConnected();
   if (isConnected) {
     try {
@@ -795,6 +827,7 @@ export async function deleteCategory(id: string) {
         throw new Error(`Cannot delete category: ${assignedCount} active product(s) are assigned to it. Please reassign or delete the products first.`);
       }
       await prisma.category.delete({ where: { id } });
+      saveStoreToDisk();
       return { success: true };
     } catch (e: any) {
       if (e.message && e.message.includes('Cannot delete category')) throw e;
@@ -811,6 +844,7 @@ export async function deleteCategory(id: string) {
   const idx = memoryCategories.findIndex((c) => c.id === id);
   if (idx !== -1) {
     memoryCategories.splice(idx, 1);
+    saveStoreToDisk();
   }
   return { success: true };
 }
@@ -1425,13 +1459,22 @@ export async function updateProduct(id: string, data: {
 }
 
 export async function deleteProduct(id: string) {
+  const store = getStore();
+  if (!store.deletedRecordIds) store.deletedRecordIds = [];
+  if (!store.deletedRecordIds.includes(id)) store.deletedRecordIds.push(id);
+
   const isConnected = await isDatabaseConnected();
   if (isConnected) {
     try {
+      const p = await prisma.product.findUnique({ where: { id } });
+      if (p && p.sku && !store.deletedRecordIds.includes(p.sku)) {
+        store.deletedRecordIds.push(p.sku);
+      }
       await prisma.product.update({
         where: { id },
         data: { isArchived: true, status: 'INACTIVE' },
       });
+      saveStoreToDisk();
       return { success: true };
     } catch (e) {
       console.warn('[PRISMA_DELETE_PRODUCT_FALLBACK]', e);
@@ -1443,6 +1486,10 @@ export async function deleteProduct(id: string) {
   if (prod) {
     prod.isArchived = true;
     prod.status = 'INACTIVE';
+    if (prod.sku && !store.deletedRecordIds.includes(prod.sku)) {
+      store.deletedRecordIds.push(prod.sku);
+    }
+    saveStoreToDisk();
   }
   return { success: true };
 }
@@ -1541,14 +1588,20 @@ export async function updateBanner(id: string, data: {
   if (data.targetUrl !== undefined) ban.targetUrl = data.targetUrl;
   if (data.isActive !== undefined) ban.isActive = data.isActive;
   if (data.sortOrder !== undefined) ban.sortOrder = Number(data.sortOrder);
+  saveStoreToDisk();
   return ban;
 }
 
 export async function deleteBanner(id: string) {
+  const store = getStore();
+  if (!store.deletedRecordIds) store.deletedRecordIds = [];
+  if (!store.deletedRecordIds.includes(id)) store.deletedRecordIds.push(id);
+
   const isConnected = await isDatabaseConnected();
   if (isConnected) {
     try {
       await prisma.banner.delete({ where: { id } });
+      saveStoreToDisk();
       return { success: true };
     } catch (e) {
       console.warn('[PRISMA_DELETE_BANNER_FALLBACK]', e);
@@ -1559,6 +1612,7 @@ export async function deleteBanner(id: string) {
   const idx = memoryBanners.findIndex((b) => b.id === id);
   if (idx !== -1) {
     memoryBanners.splice(idx, 1);
+    saveStoreToDisk();
   }
   return { success: true };
 }
@@ -1784,6 +1838,11 @@ export async function updateCoupon(id: string, data: Partial<CouponInput>) {
 
 export async function deleteCoupon(id: string) {
   if (!id) throw new Error('Coupon identifier is required.');
+  const store = getStore();
+  if (!store.deletedRecordIds) store.deletedRecordIds = [];
+  if (!store.deletedRecordIds.includes(id)) store.deletedRecordIds.push(id);
+  if (!store.deletedRecordIds.includes(id.toUpperCase())) store.deletedRecordIds.push(id.toUpperCase());
+
   const isConnected = await isDatabaseConnected();
   if (isConnected) {
     try {
@@ -1793,7 +1852,9 @@ export async function deleteCoupon(id: string) {
         },
       });
       if (target) {
+        if (!store.deletedRecordIds.includes(target.code)) store.deletedRecordIds.push(target.code);
         await prisma.coupon.delete({ where: { id: target.id } });
+        saveStoreToDisk();
         return { success: true };
       }
     } catch (e) {
@@ -1804,6 +1865,10 @@ export async function deleteCoupon(id: string) {
   await initMemoryFallback();
   const idx = memoryCoupons.findIndex((c) => c.id === id || c.code === id || c.code === id.toUpperCase());
   if (idx !== -1) {
+    const coup = memoryCoupons[idx];
+    if (coup && coup.code && !store.deletedRecordIds.includes(coup.code)) {
+      store.deletedRecordIds.push(coup.code);
+    }
     memoryCoupons.splice(idx, 1);
     saveStoreToDisk();
   }
@@ -2582,6 +2647,12 @@ export async function deleteOrder(
         await prisma.orderItem.deleteMany({ where: { orderId: existing.id } });
         await prisma.order.delete({ where: { id: existing.id } });
 
+        const store = getStore();
+        if (!store.deletedRecordIds) store.deletedRecordIds = [];
+        if (!store.deletedRecordIds.includes(existing.id)) store.deletedRecordIds.push(existing.id);
+        if (!store.deletedRecordIds.includes(existing.orderNumber)) store.deletedRecordIds.push(existing.orderNumber);
+        saveStoreToDisk();
+
         await logAudit({
           userId: employeeId,
           action: 'DELETE_ORDER',
@@ -2635,6 +2706,9 @@ export async function deleteOrder(
 
   // Remove order from memory store
   store.orders.splice(existingIndex, 1);
+  if (!store.deletedRecordIds) store.deletedRecordIds = [];
+  if (!store.deletedRecordIds.includes(existing.id)) store.deletedRecordIds.push(existing.id);
+  if (!store.deletedRecordIds.includes(existing.orderNumber)) store.deletedRecordIds.push(existing.orderNumber);
   saveStoreToDisk();
 
   await logAudit({
@@ -4070,17 +4144,21 @@ export async function updateFlashSaleCampaign(
 }
 
 export async function deleteFlashSaleCampaign(id: string): Promise<boolean> {
+  const store = getStore();
+  if (!store.deletedRecordIds) store.deletedRecordIds = [];
+  if (!store.deletedRecordIds.includes(id)) store.deletedRecordIds.push(id);
+
   const isConnected = await isDatabaseConnected();
   if (isConnected) {
     try {
       await (prisma as any).flashSaleCampaign.delete({ where: { id } });
+      saveStoreToDisk();
       return true;
     } catch (e) {
       console.warn('[PRISMA_DELETE_FLASH_SALE_FALLBACK]', e);
     }
   }
 
-  const store = getStore();
   if (Array.isArray(store.flashSaleCampaigns)) {
     store.flashSaleCampaigns = store.flashSaleCampaigns.filter((c) => c.id !== id);
     saveStoreToDisk();

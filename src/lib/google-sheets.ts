@@ -89,6 +89,7 @@ export async function pushOrderToGoogleSheets(order: any): Promise<{ success: bo
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(4000),
     });
 
     return { success: res.ok };
