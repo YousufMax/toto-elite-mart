@@ -1,5 +1,6 @@
 import { prisma } from './prisma';
 import { isDatabaseConnected, getAllOrders, getExpenses, getProducts } from './data-store';
+import { calculateOrderAging } from './order-aging';
 
 export type FinancialTimeRange = 'today' | 'this_week' | 'this_month' | 'this_year' | 'custom';
 
@@ -44,6 +45,13 @@ export interface OrderFinancialLedgerItem {
   cogs: number;
   grossProfit: number;
   netContribution: number;
+  // Order Aging & SLA Integration
+  elapsedText: string;
+  agingStatus: 'OVERDUE' | 'URGENT' | 'ON_TRACK' | 'DELIVERED' | 'CANCELLED';
+  isOverdue: boolean;
+  expectedDeliveryDate: string | null;
+  collectedAmount: number;
+  outstandingBalance: number;
 }
 
 export interface ExpenseCategoryBreakdown {
@@ -486,6 +494,7 @@ export async function getComprehensiveFinancialReport(
     const totalAmount = Number(o.totalAmount || 0);
     const grossProfit = Math.round(subtotal - discount - orderCogs);
     const netContribution = o.orderStatus === 'CANCELLED' ? 0 : Math.round(totalAmount - orderCogs);
+    const aging = calculateOrderAging(o);
 
     return {
       id: o.id,
@@ -503,6 +512,12 @@ export async function getComprehensiveFinancialReport(
       cogs: Math.round(orderCogs),
       grossProfit,
       netContribution,
+      elapsedText: aging.elapsedFormatted,
+      agingStatus: aging.agingStatus,
+      isOverdue: aging.isOverdue,
+      expectedDeliveryDate: aging.expectedDeliveryDate || null,
+      collectedAmount: aging.collectedAmount,
+      outstandingBalance: aging.outstandingBalance,
     };
   });
 

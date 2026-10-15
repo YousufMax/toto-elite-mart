@@ -2129,6 +2129,12 @@ export async function createOrder(data: {
           });
         }
 
+        const isOutsideDhaka =
+          data.deliveryZone === 'Outside Dhaka' ||
+          (data.deliveryCity && data.deliveryCity.trim().toLowerCase() !== 'dhaka');
+        const slaHours = isOutsideDhaka ? 96 : 48;
+        const expectedDeliveryDate = new Date(Date.now() + slaHours * 3600 * 1000);
+
         // Create order
         const order = await tx.order.create({
           data: {
@@ -2147,9 +2153,24 @@ export async function createOrder(data: {
             paymentMethod: data.paymentMethod as any,
             paymentStatus: 'UNPAID',
             orderStatus: 'PENDING',
+            expectedDeliveryDate,
             notes: data.notes || null,
           },
         });
+
+        try {
+          await tx.orderStatusHistory.create({
+            data: {
+              orderId: order.id,
+              fromStatus: null,
+              toStatus: 'PENDING',
+              notes: 'Order placed by customer',
+              createdAt: order.createdAt,
+            },
+          });
+        } catch (hErr) {
+          console.error('[INITIAL_STATUS_HISTORY_ERROR]', hErr);
+        }
 
         // Create items & deduct stock
         for (const item of lineItems) {
@@ -2411,7 +2432,22 @@ export async function getAllOrders(filter?: { status?: string; search?: string }
       }
       return await prisma.order.findMany({
         where,
-        include: { items: true },
+        include: {
+          items: true,
+          payments: true,
+          statusHistory: {
+            include: {
+              changedBy: {
+                select: {
+                  id: true,
+                  fullName: true,
+                  role: true,
+                },
+              },
+            },
+            orderBy: { createdAt: 'asc' },
+          },
+        },
         orderBy: { createdAt: 'desc' },
       });
     } catch {
@@ -2488,6 +2524,21 @@ export async function updateOrderStatus(orderId: string, status: string, notes?:
             assignedEmployeeId: employeeId,
           },
         });
+
+        // Record immutable status transition history
+        try {
+          await prisma.orderStatusHistory.create({
+            data: {
+              orderId: existing.id,
+              fromStatus: existing.orderStatus,
+              toStatus: status as any,
+              notes: notes || `Status changed from ${existing.orderStatus} to ${status}`,
+              changedById: employeeId || null,
+            },
+          });
+        } catch (historyErr) {
+          console.error('[STATUS_HISTORY_LOG_ERROR]', historyErr);
+        }
 
         await logAudit({
           userId: employeeId,

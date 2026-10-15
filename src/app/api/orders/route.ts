@@ -13,12 +13,87 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const status = searchParams.get('status') || undefined;
     const search = searchParams.get('search') || undefined;
+    const paymentStatus = searchParams.get('paymentStatus') || undefined;
+    const agingFilter = searchParams.get('agingFilter') || undefined;
+    const dateRange = searchParams.get('dateRange') || undefined;
 
-    const orders = await getAllOrders({ status, search });
+    let orders = await getAllOrders({ status, search });
+
+    // Payment Status filter
+    if (paymentStatus && paymentStatus !== 'ALL') {
+      orders = orders.filter((o) => o.paymentStatus === paymentStatus);
+    }
+
+    // Date Range filter
+    if (dateRange && dateRange !== 'all') {
+      const now = new Date();
+      let rangeStart: Date;
+      if (dateRange === 'today') {
+        rangeStart = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+      } else if (dateRange === 'this_week') {
+        rangeStart = new Date(now.getTime() - 6 * 24 * 60 * 60 * 1000);
+        rangeStart.setHours(0, 0, 0, 0);
+      } else if (dateRange === 'this_month') {
+        rangeStart = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
+      } else {
+        rangeStart = new Date(0);
+      }
+      orders = orders.filter((o) => new Date(o.createdAt) >= rangeStart);
+    }
+
+    // Enrich with dynamic aging & financial calculations
+    const nowMs = Date.now();
+    const { calculateOrderAging } = await import('@/lib/order-aging');
+    let enrichedOrders = orders.map((order) => ({
+      ...order,
+      subtotal: Number(order.subtotal || 0),
+      discount: Number(order.discount || 0),
+      deliveryFee: Number(order.deliveryFee || 0),
+      totalAmount: Number(order.totalAmount || 0),
+      aging: calculateOrderAging(order, nowMs),
+    }));
+
+    // Aging filter
+    if (agingFilter && agingFilter !== 'ALL') {
+      enrichedOrders = enrichedOrders.filter((o) => o.aging.agingStatus === agingFilter);
+    }
+
+    // Aggregate summary metrics across all matching orders
+    const activeOrders = enrichedOrders.filter(
+      (o) => o.orderStatus !== 'DELIVERED' && o.orderStatus !== 'CANCELLED'
+    );
+    const overdueOrders = activeOrders.filter((o) => o.aging.isOverdue);
+    const deliveredOrders = enrichedOrders.filter((o) => o.orderStatus === 'DELIVERED');
+
+    const overdueVolume = overdueOrders.reduce((sum, o) => sum + o.aging.orderValue, 0);
+    const pendingReceivables = activeOrders.reduce(
+      (sum, o) => sum + o.aging.outstandingBalance,
+      0
+    );
+    const collectedVolume = enrichedOrders.reduce((sum, o) => sum + o.aging.collectedAmount, 0);
+
+    const totalFulfillmentMs = deliveredOrders.reduce(
+      (sum, o) => sum + (o.aging.fulfillmentDurationMs || 0),
+      0
+    );
+    const avgFulfillmentHours =
+      deliveredOrders.length > 0
+        ? Number((totalFulfillmentMs / (deliveredOrders.length * 3600 * 1000)).toFixed(1))
+        : 0;
+
     return NextResponse.json({
       success: true,
-      count: orders.length,
-      orders,
+      count: enrichedOrders.length,
+      orders: enrichedOrders,
+      metrics: {
+        totalOrders: enrichedOrders.length,
+        activeOrdersCount: activeOrders.length,
+        overdueCount: overdueOrders.length,
+        overdueVolume,
+        pendingReceivables,
+        collectedVolume,
+        avgFulfillmentHours,
+      },
       currentUser: {
         userId: user.userId,
         role: user.role,

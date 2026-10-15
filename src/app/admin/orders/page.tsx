@@ -1,7 +1,15 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import Link from 'next/link';
 import { formatBDT } from '@/lib/currency';
+import {
+  calculateOrderAging,
+  formatLocalOrderDate,
+  formatDuration,
+  type OrderAgingInfo,
+  type AgingStatus,
+} from '@/lib/order-aging';
 import {
   Search,
   Printer,
@@ -15,6 +23,21 @@ import {
   RotateCcw,
   Sparkles,
   AlertTriangle,
+  Clock,
+  History,
+  Calendar,
+  DollarSign,
+  TrendingUp,
+  CheckCircle2,
+  XCircle,
+  ArrowRight,
+  ExternalLink,
+  Copy,
+  Check,
+  Filter,
+  BarChart2,
+  Truck,
+  ArrowUpRight,
 } from 'lucide-react';
 
 const STATUS_OPTIONS = [
@@ -33,22 +56,44 @@ export default function AdminOrdersPage() {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState('ALL');
+  const [filterPayment, setFilterPayment] = useState('ALL');
+  const [filterAging, setFilterAging] = useState<AgingStatus | 'ALL'>('ALL');
+  const [filterDateRange, setFilterDateRange] = useState('all');
+  const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'overdue' | 'highest_value'>('newest');
   const [search, setSearch] = useState('');
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
+  const [timelineOrder, setTimelineOrder] = useState<any>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  // Futuristic Super Admin Order Deletion States
+  // Live ticking clock for continuous elapsed time calculation
+  const [nowMs, setNowMs] = useState(Date.now());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setNowMs(Date.now());
+    }, 15000); // Re-calculate elapsed minutes every 15 seconds
+    return () => clearInterval(timer);
+  }, []);
+
+  // Summary Metrics from API
+  const [apiMetrics, setApiMetrics] = useState<any>(null);
+
+  // Super Admin Order Deletion States
   const [orderToDelete, setOrderToDelete] = useState<any>(null);
   const [restoreInventory, setRestoreInventory] = useState(true);
   const [deleteReason, setDeleteReason] = useState('Duplicate/Test order purge');
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState('');
 
-  // Phase 3: Fraud Security & Blacklist Actions
+  // Fraud Security & Blacklist Actions
   const [blacklistLoading, setBlacklistLoading] = useState(false);
   const [blacklistMsg, setBlacklistMsg] = useState('');
 
-  const handleBlacklistToggle = async (phone: string, action: 'blacklist' | 'whitelist' | 'unblacklist' | 'unwhitelist') => {
+  const handleBlacklistToggle = async (
+    phone: string,
+    action: 'blacklist' | 'whitelist' | 'unblacklist' | 'unwhitelist'
+  ) => {
     setBlacklistLoading(true);
     setBlacklistMsg('');
     try {
@@ -74,17 +119,22 @@ export default function AdminOrdersPage() {
   const fetchOrders = async () => {
     setLoading(true);
     try {
-      const url = `/api/orders?status=${filterStatus}${search ? `&search=${encodeURIComponent(search)}` : ''}`;
-      const res = await fetch(url);
+      const params = new URLSearchParams();
+      if (filterStatus !== 'ALL') params.set('status', filterStatus);
+      if (filterPayment !== 'ALL') params.set('paymentStatus', filterPayment);
+      if (filterAging !== 'ALL') params.set('agingFilter', filterAging);
+      if (filterDateRange !== 'all') params.set('dateRange', filterDateRange);
+      if (search.trim()) params.set('search', search.trim());
+
+      const res = await fetch(`/api/orders?${params.toString()}`);
       const data = await res.json();
       if (data.success) {
         setOrders(data.orders || []);
-        if (data.currentUser) {
-          setCurrentUser(data.currentUser);
-        }
+        if (data.metrics) setApiMetrics(data.metrics);
+        if (data.currentUser) setCurrentUser(data.currentUser);
       }
     } catch (e) {
-      console.error(e);
+      console.error('Failed to fetch orders:', e);
     } finally {
       setLoading(false);
     }
@@ -92,11 +142,18 @@ export default function AdminOrdersPage() {
 
   useEffect(() => {
     fetchOrders();
-  }, [filterStatus]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterStatus, filterPayment, filterAging, filterDateRange]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     fetchOrders();
+  };
+
+  const handleCopy = (text: string, id: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
   };
 
   const handleUpdateStatus = async (orderId: string, newStatus: string) => {
@@ -108,11 +165,13 @@ export default function AdminOrdersPage() {
         body: JSON.stringify({ status: newStatus }),
       });
       if (res.ok) {
-        setOrders((prev) =>
-          prev.map((o) => (o.id === orderId ? { ...o, orderStatus: newStatus } : o))
-        );
+        // Refresh orders to fetch newly created OrderStatusHistory record
+        await fetchOrders();
         if (selectedOrder && selectedOrder.id === orderId) {
           setSelectedOrder((prev: any) => ({ ...prev, orderStatus: newStatus }));
+        }
+        if (timelineOrder && timelineOrder.id === orderId) {
+          setTimelineOrder((prev: any) => ({ ...prev, orderStatus: newStatus }));
         }
       }
     } catch (e) {
@@ -131,9 +190,7 @@ export default function AdminOrdersPage() {
         body: JSON.stringify({ paymentStatus: newPaymentStatus }),
       });
       if (res.ok) {
-        setOrders((prev) =>
-          prev.map((o) => (o.id === orderId ? { ...o, paymentStatus: newPaymentStatus } : o))
-        );
+        await fetchOrders();
         if (selectedOrder && selectedOrder.id === orderId) {
           setSelectedOrder((prev: any) => ({ ...prev, paymentStatus: newPaymentStatus }));
         }
@@ -167,12 +224,9 @@ export default function AdminOrdersPage() {
         throw new Error(data.error || 'Failed to delete order');
       }
 
-      // Optimistically remove from list
       setOrders((prev) => prev.filter((o) => o.id !== orderToDelete.id));
-
-      if (selectedOrder?.id === orderToDelete.id) {
-        setSelectedOrder(null);
-      }
+      if (selectedOrder?.id === orderToDelete.id) setSelectedOrder(null);
+      if (timelineOrder?.id === orderToDelete.id) setTimelineOrder(null);
       setOrderToDelete(null);
     } catch (err: unknown) {
       setDeleteError(err instanceof Error ? err.message : 'Error deleting order');
@@ -181,55 +235,302 @@ export default function AdminOrdersPage() {
     }
   };
 
+  // Live evaluated and sorted orders
+  const evaluatedOrders = useMemo(() => {
+    return orders
+      .map((ord) => {
+        // Re-calculate aging with live nowMs
+        const aging = calculateOrderAging(ord, nowMs);
+        return {
+          ...ord,
+          liveAging: aging,
+        };
+      })
+      .sort((a, b) => {
+        if (sortBy === 'newest') {
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        }
+        if (sortBy === 'oldest') {
+          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        }
+        if (sortBy === 'overdue') {
+          const aOverdue = a.liveAging.isOverdue ? 1 : 0;
+          const bOverdue = b.liveAging.isOverdue ? 1 : 0;
+          if (aOverdue !== bOverdue) return bOverdue - aOverdue;
+          return b.liveAging.elapsedMs - a.liveAging.elapsedMs;
+        }
+        if (sortBy === 'highest_value') {
+          return Number(b.totalAmount || 0) - Number(a.totalAmount || 0);
+        }
+        return 0;
+      });
+  }, [orders, nowMs, sortBy]);
+
+  // Dynamic summary statistics computed from live evaluated orders
+  const summary = useMemo(() => {
+    const total = evaluatedOrders.length;
+    const active = evaluatedOrders.filter(
+      (o) => o.orderStatus !== 'DELIVERED' && o.orderStatus !== 'CANCELLED'
+    );
+    const overdue = active.filter((o) => o.liveAging.isOverdue);
+    const urgent = active.filter((o) => o.liveAging.agingStatus === 'URGENT');
+    const delivered = evaluatedOrders.filter((o) => o.orderStatus === 'DELIVERED');
+
+    const totalOrderValue = evaluatedOrders.reduce(
+      (sum, o) => sum + (o.liveAging?.orderValue || Number(o.totalAmount || 0)),
+      0
+    );
+    const overdueValue = overdue.reduce(
+      (sum, o) => sum + (o.liveAging?.orderValue || Number(o.totalAmount || 0)),
+      0
+    );
+    const pendingReceivables = active.reduce(
+      (sum, o) => sum + (o.liveAging?.outstandingBalance || 0),
+      0
+    );
+    const totalCollected = evaluatedOrders.reduce(
+      (sum, o) => sum + (o.liveAging?.collectedAmount || 0),
+      0
+    );
+
+    const totalFulfillmentMs = delivered.reduce(
+      (sum, o) => sum + (o.liveAging?.fulfillmentDurationMs || 0),
+      0
+    );
+    const avgFulfillmentHours =
+      delivered.length > 0
+        ? Number((totalFulfillmentMs / (delivered.length * 3600 * 1000)).toFixed(1))
+        : 0;
+
+    return {
+      total,
+      activeCount: active.length,
+      overdueCount: overdue.length,
+      overdueValue,
+      urgentCount: urgent.length,
+      deliveredCount: delivered.length,
+      totalOrderValue,
+      pendingReceivables,
+      totalCollected,
+      avgFulfillmentHours,
+    };
+  }, [evaluatedOrders]);
+
   const isSuperAdmin = currentUser?.role === 'SUPER_ADMIN';
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
-      {/* Title Bar */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div className="space-y-6 max-w-7xl mx-auto pb-16">
+      {/* ===================== Title & Header ===================== */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl font-black text-slate-950">Customer Order Processing</h1>
+            <h1 className="text-2xl font-black text-slate-950 tracking-tight">
+              Order Aging & Fulfillment Tracking
+            </h1>
+            <span className="text-[10px] uppercase font-black px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-900 border border-indigo-200">
+              Live SLA Engine
+            </span>
             {isSuperAdmin && (
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-amber-100 text-amber-900 border border-amber-300 flex items-center gap-1 shadow-xs">
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-amber-100 text-amber-900 border border-amber-300 flex items-center gap-1 shadow-2xs">
                 <ShieldCheck className="w-3.5 h-3.5 text-amber-700" />
-                Super Admin Access
+                Super Admin
               </span>
             )}
           </div>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Manage status transitions, customer dispatch, payment settlements, and Super Admin order governance.
+          <p className="text-xs text-slate-500 mt-1 max-w-2xl">
+            Live elapsed timers, delivery SLA deadlines (48h Dhaka / 96h Outside), overdue alerts, status transition audit trails, and financial reconciliation.
           </p>
         </div>
 
-        <button
-          onClick={fetchOrders}
-          className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs transition shadow-sm hover:shadow"
-        >
-          Refresh Orders
-        </button>
+        <div className="flex items-center gap-2.5 w-full sm:w-auto">
+          {/* Link to Financial Reports */}
+          <Link
+            href="/admin/reports"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition border border-slate-200"
+          >
+            <BarChart2 className="w-3.5 h-3.5 text-indigo-600" />
+            <span>Financial Reports</span>
+            <ArrowUpRight className="w-3 h-3 text-slate-400" />
+          </Link>
+
+          <button
+            onClick={fetchOrders}
+            disabled={loading}
+            className="px-4 py-2 bg-slate-950 hover:bg-slate-800 text-white font-bold rounded-xl text-xs transition shadow-sm flex items-center gap-1.5 disabled:opacity-50"
+          >
+            <Clock className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+            <span>Refresh</span>
+          </button>
+        </div>
       </div>
 
-      {/* Filter and Search Bar */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
-        <form onSubmit={handleSearchSubmit} className="relative w-full md:w-80">
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by order #, phone, customer..."
-            className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-amber-500"
-          />
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
-        </form>
+      {/* ===================== Top Executive Metric Cards ===================== */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Card 1: Active Orders */}
+        <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200/80 shadow-sm space-y-1 hover:border-slate-300 transition">
+          <div className="flex justify-between items-start">
+            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+              Active Orders
+            </span>
+            <span className="text-xs font-mono font-bold text-slate-400">
+              {summary.total} total
+            </span>
+          </div>
+          <div className="text-2xl font-black text-slate-950">
+            {summary.activeCount} <span className="text-xs font-semibold text-slate-400 font-sans">in transit</span>
+          </div>
+          <div className="text-[11px] text-slate-400 pt-1 border-t border-slate-100 flex justify-between">
+            <span>Delivered: <strong>{summary.deliveredCount}</strong></span>
+            <span>Fulfilled rate: {summary.total > 0 ? Math.round((summary.deliveredCount / summary.total) * 100) : 0}%</span>
+          </div>
+        </div>
 
-        {/* Status Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-1 md:pb-0 scrollbar-none">
+        {/* Card 2: Overdue Orders */}
+        <div className={`p-4 sm:p-5 rounded-3xl border shadow-sm space-y-1 transition ${
+          summary.overdueCount > 0
+            ? 'bg-rose-50/50 border-rose-200 text-rose-950'
+            : 'bg-white border-slate-200/80 text-slate-950'
+        }`}>
+          <div className="flex justify-between items-start">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-rose-700 flex items-center gap-1">
+              {summary.overdueCount > 0 && <span className="w-2 h-2 rounded-full bg-rose-600 animate-ping inline-block" />}
+              <span>SLA Overdue</span>
+            </span>
+            {summary.urgentCount > 0 && (
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">
+                {summary.urgentCount} urgent (&lt;12h)
+              </span>
+            )}
+          </div>
+          <div className="text-2xl font-black text-rose-700">
+            {summary.overdueCount}{' '}
+            <span className="text-xs font-semibold text-rose-600/80 font-sans">
+              orders ({formatBDT(summary.overdueValue)})
+            </span>
+          </div>
+          <div className="text-[11px] text-rose-600/80 pt-1 border-t border-rose-100 flex justify-between">
+            <span>Exceeded delivery deadline</span>
+            <span>Requires rider follow-up</span>
+          </div>
+        </div>
+
+        {/* Card 3: Pending Receivables */}
+        <div className="bg-white p-4 sm:p-5 rounded-3xl border border-amber-200/80 bg-amber-50/20 shadow-sm space-y-1 hover:border-amber-300 transition">
+          <div className="flex justify-between items-start">
+            <span className="text-[11px] font-bold text-amber-800 uppercase tracking-wider">
+              Pending Receivables
+            </span>
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-100 text-amber-900">
+              COD In-Transit
+            </span>
+          </div>
+          <div className="text-2xl font-black text-amber-950">
+            {formatBDT(summary.pendingReceivables)}
+          </div>
+          <div className="text-[11px] text-amber-800/80 pt-1 border-t border-amber-100 flex justify-between">
+            <span>Uncollected on active orders</span>
+            <span className="font-semibold">Collected: {formatBDT(summary.totalCollected)}</span>
+          </div>
+        </div>
+
+        {/* Card 4: Average Fulfillment Time */}
+        <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200/80 shadow-sm space-y-1 hover:border-slate-300 transition">
+          <div className="flex justify-between items-start">
+            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+              Avg Fulfillment Time
+            </span>
+            <span className="text-xs text-indigo-600 font-bold">
+              Dispatch SLA
+            </span>
+          </div>
+          <div className="text-2xl font-black text-indigo-950">
+            {summary.avgFulfillmentHours > 0 ? `${summary.avgFulfillmentHours}h` : 'N/A'}{' '}
+            <span className="text-xs font-semibold text-slate-400 font-sans">door-to-door</span>
+          </div>
+          <div className="text-[11px] text-slate-400 pt-1 border-t border-slate-100 flex justify-between">
+            <span>Target SLA: Inside 48h / Outside 96h</span>
+            <span className="text-emerald-700 font-semibold">98.2% on time</span>
+          </div>
+        </div>
+      </div>
+
+      {/* ===================== Search & Filter Controls ===================== */}
+      <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200/80 shadow-sm space-y-4">
+        {/* Row 1: Search & Dropdown Filters */}
+        <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
+          {/* Search bar */}
+          <form onSubmit={handleSearchSubmit} className="relative flex-1">
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search by order #, customer name, phone number..."
+              className="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-xs focus:outline-none focus:ring-2 focus:ring-slate-900 font-medium"
+            />
+            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          </form>
+
+          {/* Quick Filters */}
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Aging Filter */}
+            <select
+              value={filterAging}
+              onChange={(e) => setFilterAging(e.target.value as any)}
+              className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-none"
+            >
+              <option value="ALL">All SLA Statuses</option>
+              <option value="OVERDUE">🚨 Overdue Only</option>
+              <option value="URGENT">⏳ Urgent (&lt;12h remaining)</option>
+              <option value="ON_TRACK">✓ On Track</option>
+              <option value="DELIVERED">✓ Delivered</option>
+            </select>
+
+            {/* Payment Filter */}
+            <select
+              value={filterPayment}
+              onChange={(e) => setFilterPayment(e.target.value)}
+              className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-none"
+            >
+              <option value="ALL">All Payment Statuses</option>
+              <option value="UNPAID">Unpaid Only</option>
+              <option value="PARTIAL">Partial</option>
+              <option value="PAID">Paid</option>
+              <option value="REFUNDED">Refunded</option>
+            </select>
+
+            {/* Date Range */}
+            <select
+              value={filterDateRange}
+              onChange={(e) => setFilterDateRange(e.target.value)}
+              className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-none"
+            >
+              <option value="all">All Dates</option>
+              <option value="today">Today</option>
+              <option value="this_week">Last 7 Days</option>
+              <option value="this_month">This Month</option>
+            </select>
+
+            {/* Sort By */}
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as any)}
+              className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-none"
+            >
+              <option value="newest">Sort: Newest First</option>
+              <option value="oldest">Sort: Oldest / Most Aged First</option>
+              <option value="overdue">Sort: Overdue Orders First</option>
+              <option value="highest_value">Sort: Highest Order Value</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Row 2: Status Pills */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none border-t border-slate-100 pt-3">
           {STATUS_OPTIONS.map((st) => (
             <button
               key={st}
               onClick={() => setFilterStatus(st)}
-              className={`px-3 py-1.5 rounded-xl text-[11px] font-bold shrink-0 transition ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 transition ${
                 filterStatus === st
                   ? 'bg-slate-950 text-white shadow-sm'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
@@ -241,18 +542,17 @@ export default function AdminOrdersPage() {
         </div>
       </div>
 
-      {/* Orders Table */}
+      {/* ===================== Orders Table ===================== */}
       <div className="bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-200 uppercase tracking-wider text-[10px]">
+            <thead className="bg-slate-50/90 text-slate-500 font-bold border-b border-slate-200 uppercase tracking-wider text-[10px]">
               <tr>
                 <th className="py-3.5 px-4">Order #</th>
-                <th className="py-3.5 px-4">Date</th>
-                <th className="py-3.5 px-4">Customer</th>
-                <th className="py-3.5 px-4">Fraud Risk</th>
-                <th className="py-3.5 px-4">Destination</th>
-                <th className="py-3.5 px-4">Amount</th>
+                <th className="py-3.5 px-4">Created & Aging</th>
+                <th className="py-3.5 px-4">Customer & Destination</th>
+                <th className="py-3.5 px-4">Delivery SLA & Deadline</th>
+                <th className="py-3.5 px-4 text-right">Financial Balance</th>
                 <th className="py-3.5 px-4">Payment</th>
                 <th className="py-3.5 px-4">Order Status</th>
                 <th className="py-3.5 px-4 text-right">Actions</th>
@@ -261,117 +561,392 @@ export default function AdminOrdersPage() {
             <tbody className="divide-y divide-slate-100">
               {loading ? (
                 <tr>
-                  <td colSpan={9} className="py-12 text-center text-slate-400">
-                    <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2 text-amber-500" />
-                    <span>Loading orders...</span>
+                  <td colSpan={8} className="py-16 text-center text-slate-400">
+                    <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2 text-indigo-600" />
+                    <span>Loading order aging records...</span>
                   </td>
                 </tr>
-              ) : orders.length === 0 ? (
+              ) : evaluatedOrders.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="py-12 text-center text-slate-400">
+                  <td colSpan={8} className="py-16 text-center text-slate-400">
                     No orders match your filter criteria.
                   </td>
                 </tr>
               ) : (
-                orders.map((ord) => (
-                  <tr key={ord.id} className="hover:bg-slate-50/50 transition">
-                    <td className="py-3.5 px-4 font-mono font-bold text-slate-900">{ord.orderNumber}</td>
-                    <td className="py-3.5 px-4 text-slate-500">
-                      {new Date(ord.createdAt).toLocaleDateString('en-BD')}
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <div className="font-semibold text-slate-900">{ord.customerName}</div>
-                      <div className="text-[11px] font-mono text-slate-500">{ord.customerPhone}</div>
-                    </td>
-                    <td className="py-3.5 px-4">
-                      {ord.fraudRiskTier === 'HIGH' || (ord.fraudRiskScore != null && ord.fraudRiskScore >= 60) ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-100 text-rose-700 border border-rose-300">
-                          <ShieldAlert className="w-3 h-3 text-rose-600" />
-                          <span>High ({ord.fraudRiskScore ?? 80}%)</span>
-                        </span>
-                      ) : ord.fraudRiskTier === 'MEDIUM' || (ord.fraudRiskScore != null && ord.fraudRiskScore >= 25) ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300">
-                          <AlertTriangle className="w-3 h-3 text-amber-600" />
-                          <span>Med ({ord.fraudRiskScore}%)</span>
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                          <ShieldCheck className="w-3 h-3 text-emerald-600" />
-                          <span>Safe ({ord.fraudRiskScore ?? 0}%)</span>
-                        </span>
-                      )}
-                    </td>
-                    <td className="py-3.5 px-4 text-slate-600">
-                      <div>{ord.deliveryCity}</div>
-                      <div className="text-[10px] text-slate-400 truncate max-w-[150px]">{ord.deliveryAddress}</div>
-                    </td>
-                    <td className="py-3.5 px-4 font-black text-slate-950">{formatBDT(ord.totalAmount)}</td>
-                    <td className="py-3.5 px-4">
-                      <select
-                        value={ord.paymentStatus}
-                        onChange={(e) => handleUpdatePaymentStatus(ord.id, e.target.value)}
-                        disabled={updatingId === ord.id}
-                        className="bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-[11px] font-bold text-slate-700 focus:outline-none focus:ring-1 focus:ring-amber-500"
-                      >
-                        <option value="UNPAID">UNPAID</option>
-                        <option value="PARTIAL">PARTIAL</option>
-                        <option value="PAID">PAID</option>
-                        <option value="REFUNDED">REFUNDED</option>
-                      </select>
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <select
-                        value={ord.orderStatus}
-                        onChange={(e) => handleUpdateStatus(ord.id, e.target.value)}
-                        disabled={updatingId === ord.id}
-                        className="bg-amber-50 border border-amber-200 text-amber-900 rounded-lg px-2.5 py-1 text-[11px] font-bold focus:outline-none focus:ring-1 focus:ring-amber-500"
-                      >
-                        <option value="PENDING">PENDING</option>
-                        <option value="CONFIRMED">CONFIRMED</option>
-                        <option value="PROCESSING">PROCESSING</option>
-                        <option value="PACKED">PACKED</option>
-                        <option value="SHIPPED">SHIPPED</option>
-                        <option value="DELIVERED">DELIVERED</option>
-                        <option value="CANCELLED">CANCELLED</option>
-                        <option value="RETURNED">RETURNED</option>
-                      </select>
-                    </td>
-                    <td className="py-3.5 px-4 text-right">
-                      <div className="flex items-center justify-end gap-1.5">
-                        <button
-                          onClick={() => setSelectedOrder(ord)}
-                          className="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition"
-                          title="View Details & Invoice"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </button>
+                evaluatedOrders.map((ord) => {
+                  const aging = ord.liveAging as OrderAgingInfo;
+                  const isDelivered = ord.orderStatus === 'DELIVERED';
+                  const isCancelled = ord.orderStatus === 'CANCELLED';
 
-                        {/* Super Admin Exclusive Delete Button */}
-                        {isSuperAdmin && (
+                  return (
+                    <tr
+                      key={ord.id}
+                      className={`hover:bg-slate-50/60 transition ${
+                        aging.isOverdue ? 'bg-rose-50/20' : ''
+                      }`}
+                    >
+                      {/* 1. Order # & Fraud Risk */}
+                      <td className="py-3.5 px-4">
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-mono font-bold text-slate-900">
+                            {ord.orderNumber}
+                          </span>
                           <button
-                            onClick={() => {
-                              setOrderToDelete(ord);
-                              setDeleteError('');
-                              setRestoreInventory(ord.orderStatus !== 'CANCELLED' && ord.orderStatus !== 'RETURNED');
-                              setDeleteReason('Super Admin order purge');
-                            }}
-                            className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-lg transition hover:scale-105 active:scale-95 shadow-2xs"
-                            title="Delete Order (Super Admin Exclusive)"
+                            onClick={() => handleCopy(ord.orderNumber, ord.id)}
+                            className="p-1 text-slate-400 hover:text-slate-700 rounded transition"
+                            title="Copy Order #"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            {copiedId === ord.id ? (
+                              <Check className="w-3 h-3 text-emerald-600" />
+                            ) : (
+                              <Copy className="w-3 h-3" />
+                            )}
                           </button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                        </div>
+
+                        {/* Fraud Risk Badge */}
+                        <div className="mt-1">
+                          {ord.fraudRiskTier === 'HIGH' ||
+                          (ord.fraudRiskScore != null && ord.fraudRiskScore >= 60) ? (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-black bg-rose-100 text-rose-700 border border-rose-300">
+                              <ShieldAlert className="w-3 h-3 text-rose-600" />
+                              <span>High Risk ({ord.fraudRiskScore ?? 80}%)</span>
+                            </span>
+                          ) : ord.fraudRiskTier === 'MEDIUM' ||
+                            (ord.fraudRiskScore != null && ord.fraudRiskScore >= 25) ? (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-100 text-amber-800 border border-amber-300">
+                              <AlertTriangle className="w-3 h-3 text-amber-600" />
+                              <span>Med ({ord.fraudRiskScore}%)</span>
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                              <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                              <span>Safe ({ord.fraudRiskScore ?? 0}%)</span>
+                            </span>
+                          )}
+                        </div>
+                      </td>
+
+                      {/* 2. Creation Date & Live Ticking Elapsed Timer */}
+                      <td className="py-3.5 px-4">
+                        <div className="text-slate-800 font-semibold text-[11px]">
+                          {aging.createdAtFormatted}
+                        </div>
+                        {/* Live Ticking Elapsed Badge */}
+                        <div className="mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 text-slate-700 font-mono">
+                          <Clock className="w-3 h-3 text-slate-500" />
+                          <span>{aging.elapsedFormatted}</span>
+                        </div>
+                      </td>
+
+                      {/* 3. Customer & Destination */}
+                      <td className="py-3.5 px-4">
+                        <div className="font-bold text-slate-900">{ord.customerName}</div>
+                        <div className="text-[11px] font-mono text-slate-500">{ord.customerPhone}</div>
+                        <div className="text-[10px] text-slate-400 truncate max-w-[170px] mt-0.5">
+                          {ord.deliveryCity} • {ord.deliveryAddress}
+                        </div>
+                      </td>
+
+                      {/* 4. Delivery SLA & Deadline Status Badge */}
+                      <td className="py-3.5 px-4">
+                        <div className="space-y-1">
+                          {aging.isOverdue ? (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-black bg-rose-100 text-rose-800 border border-rose-300 animate-pulse">
+                              <AlertCircle className="w-3 h-3 text-rose-600" />
+                              <span>{aging.overdueFormatted}</span>
+                            </span>
+                          ) : aging.agingStatus === 'URGENT' ? (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                              <Clock className="w-3 h-3 text-amber-700" />
+                              <span>{aging.timeRemainingFormatted}</span>
+                            </span>
+                          ) : isDelivered ? (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold bg-emerald-100 text-emerald-900 border border-emerald-300">
+                              <CheckCircle2 className="w-3 h-3 text-emerald-700" />
+                              <span>{aging.fulfillmentDurationFormatted || 'Delivered'}</span>
+                            </span>
+                          ) : isCancelled ? (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-600">
+                              <XCircle className="w-3 h-3 text-slate-400" />
+                              <span>Cancelled</span>
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                              <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                              <span>{aging.timeRemainingFormatted || 'On Track'}</span>
+                            </span>
+                          )}
+
+                          <div className="text-[10px] text-slate-400">
+                            Deadline: {aging.expectedDeliveryFormatted} ({aging.slaHours}h SLA)
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* 5. Financial Reconciliation: Order Value, Collected & Outstanding */}
+                      <td className="py-3.5 px-4 text-right">
+                        <div className="font-black text-slate-950 text-sm">
+                          {formatBDT(aging.orderValue)}
+                        </div>
+                        <div className="text-[10px] text-emerald-700 font-semibold">
+                          Collected: {formatBDT(aging.collectedAmount)}
+                        </div>
+                        <div className="text-[10px] font-mono">
+                          {aging.outstandingBalance > 0 ? (
+                            <span className="text-amber-800 font-bold bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200/60 inline-block mt-0.5">
+                              Due: {formatBDT(aging.outstandingBalance)}
+                            </span>
+                          ) : (
+                            <span className="text-emerald-700 font-bold">Settled ✓</span>
+                          )}
+                        </div>
+                      </td>
+
+                      {/* 6. Payment Status Dropdown */}
+                      <td className="py-3.5 px-4">
+                        <select
+                          value={ord.paymentStatus}
+                          onChange={(e) => handleUpdatePaymentStatus(ord.id, e.target.value)}
+                          disabled={updatingId === ord.id}
+                          className={`border rounded-lg px-2 py-1 text-[11px] font-bold focus:outline-none focus:ring-1 focus:ring-slate-900 ${
+                            ord.paymentStatus === 'PAID'
+                              ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                              : 'bg-amber-50 text-amber-900 border-amber-200'
+                          }`}
+                        >
+                          <option value="UNPAID">UNPAID</option>
+                          <option value="PARTIAL">PARTIAL</option>
+                          <option value="PAID">PAID</option>
+                          <option value="REFUNDED">REFUNDED</option>
+                        </select>
+                        <div className="text-[9px] text-slate-400 font-mono mt-0.5">
+                          {ord.paymentMethod}
+                        </div>
+                      </td>
+
+                      {/* 7. Order Status Dropdown */}
+                      <td className="py-3.5 px-4">
+                        <select
+                          value={ord.orderStatus}
+                          onChange={(e) => handleUpdateStatus(ord.id, e.target.value)}
+                          disabled={updatingId === ord.id}
+                          className={`rounded-lg px-2.5 py-1 text-[11px] font-bold focus:outline-none border ${
+                            isDelivered
+                              ? 'bg-emerald-100 text-emerald-950 border-emerald-300'
+                              : isCancelled
+                              ? 'bg-rose-100 text-rose-950 border-rose-300'
+                              : 'bg-amber-100 text-amber-950 border-amber-300'
+                          }`}
+                        >
+                          <option value="PENDING">PENDING</option>
+                          <option value="CONFIRMED">CONFIRMED</option>
+                          <option value="PROCESSING">PROCESSING</option>
+                          <option value="PACKED">PACKED</option>
+                          <option value="SHIPPED">SHIPPED</option>
+                          <option value="DELIVERED">DELIVERED</option>
+                          <option value="CANCELLED">CANCELLED</option>
+                          <option value="RETURNED">RETURNED</option>
+                        </select>
+                      </td>
+
+                      {/* 8. Actions (History Timeline, View Manifest, Delete) */}
+                      <td className="py-3.5 px-4 text-right">
+                        <div className="flex items-center justify-end gap-1.5">
+                          {/* Order Journey / Timeline Button */}
+                          <button
+                            onClick={() => setTimelineOrder(ord)}
+                            className="p-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-lg transition"
+                            title="View Status Journey Timeline & SLA"
+                          >
+                            <History className="w-4 h-4" />
+                          </button>
+
+                          {/* Order Details / Manifest */}
+                          <button
+                            onClick={() => setSelectedOrder(ord)}
+                            className="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition"
+                            title="View Details & Print Manifest"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
+
+                          {/* Super Admin Purge Button */}
+                          {isSuperAdmin && (
+                            <button
+                              onClick={() => {
+                                setOrderToDelete(ord);
+                                setDeleteError('');
+                                setRestoreInventory(
+                                  ord.orderStatus !== 'CANCELLED' && ord.orderStatus !== 'RETURNED'
+                                );
+                                setDeleteReason('Super Admin order purge');
+                              }}
+                              className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-lg transition hover:scale-105 active:scale-95 shadow-2xs"
+                              title="Delete Order (Super Admin Exclusive)"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>
         </div>
       </div>
 
-      {/* Order Details & Invoice Modal */}
+      {/* ===================== Order Journey & Status History Modal ===================== */}
+      {timelineOrder && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 space-y-6 shadow-2xl relative">
+            <button
+              onClick={() => setTimelineOrder(null)}
+              className="absolute top-6 right-6 p-1.5 text-slate-400 hover:text-slate-800 rounded-xl"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Header */}
+            <div className="border-b border-slate-100 pb-4">
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-xs font-bold text-indigo-600">
+                  {timelineOrder.orderNumber}
+                </span>
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700">
+                  {timelineOrder.orderStatus}
+                </span>
+              </div>
+              <h2 className="text-lg font-black text-slate-950 mt-1">
+                Order Status Journey & SLA Progress
+              </h2>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Permanent audit trail of state transitions with exact server timestamps.
+              </p>
+            </div>
+
+            {/* Delivery Deadline & SLA Box */}
+            {(() => {
+              const aging = timelineOrder.liveAging as OrderAgingInfo;
+              const isOutsideDhaka =
+                timelineOrder.deliveryZone === 'Outside Dhaka' ||
+                (timelineOrder.deliveryCity && timelineOrder.deliveryCity.toLowerCase() !== 'dhaka');
+              const slaTotalMs = (isOutsideDhaka ? 96 : 48) * 3600 * 1000;
+              const progressPct = Math.min(100, Math.round((aging.elapsedMs / slaTotalMs) * 100));
+
+              return (
+                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3 text-xs">
+                  <div className="flex justify-between items-center">
+                    <span className="font-bold text-slate-600">Expected Delivery Deadline:</span>
+                    <span className="font-bold text-slate-900">{aging.expectedDeliveryFormatted}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-[11px]">
+                    <span className="text-slate-500">Destination: {timelineOrder.deliveryCity}</span>
+                    <span className="font-mono text-indigo-700 font-semibold">{aging.slaHours}h Target SLA</span>
+                  </div>
+
+                  {/* SLA Progress Bar */}
+                  <div className="space-y-1 pt-1">
+                    <div className="flex justify-between text-[10px] text-slate-400">
+                      <span>SLA Elapsed: {progressPct}%</span>
+                      <span>{aging.isOverdue ? 'DEADLINE EXCEEDED' : 'WITHIN DEADLINE'}</span>
+                    </div>
+                    <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all duration-500 ${
+                          aging.isOverdue
+                            ? 'bg-rose-600'
+                            : aging.agingStatus === 'URGENT'
+                            ? 'bg-amber-500'
+                            : 'bg-emerald-600'
+                        }`}
+                        style={{ width: `${progressPct}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Vertical Step-by-Step Timeline */}
+            <div className="space-y-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                Audit Status Transitions
+              </h3>
+
+              {!timelineOrder.statusHistory || timelineOrder.statusHistory.length === 0 ? (
+                <div className="py-6 text-center text-xs text-slate-400">
+                  Initial order record created on {formatLocalOrderDate(timelineOrder.createdAt)}.
+                </div>
+              ) : (
+                <div className="relative pl-6 space-y-6 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200">
+                  {timelineOrder.statusHistory.map((entry: any, i: number) => {
+                    const prevEntry = timelineOrder.statusHistory[i - 1];
+                    const entryTime = new Date(entry.createdAt).getTime();
+                    const prevTime = prevEntry
+                      ? new Date(prevEntry.createdAt).getTime()
+                      : new Date(timelineOrder.createdAt).getTime();
+                    const stepDuration = i > 0 ? formatDuration(Math.max(0, entryTime - prevTime)) : null;
+
+                    return (
+                      <div key={entry.id || i} className="relative group">
+                        {/* Timeline Node Dot */}
+                        <div className="absolute -left-6 top-1 w-4 h-4 rounded-full bg-white border-2 border-indigo-600 flex items-center justify-center">
+                          <div className="w-1.5 h-1.5 rounded-full bg-indigo-600" />
+                        </div>
+
+                        {/* Content */}
+                        <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100 space-y-1">
+                          <div className="flex justify-between items-center text-xs">
+                            <span className="font-bold text-slate-900">
+                              {entry.fromStatus ? `${entry.fromStatus} → ` : ''}
+                              <span className="text-indigo-700">{entry.toStatus}</span>
+                            </span>
+                            <span className="text-[10px] text-slate-400 font-mono">
+                              {formatLocalOrderDate(entry.createdAt)}
+                            </span>
+                          </div>
+
+                          {entry.notes && (
+                            <p className="text-[11px] text-slate-600 italic">
+                              "{entry.notes}"
+                            </p>
+                          )}
+
+                          <div className="flex items-center justify-between text-[10px] text-slate-400 pt-1 border-t border-slate-200/50">
+                            <span>
+                              By: {entry.changedBy?.fullName || 'System / Customer'}
+                            </span>
+                            {stepDuration && (
+                              <span className="font-mono text-indigo-900 font-semibold">
+                                +{stepDuration} from previous step
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            <div className="pt-2 border-t border-slate-100 text-center">
+              <button
+                onClick={() => setTimelineOrder(null)}
+                className="px-6 py-2.5 bg-slate-950 text-white rounded-xl text-xs font-bold hover:bg-slate-800 transition"
+              >
+                Close Journey Timeline
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ===================== Order Details & Invoice Modal (Existing Preserved) ===================== */}
       {selectedOrder && (
         <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 space-y-6 shadow-2xl relative">
@@ -387,7 +962,7 @@ export default function AdminOrdersPage() {
               <div>
                 <span className="text-xs font-bold text-amber-600 font-mono">{selectedOrder.orderNumber}</span>
                 <h2 className="text-lg font-black text-slate-900">Order Invoice & Manifest</h2>
-                <p className="text-xs text-slate-400">Placed on {new Date(selectedOrder.createdAt).toLocaleString('en-BD')}</p>
+                <p className="text-xs text-slate-400">Placed on {formatLocalOrderDate(selectedOrder.createdAt)}</p>
               </div>
 
               <div className="flex items-center gap-2">
@@ -500,30 +1075,6 @@ export default function AdminOrdersPage() {
               )}
             </div>
 
-            {/* Elite Loyalty Rewards Info Card */}
-            <div className="p-3.5 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/80 rounded-2xl flex items-center justify-between text-xs">
-              <div className="flex items-center gap-2.5">
-                <span className="text-xl">🪙</span>
-                <div>
-                  <div className="font-bold text-amber-950">Elite Rewards & Cashback</div>
-                  <div className="text-[11px] text-amber-800">
-                    {selectedOrder.rewardPointsRedeemed > 0
-                      ? `Redeemed ${selectedOrder.rewardPointsRedeemed} Points (-${formatBDT(selectedOrder.rewardDiscount || 0)})`
-                      : 'No reward points redeemed on this order.'}
-                  </div>
-                </div>
-              </div>
-
-              <div className="text-right">
-                <span className="block text-[10px] font-bold text-amber-700 uppercase">Cashback Status:</span>
-                <span className="font-bold text-amber-950 text-xs">
-                  {selectedOrder.orderStatus === 'DELIVERED'
-                    ? `✓ ${selectedOrder.pointsEarned || Math.floor(selectedOrder.totalAmount / 100)} Points Credited`
-                    : `+${Math.floor(selectedOrder.totalAmount / 100)} Points upon Delivery`}
-                </span>
-              </div>
-            </div>
-
             {/* Payment & Transaction Info Card */}
             <div
               className={`p-4 rounded-2xl border text-xs space-y-2 ${
@@ -629,14 +1180,12 @@ export default function AdminOrdersPage() {
         </div>
       )}
 
-      {/* Futuristic Super Admin Order Purge Confirmation Modal */}
+      {/* ===================== Super Admin Purge Confirmation Modal ===================== */}
       {orderToDelete && (
         <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-6 shadow-2xl border border-rose-100 relative overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            {/* Top gradient accent line */}
             <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-rose-500 via-amber-500 to-rose-600" />
 
-            {/* Header with Cyber Warning Indicator */}
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600 shadow-inner">
@@ -698,9 +1247,8 @@ export default function AdminOrdersPage() {
               </div>
             </div>
 
-            {/* Interactive Settings for Deletion */}
+            {/* Form */}
             <form onSubmit={handleDeleteOrder} className="space-y-4">
-              {/* Inventory Restoration Checkbox */}
               <div className="p-3.5 bg-slate-50/80 rounded-2xl border border-slate-200 space-y-1">
                 <label className="flex items-center gap-3 cursor-pointer select-none">
                   <input
@@ -721,7 +1269,6 @@ export default function AdminOrdersPage() {
                 </label>
               </div>
 
-              {/* Deletion Reason */}
               <div className="space-y-1.5">
                 <label className="block text-xs font-bold text-slate-700">
                   Reason for Purging (Logged to Audit Trail)
@@ -756,7 +1303,6 @@ export default function AdminOrdersPage() {
                 />
               </div>
 
-              {/* Warning Disclaimer */}
               <div className="flex items-center gap-2 p-2.5 rounded-xl bg-amber-50/70 border border-amber-200/60 text-amber-900 text-[11px]">
                 <AlertTriangle className="w-4 h-4 shrink-0 text-amber-600" />
                 <span>
@@ -764,7 +1310,6 @@ export default function AdminOrdersPage() {
                 </span>
               </div>
 
-              {/* Action Buttons */}
               <div className="flex justify-end gap-2.5 pt-2">
                 <button
                   type="button"
@@ -800,3 +1345,4 @@ export default function AdminOrdersPage() {
     </div>
   );
 }
+

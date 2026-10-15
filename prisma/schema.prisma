@@ -112,6 +112,7 @@ model User {
   expenses           Expense[]
   assignedOrders     Order[]             @relation("OrderAssignee")
   recordedPayments   Payment[]           @relation("PaymentRecorder")
+  statusHistoryChanges OrderStatusHistory[] @relation("StatusHistoryChanger")
 
   @@index([email])
   @@index([role])
@@ -294,20 +295,39 @@ model Order {
   orderStatus        OrderStatus   @default(PENDING)
   notes              String?
   internalNotes      String?
+  expectedDeliveryDate DateTime?
   assignedEmployeeId String?
   assignedEmployee   User?         @relation("OrderAssignee", fields: [assignedEmployeeId], references: [id], onDelete: SetNull)
   isDeleted          Boolean       @default(false)
   createdAt          DateTime      @default(now())
   updatedAt          DateTime      @updatedAt
 
-  items    OrderItem[]
-  payments Payment[]
+  items         OrderItem[]
+  payments      Payment[]
+  statusHistory OrderStatusHistory[]
 
   @@index([orderNumber])
   @@index([customerPhone])
   @@index([orderStatus])
   @@index([paymentStatus])
   @@index([isDeleted])
+  @@index([createdAt])
+  @@index([expectedDeliveryDate])
+}
+
+model OrderStatusHistory {
+  id          String       @id @default(uuid())
+  orderId     String
+  order       Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  fromStatus  OrderStatus?
+  toStatus    OrderStatus
+  notes       String?
+  changedById String?
+  changedBy   User?        @relation("StatusHistoryChanger", fields: [changedById], references: [id], onDelete: SetNull)
+  createdAt   DateTime     @default(now())
+
+  @@index([orderId])
+  @@index([toStatus])
   @@index([createdAt])
 }
 

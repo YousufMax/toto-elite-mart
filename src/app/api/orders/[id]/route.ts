@@ -30,20 +30,24 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       return NextResponse.json({ error: 'Unauthorized. Order status update permissions required.' }, { status: 403 });
     }
 
-    const { status, paymentStatus, internalNotes } = await req.json();
+    const { status, paymentStatus, internalNotes, expectedDeliveryDate } = await req.json();
 
     if (status) {
       await updateOrderStatus(params.id, status, internalNotes, user.userId);
     }
 
-    if (paymentStatus) {
+    if (paymentStatus || expectedDeliveryDate) {
       try {
+        const updateData: any = {};
+        if (paymentStatus) updateData.paymentStatus = paymentStatus;
+        if (expectedDeliveryDate) updateData.expectedDeliveryDate = new Date(expectedDeliveryDate);
+
         await prisma.order.update({
           where: { id: params.id },
-          data: { paymentStatus },
+          data: updateData,
         });
-      } catch {
-        // in-memory fallback handled in updateOrderStatus
+      } catch (err) {
+        console.warn('[ORDER_PATCH_PRISMA_ERROR]', err);
       }
     }
 
@@ -52,7 +56,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       action: 'UPDATE_ORDER',
       entityType: 'ORDER',
       entityId: params.id,
-      afterState: { status, paymentStatus, internalNotes },
+      afterState: { status, paymentStatus, internalNotes, expectedDeliveryDate },
     });
 
     return NextResponse.json({ success: true, message: 'Order updated successfully' });

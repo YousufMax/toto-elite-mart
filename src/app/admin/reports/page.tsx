@@ -34,7 +34,9 @@ import {
   ChevronRight,
   ShieldCheck,
   X,
-  PieChart as PieChartIcon
+  PieChart as PieChartIcon,
+  Clock,
+  AlertTriangle
 } from 'lucide-react';
 
 export default function AdminReportsPage() {
@@ -59,6 +61,7 @@ export default function AdminReportsPage() {
   const [orderSearch, setOrderSearch] = useState('');
   const [orderStatusFilter, setOrderStatusFilter] = useState('ALL');
   const [paymentStatusFilter, setPaymentStatusFilter] = useState('ALL');
+  const [agingFilter, setAgingFilter] = useState('ALL');
 
   // Export dropdown
   const [showExportMenu, setShowExportMenu] = useState(false);
@@ -166,9 +169,12 @@ export default function AdminReportsPage() {
       const matchPaymentStatus =
         paymentStatusFilter === 'ALL' || order.paymentStatus === paymentStatusFilter;
 
-      return matchQuery && matchOrderStatus && matchPaymentStatus;
+      const matchAging =
+        agingFilter === 'ALL' || order.agingStatus === agingFilter;
+
+      return matchQuery && matchOrderStatus && matchPaymentStatus && matchAging;
     });
-  }, [report, orderSearch, orderStatusFilter, paymentStatusFilter]);
+  }, [report, orderSearch, orderStatusFilter, paymentStatusFilter, agingFilter]);
 
   // Render trend badge
   const renderTrendBadge = (changePercent: number, trend: 'UP' | 'DOWN' | 'NEUTRAL', invert = false) => {
@@ -1636,6 +1642,19 @@ export default function AdminReportsPage() {
                     <option value="REFUNDED">Refunded</option>
                   </select>
 
+                  <select
+                    value={agingFilter}
+                    onChange={(e) => setAgingFilter(e.target.value)}
+                    className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none"
+                  >
+                    <option value="ALL">All Aging / SLA</option>
+                    <option value="OVERDUE">⚠️ Overdue</option>
+                    <option value="URGENT">⚡ Urgent (&lt;12h)</option>
+                    <option value="ON_TRACK">⏱️ On Track</option>
+                    <option value="DELIVERED">✅ Delivered</option>
+                    <option value="CANCELLED">❌ Cancelled</option>
+                  </select>
+
                   <button
                     onClick={() => handleExport('orders')}
                     className="p-2 border border-slate-200 rounded-xl hover:bg-slate-50 text-slate-600 transition"
@@ -1652,11 +1671,11 @@ export default function AdminReportsPage() {
                   <thead>
                     <tr className="border-b border-slate-100 text-slate-400 font-bold uppercase text-[10px] tracking-wider">
                       <th className="pb-3 pl-2">Order #</th>
-                      <th className="pb-3">Date</th>
+                      <th className="pb-3">Date & Aging</th>
                       <th className="pb-3">Customer</th>
-                      <th className="pb-3">Status</th>
+                      <th className="pb-3">Status & SLA</th>
                       <th className="pb-3 text-right">Order Value</th>
-                      <th className="pb-3 text-right">Delivery</th>
+                      <th className="pb-3 text-right">Collected / Bal</th>
                       <th className="pb-3 text-right">COGS</th>
                       <th className="pb-3 text-right">Gross Profit</th>
                       <th className="pb-3 text-right pr-2">Net Contribution</th>
@@ -1673,17 +1692,29 @@ export default function AdminReportsPage() {
                       filteredOrders.map((order) => {
                         const isDelivered = order.orderStatus === 'DELIVERED';
                         const isCancelled = order.orderStatus === 'CANCELLED';
+                        const isOverdue = order.isOverdue || order.agingStatus === 'OVERDUE';
+                        const isUrgent = order.agingStatus === 'URGENT';
 
                         return (
                           <tr key={order.id} className="hover:bg-slate-50/80 transition">
                             <td className="py-3 pl-2 font-mono font-bold text-slate-900">
                               {order.orderNumber}
                             </td>
-                            <td className="py-3 text-slate-500 text-[11px]">
-                              {new Date(order.createdAt).toLocaleDateString('en-US', {
-                                month: 'short',
-                                day: 'numeric',
-                              })}
+                            <td className="py-3">
+                              <div className="text-slate-900 font-medium text-[11px]">
+                                {new Date(order.createdAt).toLocaleDateString('en-US', {
+                                  month: 'short',
+                                  day: 'numeric',
+                                })}
+                              </div>
+                              <div className="flex items-center gap-1 mt-0.5">
+                                <Clock className="w-3 h-3 text-slate-400" />
+                                <span className={`text-[10px] font-mono ${
+                                  isOverdue ? 'text-rose-600 font-black' : isUrgent ? 'text-amber-600 font-bold' : 'text-slate-500'
+                                }`}>
+                                  {order.elapsedText || 'N/A'}
+                                </span>
+                              </div>
                             </td>
                             <td className="py-3">
                               <div className="font-semibold text-slate-900">
@@ -1695,17 +1726,30 @@ export default function AdminReportsPage() {
                             </td>
                             <td className="py-3">
                               <div className="flex flex-col gap-1 items-start">
-                                <span
-                                  className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                                    isDelivered
-                                      ? 'bg-emerald-100 text-emerald-800'
-                                      : isCancelled
-                                      ? 'bg-rose-100 text-rose-800'
-                                      : 'bg-amber-100 text-amber-800'
-                                  }`}
-                                >
-                                  {order.orderStatus}
-                                </span>
+                                <div className="flex items-center gap-1">
+                                  <span
+                                    className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                                      isDelivered
+                                        ? 'bg-emerald-100 text-emerald-800'
+                                        : isCancelled
+                                        ? 'bg-rose-100 text-rose-800'
+                                        : 'bg-amber-100 text-amber-800'
+                                    }`}
+                                  >
+                                    {order.orderStatus}
+                                  </span>
+
+                                  {isOverdue && (
+                                    <span className="px-1.5 py-0.5 rounded text-[9px] font-black bg-rose-600 text-white animate-pulse">
+                                      OVERDUE
+                                    </span>
+                                  )}
+                                  {isUrgent && (
+                                    <span className="px-1.5 py-0.5 rounded text-[9px] font-black bg-amber-500 text-white">
+                                      URGENT
+                                    </span>
+                                  )}
+                                </div>
                                 <span className="text-[10px] text-slate-400 font-mono">
                                   {order.paymentMethod} • {order.paymentStatus}
                                 </span>
@@ -1713,9 +1757,23 @@ export default function AdminReportsPage() {
                             </td>
                             <td className="py-3 text-right font-bold text-slate-900">
                               {formatBDT(order.totalAmount)}
+                              <div className="text-[10px] font-normal text-slate-400">
+                                Ship: {formatBDT(order.deliveryFee)}
+                              </div>
                             </td>
-                            <td className="py-3 text-right text-slate-500">
-                              {formatBDT(order.deliveryFee)}
+                            <td className="py-3 text-right">
+                              <div className="font-bold text-emerald-700">
+                                {formatBDT(order.collectedAmount ?? (order.paymentStatus === 'PAID' ? order.totalAmount : 0))}
+                              </div>
+                              {(order.outstandingBalance ?? (order.paymentStatus === 'PAID' ? 0 : order.totalAmount)) > 0 ? (
+                                <div className="text-[10px] font-bold text-rose-600">
+                                  Bal: {formatBDT(order.outstandingBalance ?? order.totalAmount)}
+                                </div>
+                              ) : (
+                                <div className="text-[10px] font-medium text-slate-400">
+                                  Settled
+                                </div>
+                              )}
                             </td>
                             <td className="py-3 text-right font-medium text-rose-600">
                               {isCancelled ? '-' : `-${formatBDT(order.cogs)}`}
