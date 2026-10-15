@@ -18,12 +18,14 @@ import {
   Ticket,
   Star,
   Sliders,
+  Flame,
 } from 'lucide-react';
 
 const NAV_ITEMS = [
   { label: 'Overview', href: '/admin', icon: LayoutDashboard },
   { label: 'Order Processing', href: '/admin/orders', icon: ShoppingCart },
   { label: 'Product Catalog', href: '/admin/products', icon: Package },
+  { label: 'Flash Sale Deals', href: '/admin/flash-sale', icon: Flame },
   { label: 'Inventory Ledger', href: '/admin/inventory', icon: Warehouse },
   { label: 'Customer Reviews', href: '/admin/reviews', icon: Star },
   { label: 'Categories', href: '/admin/categories', icon: Layers },

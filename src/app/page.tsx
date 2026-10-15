@@ -4,6 +4,7 @@ import Header from '@/components/storefront/Header';
 import Footer from '@/components/storefront/Footer';
 import ProductCard from '@/components/storefront/ProductCard';
 import { getProducts, getCategories, getBanners } from '@/lib/data-store';
+import FlashSaleSection from '@/components/storefront/FlashSaleSection';
 import HeroBannerSlider from '@/components/storefront/HeroBannerSlider';
 import {
   ArrowRight,
@@ -27,7 +28,6 @@ export default async function HomePage() {
   ]);
 
   const featuredProducts = products.filter((p) => p.isFeatured).slice(0, 8);
-  const flashDeals = products.filter((p) => p.salePrice && p.salePrice < p.sellingPrice).slice(0, 4);
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
@@ -76,35 +76,8 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Flash Deals / Special Discounts Section */}
-        {flashDeals.length > 0 && (
-          <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="bg-gradient-to-r from-red-600 to-amber-600 rounded-3xl p-6 sm:p-8 text-white mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-white">
-                  <Flame className="w-7 h-7 fill-white" />
-                </div>
-                <div>
-                  <h2 className="text-xl sm:text-2xl font-black tracking-tight">Flash Sale Discounts</h2>
-                  <p className="text-xs text-red-100 mt-0.5">Limited stock discounts on selected customer favourites</p>
-                </div>
-              </div>
-
-              <Link
-                href="/shop"
-                className="bg-white text-slate-950 hover:bg-slate-100 px-5 py-2.5 rounded-xl font-bold text-xs shadow-md transition shrink-0"
-              >
-                View All Deals
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-              {flashDeals.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          </section>
-        )}
+        {/* Dynamic Authoritative Flash Sale Section */}
+        <FlashSaleSection />
 
         {/* Featured Products Grid */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

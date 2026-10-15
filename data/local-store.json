@@ -61,7 +61,7 @@
       "purchaseCost": 2000,
       "sellingPrice": 4500,
       "salePrice": 3000,
-      "stockQuantity": 18,
+      "stockQuantity": 11,
       "lowStockThreshold": 5,
       "status": "ACTIVE",
       "isFeatured": false,
@@ -77,7 +77,7 @@
           "colorCode": "#000000",
           "price": 3000,
           "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiMajuxHisiIhUTsq_JzvvXQJD82dveusJha4o5pT-8g&s=10",
-          "stockQuantity": 9,
+          "stockQuantity": 2,
           "isActive": true,
           "sortOrder": 0,
           "createdAt": "2026-10-14T17:02:18.037Z",
@@ -466,7 +466,7 @@
       "purchaseCost": 1100,
       "sellingPrice": 1850,
       "salePrice": 1599,
-      "stockQuantity": 38,
+      "stockQuantity": 36,
       "lowStockThreshold": 10,
       "isFeatured": true,
       "tags": "earbuds, audio, bluetooth, wireless, anc",
@@ -508,7 +508,7 @@
           "name": "Matte Black",
           "colorCode": "#111827",
           "imageUrl": "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=800&auto=format&fit=crop&q=80",
-          "stockQuantity": 18,
+          "stockQuantity": 16,
           "isActive": true,
           "sortOrder": 0,
           "createdAt": "2026-10-12T19:07:15.893Z",
@@ -984,6 +984,139 @@
     }
   ],
   "orders": [
+    {
+      "id": "ord-1792049720961",
+      "orderNumber": "TEM-2026-54074",
+      "customerName": "Flash Sale Test Buyer",
+      "customerPhone": "01799887766",
+      "deliveryAddress": "Mirpur 10, Block D, Dhaka",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "Inside Dhaka",
+      "subtotal": 6300,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 0,
+      "totalAmount": 6300,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "rewardPointsRedeemed": 0,
+      "rewardDiscount": 0,
+      "fraudRiskScore": 0,
+      "fraudRiskTier": "LOW",
+      "fraudRiskFlags": [],
+      "items": [
+        {
+          "productId": "prod-1791997338037",
+          "productName": "Head Phone HOCO ANC",
+          "sku": "HDP 456",
+          "selectedColor": "Black",
+          "variantId": "var-1791997338037-0",
+          "unitPrice": 3150,
+          "purchaseCost": 2000,
+          "quantity": 2,
+          "totalPrice": 6300,
+          "isFlashSale": true,
+          "flashCampaignId": "fsc-1792049720717"
+        }
+      ],
+      "createdAt": "2026-10-15T07:35:20.961Z",
+      "updatedAt": "2026-10-15T07:35:20.961Z"
+    },
+    {
+      "id": "ord-1792049638383",
+      "orderNumber": "TEM-2026-24473",
+      "customerName": "Yousuf Rahman",
+      "customerPhone": "01623363623",
+      "deliveryAddress": "Benapole Jashore Khulna",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "Inside Dhaka",
+      "subtotal": 14398,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 0,
+      "totalAmount": 14398,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "rewardPointsRedeemed": 0,
+      "rewardDiscount": 0,
+      "fraudRiskScore": 0,
+      "fraudRiskTier": "LOW",
+      "fraudRiskFlags": [
+        "Verified Trusted Customer (Admin Whitelist)"
+      ],
+      "items": [
+        {
+          "productId": "prod-1791997338037",
+          "productName": "Head Phone HOCO ANC",
+          "sku": "HDP 456",
+          "selectedColor": "Black",
+          "variantId": "var-1791997338037-0",
+          "unitPrice": 3000,
+          "purchaseCost": 2000,
+          "quantity": 4,
+          "totalPrice": 12000,
+          "isFlashSale": false,
+          "flashCampaignId": null
+        },
+        {
+          "productId": "prod-1",
+          "productName": "Pro ANC Wireless Earbuds with ENC Mic",
+          "sku": "TEM-TWS-001",
+          "selectedColor": "Matte Black",
+          "variantId": "var-tws-1",
+          "unitPrice": 1199,
+          "purchaseCost": 1100,
+          "quantity": 2,
+          "totalPrice": 2398,
+          "isFlashSale": true,
+          "flashCampaignId": "fsc-seed-1"
+        }
+      ],
+      "createdAt": "2026-10-15T07:33:58.383Z",
+      "updatedAt": "2026-10-15T07:33:58.383Z"
+    },
+    {
+      "id": "ord-1792047133420",
+      "orderNumber": "TEM-2026-49606",
+      "customerName": "yousuf ali",
+      "customerPhone": "01623363623",
+      "deliveryAddress": "azizer mor, boyra bazar, khulna, bangladesh",
+      "deliveryCity": "Khulna",
+      "deliveryZone": "Inside Dhaka",
+      "subtotal": 3000,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 0,
+      "totalAmount": 3000,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "rewardPointsRedeemed": 0,
+      "rewardDiscount": 0,
+      "fraudRiskScore": 0,
+      "fraudRiskTier": "LOW",
+      "fraudRiskFlags": [],
+      "items": [
+        {
+          "productId": "prod-1791997338037",
+          "productName": "Head Phone HOCO ANC",
+          "sku": "HDP 456",
+          "selectedColor": "Black",
+          "variantId": "var-1791997338037-0",
+          "unitPrice": 3000,
+          "purchaseCost": 2000,
+          "quantity": 1,
+          "totalPrice": 3000
+        }
+      ],
+      "createdAt": "2026-10-15T06:52:13.420Z",
+      "updatedAt": "2026-10-15T06:52:13.420Z"
+    },
     {
       "id": "ord-1792046833526",
       "orderNumber": "TEM-2026-60594",
@@ -3117,6 +3250,50 @@
       "reason": "Customer order TEM-2026-60594 (Color: Matte Black)",
       "referenceId": "ord-1792046833526",
       "createdAt": "2026-10-15T06:47:13.530Z"
+    },
+    {
+      "id": "mov-1792047133424",
+      "productId": "prod-1791997338037",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 18,
+      "newStock": 17,
+      "reason": "Customer order TEM-2026-49606 (Color: Black)",
+      "referenceId": "ord-1792047133420",
+      "createdAt": "2026-10-15T06:52:13.424Z"
+    },
+    {
+      "id": "mov-1792049638391",
+      "productId": "prod-1791997338037",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -4,
+      "previousStock": 17,
+      "newStock": 13,
+      "reason": "Customer order TEM-2026-24473 (Color: Black)",
+      "referenceId": "ord-1792049638383",
+      "createdAt": "2026-10-15T07:33:58.391Z"
+    },
+    {
+      "id": "mov-1792049638391",
+      "productId": "prod-1",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -2,
+      "previousStock": 38,
+      "newStock": 36,
+      "reason": "Customer order TEM-2026-24473 (Color: Matte Black)",
+      "referenceId": "ord-1792049638383",
+      "createdAt": "2026-10-15T07:33:58.391Z"
+    },
+    {
+      "id": "mov-1792049720963",
+      "productId": "prod-1791997338037",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -2,
+      "previousStock": 13,
+      "newStock": 11,
+      "reason": "Customer order TEM-2026-54074 (Color: Black)",
+      "referenceId": "ord-1792049720961",
+      "createdAt": "2026-10-15T07:35:20.963Z"
     }
   ],
   "users": [
@@ -3214,7 +3391,9 @@
     "fraudMaxCodAmount": 4000,
     "fraudHighRiskAdvanceFeeRequired": true,
     "blacklistedPhones": [],
-    "whitelistedPhones": []
+    "whitelistedPhones": [
+      "01623363623"
+    ]
   },
   "reviews": [
     {
@@ -3458,5 +3637,87 @@
     }
   },
   "fraudBlacklist": [],
-  "fraudWhitelist": []
+  "fraudWhitelist": [
+    "01623363623"
+  ],
+  "flashSaleCampaigns": [
+    {
+      "id": "fsc-1792049668407",
+      "title": "Automated E2E Test Flash Sale",
+      "subtitle": "Exclusive Verification Deal",
+      "bannerUrl": "",
+      "startDate": "2026-10-15T07:33:28.340Z",
+      "endDate": "2026-10-16T07:34:28.340Z",
+      "status": "ACTIVE",
+      "isActive": true,
+      "items": [
+        {
+          "id": "fsi-1792049668407-0",
+          "campaignId": "fsc-1792049668407",
+          "productId": "prod-1791997338037",
+          "flashPrice": 3150,
+          "originalPrice": 4500,
+          "allocatedStock": 15,
+          "soldCount": 0,
+          "sortOrder": 1
+        }
+      ],
+      "createdAt": "2026-10-15T07:34:28.407Z",
+      "updatedAt": "2026-10-15T07:34:28.407Z"
+    },
+    {
+      "id": "fsc-seed-1",
+      "title": "Flash Sale Discounts",
+      "subtitle": "Limited stock discounts on selected customer favourites",
+      "bannerUrl": "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=1200&auto=format&fit=crop&q=80",
+      "startDate": "2026-10-15T05:08:38.313Z",
+      "endDate": "2026-10-18T07:08:38.313Z",
+      "status": "ACTIVE",
+      "isActive": true,
+      "items": [
+        {
+          "id": "fsi-1",
+          "campaignId": "fsc-seed-1",
+          "productId": "prod-1",
+          "flashPrice": 1199,
+          "originalPrice": 1850,
+          "allocatedStock": 30,
+          "soldCount": 22,
+          "sortOrder": 1
+        },
+        {
+          "id": "fsi-2",
+          "campaignId": "fsc-seed-1",
+          "productId": "prod-6",
+          "flashPrice": 750,
+          "originalPrice": 950,
+          "allocatedStock": 25,
+          "soldCount": 16,
+          "sortOrder": 2
+        },
+        {
+          "id": "fsi-3",
+          "campaignId": "fsc-seed-1",
+          "productId": "prod-2",
+          "flashPrice": 799,
+          "originalPrice": 1250,
+          "allocatedStock": 20,
+          "soldCount": 14,
+          "sortOrder": 3
+        },
+        {
+          "id": "fsi-4",
+          "campaignId": "fsc-seed-1",
+          "productId": "prod-4",
+          "flashPrice": 1599,
+          "originalPrice": 2450,
+          "allocatedStock": 15,
+          "soldCount": 11,
+          "sortOrder": 4
+        }
+      ],
+      "createdAt": "2026-10-15T07:08:38.313Z",
+      "updatedAt": "2026-10-15T07:08:38.313Z"
+    }
+  ]
 }

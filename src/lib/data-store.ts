@@ -31,6 +31,7 @@ interface GlobalMemoryStore {
   rewards?: Record<string, any>;
   fraudBlacklist?: string[];
   fraudWhitelist?: string[];
+  flashSaleCampaigns?: any[];
 }
 
 export function saveStoreToDisk() {
@@ -144,6 +145,66 @@ function getStore(): GlobalMemoryStore {
   }
   if (!Array.isArray(currentStore.fraudWhitelist)) {
     currentStore.fraudWhitelist = [];
+  }
+  if (!Array.isArray(currentStore.flashSaleCampaigns) || currentStore.flashSaleCampaigns.length === 0) {
+    const now = new Date();
+    const threeDaysLater = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+    currentStore.flashSaleCampaigns = [
+      {
+        id: 'fsc-seed-1',
+        title: 'Flash Sale Discounts',
+        subtitle: 'Limited stock discounts on selected customer favourites',
+        bannerUrl: 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=1200&auto=format&fit=crop&q=80',
+        startDate: new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString(),
+        endDate: threeDaysLater.toISOString(),
+        status: 'ACTIVE',
+        isActive: true,
+        items: [
+          {
+            id: 'fsi-1',
+            campaignId: 'fsc-seed-1',
+            productId: 'prod-1',
+            flashPrice: 1199,
+            originalPrice: 1850,
+            allocatedStock: 30,
+            soldCount: 18,
+            sortOrder: 1,
+          },
+          {
+            id: 'fsi-2',
+            campaignId: 'fsc-seed-1',
+            productId: 'prod-6',
+            flashPrice: 750,
+            originalPrice: 950,
+            allocatedStock: 25,
+            soldCount: 16,
+            sortOrder: 2,
+          },
+          {
+            id: 'fsi-3',
+            campaignId: 'fsc-seed-1',
+            productId: 'prod-2',
+            flashPrice: 799,
+            originalPrice: 1250,
+            allocatedStock: 20,
+            soldCount: 14,
+            sortOrder: 3,
+          },
+          {
+            id: 'fsi-4',
+            campaignId: 'fsc-seed-1',
+            productId: 'prod-4',
+            flashPrice: 1599,
+            originalPrice: 2450,
+            allocatedStock: 15,
+            soldCount: 11,
+            sortOrder: 4,
+          },
+        ],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+    ];
   }
   if (!Array.isArray(currentStore.reviews) || currentStore.reviews.length === 0) {
     currentStore.reviews = [
@@ -1914,9 +1975,20 @@ export async function createOrder(data: {
       }
     }
 
-    const unitPrice = (matchedVariant && matchedVariant.price != null && Number(matchedVariant.price) > 0)
+    // Authoritative Flash Sale deal resolution
+    const flashDeal = await getFlashSaleProductDeal(product.id);
+    let isFlash = false;
+    let flashCampaignId: string | null = null;
+    let unitPrice = (matchedVariant && matchedVariant.price != null && Number(matchedVariant.price) > 0)
       ? Number(matchedVariant.price)
       : (product.salePrice || product.sellingPrice);
+
+    if (flashDeal && flashDeal.remainingStock >= itemReq.quantity) {
+      isFlash = true;
+      flashCampaignId = flashDeal.campaignId;
+      unitPrice = flashDeal.flashPrice;
+    }
+
     const purchaseCost = product.purchaseCost || 0;
     lineItems.push({
       productId: product.id,
@@ -1928,6 +2000,8 @@ export async function createOrder(data: {
       purchaseCost,
       quantity: itemReq.quantity,
       totalPrice: unitPrice * itemReq.quantity,
+      isFlashSale: isFlash,
+      flashCampaignId,
     });
   }
 
@@ -2177,6 +2251,13 @@ export async function createOrder(data: {
     }
   }
 
+  // Deduct flash sale allocated stock if applicable
+  for (const item of lineItems) {
+    if (item.isFlashSale && item.flashCampaignId) {
+      await recordFlashSalePurchase(item.flashCampaignId, item.productId, item.quantity);
+    }
+  }
+
   // Queue Telegram Outbox notification
   await queueNotification('NEW_ORDER', {
     orderNumber,
@@ -2197,6 +2278,17 @@ export async function createOrder(data: {
     pushOrderToGoogleSheets(savedOrder).catch((e: any) => console.warn('[SHEETS_SYNC_BG_WARN]', e));
   } catch {
     // ignore non-critical sync
+  }
+
+  // Increment flash sale item soldCount for any flash deals
+  for (const item of lineItems) {
+    if (item.isFlashSale && item.flashCampaignId) {
+      try {
+        await recordFlashSalePurchase(item.flashCampaignId, item.productId, item.quantity);
+      } catch (err) {
+        console.warn('[RECORD_FLASH_SALE_PURCHASE_FAIL]', err);
+      }
+    }
   }
 
   return savedOrder;
@@ -2304,6 +2396,10 @@ export async function updateOrderStatus(orderId: string, status: string, notes?:
                 },
               });
             }
+
+            if ((item as any).isFlashSale && (item as any).flashCampaignId) {
+              await restoreFlashSaleStock((item as any).flashCampaignId, item.productId, item.quantity);
+            }
           }
         }
 
@@ -2354,6 +2450,10 @@ export async function updateOrderStatus(orderId: string, status: string, notes?:
             createdAt: new Date(),
           });
         }
+
+        if ((item as any).isFlashSale && (item as any).flashCampaignId) {
+          await restoreFlashSaleStock((item as any).flashCampaignId, item.productId, item.quantity);
+        }
       }
 
       // Refund redeemed points back to customer balance
@@ -2381,6 +2481,19 @@ export async function updateOrderStatus(orderId: string, status: string, notes?:
           ord.rewardPointsCredited = false;
         } catch (e) {
           console.warn('[REWARD_POINTS_CANCEL_REVERSAL_FAIL]', e);
+        }
+      }
+
+      // Restore flash sale stock if order included flash sale deals
+      if (Array.isArray(ord.items)) {
+        for (const item of ord.items) {
+          if (item.isFlashSale && item.flashCampaignId) {
+            try {
+              await restoreFlashSaleStock(item.flashCampaignId, item.productId, item.quantity);
+            } catch (err) {
+              console.warn('[FLASH_SALE_CANCEL_RESTORE_FAIL]', err);
+            }
+          }
         }
       }
     }
@@ -3458,5 +3571,575 @@ export async function removeWhitelistedPhone(phone: string): Promise<string[]> {
   saveStoreToDisk();
   return store.fraudWhitelist || [];
 }
+
+// ==========================================
+// FLASH SALE MANAGEMENT REPOSITORY
+// ==========================================
+
+export interface FlashSaleItemData {
+  id: string;
+  campaignId: string;
+  productId: string;
+  flashPrice: number;
+  originalPrice: number;
+  allocatedStock: number;
+  soldCount: number;
+  sortOrder?: number;
+  remainingStock?: number;
+  isSoldOut?: boolean;
+  discountPercent?: number;
+  product?: any;
+}
+
+export interface FlashSaleCampaignData {
+  id: string;
+  title: string;
+  subtitle?: string | null;
+  bannerUrl?: string | null;
+  startDate: string;
+  endDate: string;
+  status: 'SCHEDULED' | 'ACTIVE' | 'ENDED' | 'CANCELLED';
+  isActive: boolean;
+  items: FlashSaleItemData[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export function computeAuthoritativeCampaignStatus(
+  campaign: { startDate: string | Date; endDate: string | Date; status?: string; isActive?: boolean },
+  nowMs: number = Date.now()
+): 'SCHEDULED' | 'ACTIVE' | 'ENDED' | 'CANCELLED' {
+  if (campaign.status === 'CANCELLED' || campaign.isActive === false) {
+    return 'CANCELLED';
+  }
+  const startMs = new Date(campaign.startDate).getTime();
+  const endMs = new Date(campaign.endDate).getTime();
+  if (nowMs < startMs) {
+    return 'SCHEDULED';
+  }
+  if (nowMs >= startMs && nowMs <= endMs) {
+    return 'ACTIVE';
+  }
+  return 'ENDED';
+}
+
+export async function getActiveFlashSaleCampaign(): Promise<{
+  campaign: FlashSaleCampaignData | null;
+  serverTime: string;
+  secondsRemaining: number;
+}> {
+  const now = new Date();
+  const nowIso = now.toISOString();
+  const nowMs = now.getTime();
+
+  const isConnected = await isDatabaseConnected();
+  if (isConnected) {
+    try {
+      const activePrisma = await (prisma as any).flashSaleCampaign.findFirst({
+        where: {
+          isActive: true,
+          status: { in: ['ACTIVE', 'SCHEDULED'] },
+          startDate: { lte: now },
+          endDate: { gte: now },
+        },
+        include: {
+          items: {
+            include: {
+              product: {
+                include: {
+                  images: { orderBy: { sortOrder: 'asc' } },
+                  category: true,
+                },
+              },
+            },
+            orderBy: { sortOrder: 'asc' },
+          },
+        },
+        orderBy: { startDate: 'desc' },
+      });
+
+      if (activePrisma) {
+        const computedStatus = computeAuthoritativeCampaignStatus(activePrisma, nowMs);
+        if (computedStatus === 'ACTIVE') {
+          const endMs = new Date(activePrisma.endDate).getTime();
+          const mappedItems: FlashSaleItemData[] = activePrisma.items.map((it: any) => {
+            const prod = it.product;
+            const originalPrice = Number(it.originalPrice || prod.sellingPrice);
+            const flashPrice = Number(it.flashPrice);
+            const allocatedStock = Number(it.allocatedStock);
+            const soldCount = Number(it.soldCount || 0);
+            const remainingStock = Math.max(0, allocatedStock - soldCount);
+            const discountPercent = originalPrice > 0 ? Math.round(((originalPrice - flashPrice) / originalPrice) * 100) : 0;
+            return {
+              id: it.id,
+              campaignId: it.campaignId,
+              productId: it.productId,
+              flashPrice,
+              originalPrice,
+              allocatedStock,
+              soldCount,
+              sortOrder: it.sortOrder,
+              remainingStock,
+              isSoldOut: soldCount >= allocatedStock || prod.stockQuantity <= 0,
+              discountPercent,
+              product: {
+                ...prod,
+                purchaseCost: Number(prod.purchaseCost || 0),
+                sellingPrice: Number(prod.sellingPrice),
+                salePrice: prod.salePrice ? Number(prod.salePrice) : null,
+              },
+            };
+          });
+
+          return {
+            campaign: {
+              id: activePrisma.id,
+              title: activePrisma.title,
+              subtitle: activePrisma.subtitle,
+              bannerUrl: activePrisma.bannerUrl,
+              startDate: new Date(activePrisma.startDate).toISOString(),
+              endDate: new Date(activePrisma.endDate).toISOString(),
+              status: 'ACTIVE',
+              isActive: true,
+              items: mappedItems,
+              createdAt: new Date(activePrisma.createdAt).toISOString(),
+              updatedAt: new Date(activePrisma.updatedAt).toISOString(),
+            },
+            serverTime: nowIso,
+            secondsRemaining: Math.max(0, Math.floor((endMs - nowMs) / 1000)),
+          };
+        }
+      }
+    } catch (e) {
+      console.warn('[PRISMA_ACTIVE_FLASH_SALE_FALLBACK]', e);
+    }
+  }
+
+  // In-memory fallback
+  const store = getStore();
+  const allCampaigns: FlashSaleCampaignData[] = store.flashSaleCampaigns || [];
+  const activeCampaign = allCampaigns.find((c) => {
+    const computed = computeAuthoritativeCampaignStatus(c, nowMs);
+    return computed === 'ACTIVE' && c.isActive !== false;
+  });
+
+  if (!activeCampaign) {
+    return {
+      campaign: null,
+      serverTime: nowIso,
+      secondsRemaining: 0,
+    };
+  }
+
+  const endMs = new Date(activeCampaign.endDate).getTime();
+  const allProds = await getProducts();
+
+  const mappedItems: FlashSaleItemData[] = (activeCampaign.items || []).map((it) => {
+    const prod = allProds.find((p: any) => p.id === it.productId) || {
+      id: it.productId,
+      name: 'Flash Sale Product',
+      stockQuantity: 10,
+      images: [],
+    };
+    const originalPrice = Number(it.originalPrice || prod.sellingPrice || 1000);
+    const flashPrice = Number(it.flashPrice);
+    const allocatedStock = Number(it.allocatedStock);
+    const soldCount = Number(it.soldCount || 0);
+    const remainingStock = Math.max(0, allocatedStock - soldCount);
+    const discountPercent = originalPrice > 0 ? Math.round(((originalPrice - flashPrice) / originalPrice) * 100) : 0;
+
+    return {
+      ...it,
+      flashPrice,
+      originalPrice,
+      allocatedStock,
+      soldCount,
+      remainingStock,
+      isSoldOut: soldCount >= allocatedStock || Number(prod.stockQuantity) <= 0,
+      discountPercent,
+      product: prod,
+    };
+  });
+
+  return {
+    campaign: {
+      ...activeCampaign,
+      status: 'ACTIVE',
+      items: mappedItems,
+    },
+    serverTime: nowIso,
+    secondsRemaining: Math.max(0, Math.floor((endMs - nowMs) / 1000)),
+  };
+}
+
+export async function getFlashSaleProductDeal(productId: string): Promise<{
+  isFlashSale: boolean;
+  campaignId: string;
+  flashPrice: number;
+  originalPrice: number;
+  remainingStock: number;
+  discountPercent: number;
+} | null> {
+  const { campaign } = await getActiveFlashSaleCampaign();
+  if (!campaign || campaign.status !== 'ACTIVE') return null;
+
+  const item = (campaign.items || []).find((i) => i.productId === productId);
+  if (!item) return null;
+
+  const remaining = Math.max(0, item.allocatedStock - item.soldCount);
+  if (remaining <= 0) return null;
+
+  return {
+    isFlashSale: true,
+    campaignId: campaign.id,
+    flashPrice: Number(item.flashPrice),
+    originalPrice: Number(item.originalPrice),
+    remainingStock: remaining,
+    discountPercent: (item as any).discountPercent || Math.round(((item.originalPrice - item.flashPrice) / item.originalPrice) * 100),
+  };
+}
+
+export async function getAllFlashSaleCampaigns(): Promise<any[]> {
+  const nowMs = Date.now();
+  const isConnected = await isDatabaseConnected();
+  if (isConnected) {
+    try {
+      const campaigns = await (prisma as any).flashSaleCampaign.findMany({
+        include: {
+          items: {
+            include: {
+              product: {
+                select: { id: true, name: true, sku: true, sellingPrice: true, stockQuantity: true, images: true },
+              },
+            },
+            orderBy: { sortOrder: 'asc' },
+          },
+        },
+        orderBy: { createdAt: 'desc' },
+      });
+
+      return campaigns.map((c: any) => {
+        const computedStatus = computeAuthoritativeCampaignStatus(c, nowMs);
+        const totalAllocated = c.items.reduce((s: number, i: any) => s + (Number(i.allocatedStock) || 0), 0);
+        const totalSold = c.items.reduce((s: number, i: any) => s + (Number(i.soldCount) || 0), 0);
+        const totalRevenue = c.items.reduce(
+          (s: number, i: any) => s + (Number(i.soldCount) || 0) * (Number(i.flashPrice) || 0),
+          0
+        );
+        return {
+          ...c,
+          startDate: new Date(c.startDate).toISOString(),
+          endDate: new Date(c.endDate).toISOString(),
+          computedStatus,
+          totalAllocated,
+          totalSold,
+          totalRevenue,
+          items: c.items.map((i: any) => ({
+            ...i,
+            flashPrice: Number(i.flashPrice),
+            originalPrice: Number(i.originalPrice),
+            allocatedStock: Number(i.allocatedStock),
+            soldCount: Number(i.soldCount || 0),
+          })),
+        };
+      });
+    } catch (e) {
+      console.warn('[PRISMA_ALL_FLASH_SALE_FALLBACK]', e);
+    }
+  }
+
+  // In-memory fallback
+  const store = getStore();
+  const allCampaigns: FlashSaleCampaignData[] = store.flashSaleCampaigns || [];
+  const allProds = await getProducts();
+
+  return allCampaigns.map((c) => {
+    const computedStatus = computeAuthoritativeCampaignStatus(c, nowMs);
+    const totalAllocated = (c.items || []).reduce((s, i) => s + (Number(i.allocatedStock) || 0), 0);
+    const totalSold = (c.items || []).reduce((s, i) => s + (Number(i.soldCount) || 0), 0);
+    const totalRevenue = (c.items || []).reduce(
+      (s, i) => s + (Number(i.soldCount) || 0) * (Number(i.flashPrice) || 0),
+      0
+    );
+
+    const enrichedItems = (c.items || []).map((i) => {
+      const prod = allProds.find((p: any) => p.id === i.productId);
+      return {
+        ...i,
+        product: prod || { name: 'Product ' + i.productId },
+      };
+    });
+
+    return {
+      ...c,
+      computedStatus,
+      totalAllocated,
+      totalSold,
+      totalRevenue,
+      items: enrichedItems,
+    };
+  });
+}
+
+export async function createFlashSaleCampaign(data: {
+  title: string;
+  subtitle?: string;
+  bannerUrl?: string;
+  startDate: string;
+  endDate: string;
+  status?: 'SCHEDULED' | 'ACTIVE' | 'ENDED' | 'CANCELLED';
+  isActive?: boolean;
+  items: Array<{
+    productId: string;
+    flashPrice: number;
+    originalPrice?: number;
+    allocatedStock: number;
+  }>;
+}): Promise<any> {
+  const isConnected = await isDatabaseConnected();
+  const allProds = await getProducts();
+
+  if (isConnected) {
+    try {
+      const created = await (prisma as any).flashSaleCampaign.create({
+        data: {
+          title: data.title,
+          subtitle: data.subtitle || null,
+          bannerUrl: data.bannerUrl || null,
+          startDate: new Date(data.startDate),
+          endDate: new Date(data.endDate),
+          status: data.status || 'SCHEDULED',
+          isActive: data.isActive !== false,
+          items: {
+            create: data.items.map((i, idx) => {
+              const prod = allProds.find((p: any) => p.id === i.productId);
+              const orig = i.originalPrice || (prod ? Number(prod.sellingPrice) : Number(i.flashPrice));
+              return {
+                productId: i.productId,
+                flashPrice: Number(i.flashPrice),
+                originalPrice: orig,
+                allocatedStock: Number(i.allocatedStock) || 1,
+                soldCount: 0,
+                sortOrder: idx + 1,
+              };
+            }),
+          },
+        },
+        include: { items: true },
+      });
+      return created;
+    } catch (e) {
+      console.warn('[PRISMA_CREATE_FLASH_SALE_FALLBACK]', e);
+    }
+  }
+
+  // Memory fallback
+  const store = getStore();
+  if (!Array.isArray(store.flashSaleCampaigns)) store.flashSaleCampaigns = [];
+
+  const newId = `fsc-${Date.now()}`;
+  const campaignItems: FlashSaleItemData[] = data.items.map((i, idx) => {
+    const prod = allProds.find((p: any) => p.id === i.productId);
+    const orig = i.originalPrice || (prod ? Number(prod.sellingPrice) : Number(i.flashPrice));
+    return {
+      id: `fsi-${Date.now()}-${idx}`,
+      campaignId: newId,
+      productId: i.productId,
+      flashPrice: Number(i.flashPrice),
+      originalPrice: orig,
+      allocatedStock: Number(i.allocatedStock) || 1,
+      soldCount: 0,
+      sortOrder: idx + 1,
+    };
+  });
+
+  const newCampaign: FlashSaleCampaignData = {
+    id: newId,
+    title: data.title,
+    subtitle: data.subtitle || '',
+    bannerUrl: data.bannerUrl || '',
+    startDate: new Date(data.startDate).toISOString(),
+    endDate: new Date(data.endDate).toISOString(),
+    status: data.status || 'SCHEDULED',
+    isActive: data.isActive !== false,
+    items: campaignItems,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+
+  store.flashSaleCampaigns.unshift(newCampaign);
+  saveStoreToDisk();
+  return newCampaign;
+}
+
+export async function updateFlashSaleCampaign(
+  id: string,
+  data: Partial<{
+    title: string;
+    subtitle: string;
+    bannerUrl: string;
+    startDate: string;
+    endDate: string;
+    status: 'SCHEDULED' | 'ACTIVE' | 'ENDED' | 'CANCELLED';
+    isActive: boolean;
+    items: Array<{
+      productId: string;
+      flashPrice: number;
+      originalPrice?: number;
+      allocatedStock: number;
+      soldCount?: number;
+    }>;
+  }>
+): Promise<any> {
+  const isConnected = await isDatabaseConnected();
+  const allProds = await getProducts();
+
+  if (isConnected) {
+    try {
+      const updateData: any = {};
+      if (data.title !== undefined) updateData.title = data.title;
+      if (data.subtitle !== undefined) updateData.subtitle = data.subtitle;
+      if (data.bannerUrl !== undefined) updateData.bannerUrl = data.bannerUrl;
+      if (data.startDate !== undefined) updateData.startDate = new Date(data.startDate);
+      if (data.endDate !== undefined) updateData.endDate = new Date(data.endDate);
+      if (data.status !== undefined) updateData.status = data.status;
+      if (data.isActive !== undefined) updateData.isActive = data.isActive;
+
+      if (Array.isArray(data.items)) {
+        await (prisma as any).flashSaleItem.deleteMany({ where: { campaignId: id } });
+        updateData.items = {
+          create: data.items.map((i, idx) => {
+            const prod = allProds.find((p: any) => p.id === i.productId);
+            const orig = i.originalPrice || (prod ? Number(prod.sellingPrice) : Number(i.flashPrice));
+            return {
+              productId: i.productId,
+              flashPrice: Number(i.flashPrice),
+              originalPrice: orig,
+              allocatedStock: Number(i.allocatedStock) || 1,
+              soldCount: Number(i.soldCount || 0),
+              sortOrder: idx + 1,
+            };
+          }),
+        };
+      }
+
+      return await (prisma as any).flashSaleCampaign.update({
+        where: { id },
+        data: updateData,
+        include: { items: true },
+      });
+    } catch (e) {
+      console.warn('[PRISMA_UPDATE_FLASH_SALE_FALLBACK]', e);
+    }
+  }
+
+  // Memory fallback
+  const store = getStore();
+  if (!Array.isArray(store.flashSaleCampaigns)) store.flashSaleCampaigns = [];
+  const campaign = store.flashSaleCampaigns.find((c) => c.id === id);
+  if (!campaign) throw new Error('Flash sale campaign not found');
+
+  if (data.title !== undefined) campaign.title = data.title;
+  if (data.subtitle !== undefined) campaign.subtitle = data.subtitle;
+  if (data.bannerUrl !== undefined) campaign.bannerUrl = data.bannerUrl;
+  if (data.startDate !== undefined) campaign.startDate = new Date(data.startDate).toISOString();
+  if (data.endDate !== undefined) campaign.endDate = new Date(data.endDate).toISOString();
+  if (data.status !== undefined) campaign.status = data.status;
+  if (data.isActive !== undefined) campaign.isActive = data.isActive;
+
+  if (Array.isArray(data.items)) {
+    campaign.items = data.items.map((i, idx) => {
+      const prod = allProds.find((p: any) => p.id === i.productId);
+      const orig = i.originalPrice || (prod ? Number(prod.sellingPrice) : Number(i.flashPrice));
+      const existing = (campaign.items || []).find((old: any) => old.productId === i.productId);
+      return {
+        id: existing?.id || `fsi-${Date.now()}-${idx}`,
+        campaignId: campaign.id,
+        productId: i.productId,
+        flashPrice: Number(i.flashPrice),
+        originalPrice: orig,
+        allocatedStock: Number(i.allocatedStock) || 1,
+        soldCount: i.soldCount !== undefined ? Number(i.soldCount) : (existing?.soldCount || 0),
+        sortOrder: idx + 1,
+      };
+    });
+  }
+  campaign.updatedAt = new Date().toISOString();
+  saveStoreToDisk();
+  return campaign;
+}
+
+export async function deleteFlashSaleCampaign(id: string): Promise<boolean> {
+  const isConnected = await isDatabaseConnected();
+  if (isConnected) {
+    try {
+      await (prisma as any).flashSaleCampaign.delete({ where: { id } });
+      return true;
+    } catch (e) {
+      console.warn('[PRISMA_DELETE_FLASH_SALE_FALLBACK]', e);
+    }
+  }
+
+  const store = getStore();
+  if (Array.isArray(store.flashSaleCampaigns)) {
+    store.flashSaleCampaigns = store.flashSaleCampaigns.filter((c) => c.id !== id);
+    saveStoreToDisk();
+  }
+  return true;
+}
+
+export async function recordFlashSalePurchase(campaignId: string, productId: string, quantity: number): Promise<void> {
+  const isConnected = await isDatabaseConnected();
+  if (isConnected) {
+    try {
+      await (prisma as any).flashSaleItem.updateMany({
+        where: { campaignId, productId },
+        data: { soldCount: { increment: quantity } },
+      });
+      return;
+    } catch (e) {
+      console.warn('[PRISMA_RECORD_FLASH_SALE_PURCHASE_FALLBACK]', e);
+    }
+  }
+
+  const store = getStore();
+  const campaign = (store.flashSaleCampaigns || []).find((c) => c.id === campaignId);
+  if (campaign && Array.isArray(campaign.items)) {
+    const item = campaign.items.find((i: any) => i.productId === productId);
+    if (item) {
+      item.soldCount = (Number(item.soldCount) || 0) + quantity;
+      saveStoreToDisk();
+    }
+  }
+}
+
+export async function restoreFlashSaleStock(campaignId: string, productId: string, quantity: number): Promise<void> {
+  const isConnected = await isDatabaseConnected();
+  if (isConnected) {
+    try {
+      const item = await (prisma as any).flashSaleItem.findFirst({ where: { campaignId, productId } });
+      if (item) {
+        await (prisma as any).flashSaleItem.update({
+          where: { id: item.id },
+          data: { soldCount: Math.max(0, item.soldCount - quantity) },
+        });
+      }
+      return;
+    } catch (e) {
+      console.warn('[PRISMA_RESTORE_FLASH_SALE_STOCK_FALLBACK]', e);
+    }
+  }
+
+  const store = getStore();
+  const campaign = (store.flashSaleCampaigns || []).find((c) => c.id === campaignId);
+  if (campaign && Array.isArray(campaign.items)) {
+    const item = campaign.items.find((i: any) => i.productId === productId);
+    if (item) {
+      item.soldCount = Math.max(0, (Number(item.soldCount) || 0) - quantity);
+      saveStoreToDisk();
+    }
+  }
+}
+
 
 
