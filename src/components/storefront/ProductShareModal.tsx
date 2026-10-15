@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { X, Check, Copy, Share2, ExternalLink } from 'lucide-react';
+import { X, Check, Copy, Share2 } from 'lucide-react';
 import { formatBDT } from '@/lib/currency';
 
 interface ProductShareModalProps {
@@ -16,6 +16,155 @@ interface ProductShareModalProps {
     images?: Array<{ url: string } | string>;
     category?: { name: string };
   };
+}
+
+// 1. Official WhatsApp App Icon
+function WhatsAppIcon({ className = 'w-13 h-13' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 175.216 175.552" className={className}>
+      <defs>
+        <linearGradient id="wa-official-grad" x1="85.915" x2="86.535" y1="32.567" y2="137.092" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#57d163" />
+          <stop offset="1" stopColor="#23b33a" />
+        </linearGradient>
+      </defs>
+      {/* Outer White Border Silhouette */}
+      <path
+        fill="#FFFFFF"
+        d="m12.966 161.238 10.439-38.114a73.42 73.42 0 0 1-9.821-36.772c.017-40.556 33.021-73.55 73.578-73.55 19.681.01 38.154 7.669 52.047 21.572s21.537 32.383 21.53 52.037c-.018 40.553-33.027 73.553-73.578 73.553h-.032c-12.313-.005-24.412-3.094-35.159-8.954z"
+      />
+      {/* Green Badge */}
+      <path
+        fill="url(#wa-official-grad)"
+        d="M87.184 25.227c-33.733 0-61.166 27.423-61.178 61.13a60.98 60.98 0 0 0 9.349 32.535l1.455 2.313-6.179 22.558 23.146-6.069 2.235 1.324c9.387 5.571 20.15 8.517 31.126 8.523h.023c33.707 0 61.14-27.426 61.153-61.135a60.75 60.75 0 0 0-17.895-43.251 60.75 60.75 0 0 0-43.235-17.928z"
+      />
+      {/* White Phone Receiver */}
+      <path
+        fill="#FFFFFF"
+        fillRule="evenodd"
+        d="M68.772 55.603c-1.378-3.061-2.828-3.123-4.137-3.176l-3.524-.043c-1.226 0-3.218.46-4.902 2.3s-6.435 6.287-6.435 15.332 6.588 17.785 7.506 19.013 12.718 20.381 31.405 27.75c15.529 6.124 18.689 4.906 22.061 4.6s10.877-4.447 12.408-8.74 1.532-7.971 1.073-8.74-1.685-1.226-3.525-2.146-10.877-5.367-12.562-5.981-2.91-.919-4.137.921-4.746 5.979-5.819 7.206-2.144 1.381-3.984.462-7.76-2.861-14.784-9.124c-5.465-4.873-9.154-10.891-10.228-12.73s-.114-2.835.808-3.751c.825-.824 1.838-2.147 2.759-3.22s1.224-1.84 1.836-3.065.307-2.301-.153-3.22-4.032-10.011-5.666-13.647"
+      />
+    </svg>
+  );
+}
+
+// 2. Official Facebook App Icon
+function FacebookIcon({ className = 'w-13 h-13' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 40 40" className={className}>
+      <defs>
+        <linearGradient id="fb-official-grad" x1="0%" y1="100%" x2="0%" y2="0%">
+          <stop offset="0%" stopColor="#0062e0" />
+          <stop offset="1%" stopColor="#19afff" />
+        </linearGradient>
+      </defs>
+      <path
+        fill="url(#fb-official-grad)"
+        d="M16.7 39.8C7.2 38.1 0 29.9 0 20 0 9 9 0 20 0s20 9 20 20c0 9.9-7.2 18.1-16.7 19.8l-1.1-.9h-4.4l-1.1.9z"
+      />
+      <path
+        fill="#FFFFFF"
+        d="m27.8 25.6.9-5.6h-5.3v-3.9c0-1.6.6-2.8 3-2.8H29V8.2c-1.4-.2-3-.4-4.4-.4-4.6 0-7.8 2.8-7.8 7.8V20h-5v5.6h5v14.1c1.1.2 2.2.3 3.3.3 1.1 0 2.2-.1 3.3-.3V25.6h4.4z"
+      />
+    </svg>
+  );
+}
+
+// 3. Official Messenger App Icon
+function MessengerIcon({ className = 'w-13 h-13' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 800 800" className={className}>
+      <defs>
+        <radialGradient id="msg-official-grad" cx="20%" cy="100%" r="100%">
+          <stop offset="0%" stopColor="#0099ff" />
+          <stop offset="60%" stopColor="#a033ff" />
+          <stop offset="90%" stopColor="#ff5280" />
+          <stop offset="100%" stopColor="#ff7061" />
+        </radialGradient>
+      </defs>
+      <path
+        fill="url(#msg-official-grad)"
+        d="M400 0C174.7 0 0 165.1 0 388c0 116.6 47.8 217.4 125.6 287 6.5 5.8 10.5 14 10.7 22.8l2.2 71.2a32 32 0 0 0 44.9 28.3l79.4-35c6.7-3 14.3-3.5 21.4-1.6 36.5 10 75.3 15.4 115.8 15.4 225.3 0 400-165.1 400-388S625.3 0 400 0z"
+      />
+      <path
+        fill="#FFFFFF"
+        d="m159.8 501.5 117.5-186.4a60 60 0 0 1 86.8-16l93.5 70.1a24 24 0 0 0 28.9-.1l126.2-95.8c16.8-12.8 38.8 7.4 27.6 25.3L522.7 484.9a60 60 0 0 1-86.8 16l-93.5-70.1a24 24 0 0 0-28.9.1l-126.2 95.8c-16.8 12.8-38.8-7.3-27.5-25.2z"
+      />
+    </svg>
+  );
+}
+
+// 4. Official Telegram App Icon
+function TelegramIcon({ className = 'w-13 h-13' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 496 512" className={className}>
+      <defs>
+        <linearGradient id="tg-official-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#2AABEE" />
+          <stop offset="100%" stopColor="#229ED9" />
+        </linearGradient>
+      </defs>
+      <circle cx="248" cy="256" r="248" fill="url(#tg-official-grad)" />
+      <path
+        fill="#FFFFFF"
+        d="M362.952,176.66c-3.732,39.215-19.881,134.378-28.1,178.3-3.476,18.584-10.322,24.816-16.948,25.425-14.4,1.326-25.338-9.517-39.287-18.661-21.827-14.308-34.158-23.215-55.346-37.177-24.485-16.135-8.612-25,5.342-39.5,3.652-3.793,67.107-61.51,68.335-66.746.153-.655.3-3.1-1.154-4.384s-3.59-.849-5.135-.5q-3.283.746-104.608,69.142-14.845,10.194-26.894,9.934c-8.855-.191-25.888-5.006-38.551-9.123-15.531-5.048-27.875-7.717-26.8-16.291q.84-6.7,18.45-13.7,108.446-47.248,144.628-62.3c68.872-28.647,83.183-33.623,92.511-33.789,2.052-.034,6.639.474,9.61,2.885a10.452,10.452,0,0,1,3.53,6.716A43.765,43.765,0,0,1,362.952,176.66Z"
+      />
+    </svg>
+  );
+}
+
+// 5. Official Instagram App Icon
+function InstagramIcon({ className = 'w-13 h-13' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 512 512" className={className}>
+      <defs>
+        <radialGradient id="ig-official-grad" cx="20%" cy="115%" r="135%">
+          <stop offset="0%" stopColor="#FFDC80" />
+          <stop offset="10%" stopColor="#FCAF45" />
+          <stop offset="30%" stopColor="#F77737" />
+          <stop offset="50%" stopColor="#F56040" />
+          <stop offset="65%" stopColor="#FD1D1D" />
+          <stop offset="80%" stopColor="#E1306C" />
+          <stop offset="90%" stopColor="#C13584" />
+          <stop offset="100%" stopColor="#833AB4" />
+        </radialGradient>
+      </defs>
+      <rect x="0" y="0" width="512" height="512" rx="120" fill="url(#ig-official-grad)" />
+      {/* Camera Outer Rounded Box */}
+      <rect
+        x="96"
+        y="96"
+        width="320"
+        height="320"
+        rx="80"
+        fill="none"
+        stroke="#FFFFFF"
+        strokeWidth="38"
+      />
+      {/* Center Lens Circle */}
+      <circle
+        cx="256"
+        cy="256"
+        r="78"
+        fill="none"
+        stroke="#FFFFFF"
+        strokeWidth="38"
+      />
+      {/* Flash Dot */}
+      <circle cx="346" cy="166" r="22" fill="#FFFFFF" />
+    </svg>
+  );
+}
+
+// 6. Native Share / More Apps Icon
+function MoreAppsIcon({ className = 'w-13 h-13' }: { className?: string }) {
+  return (
+    <div
+      className={`${className} rounded-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 text-white flex items-center justify-center shadow-md`}
+    >
+      <Share2 className="w-6 h-6 text-white stroke-[2.2]" />
+    </div>
+  );
 }
 
 export default function ProductShareModal({
@@ -199,13 +348,13 @@ export default function ProductShareModal({
 
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-200/60">
               <Share2 className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="font-black text-slate-900 text-sm">Share Product</h3>
-              <p className="text-[11px] text-slate-500">Spread the word with friends & family</p>
+              <h3 className="font-black text-slate-900 text-sm tracking-tight">Share Product</h3>
+              <p className="text-[11px] text-slate-500">Share with friends on your favorite app</p>
             </div>
           </div>
           <button
@@ -248,100 +397,88 @@ export default function ProductShareModal({
             </div>
           </div>
 
-          {/* Social Platforms Grid */}
+          {/* Social Platforms Grid - Balanced 3x2 on mobile, 6 on desktop */}
           <div>
             <span className="block text-[11px] font-bold text-slate-500 mb-3 uppercase tracking-wider">
               Share To Social Platforms
             </span>
-            <div className="grid grid-cols-4 sm:grid-cols-5 gap-3">
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-3.5 sm:gap-2">
               {/* WhatsApp */}
               <button
                 type="button"
                 onClick={handleWhatsApp}
-                className="flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-slate-50 transition group"
+                className="flex flex-col items-center gap-2 p-2 rounded-2xl hover:bg-slate-50 transition group cursor-pointer"
               >
-                <div className="w-12 h-12 rounded-2xl bg-[#25D366] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
-                  <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
-                    <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.698c.99.54 1.802.825 2.796.825 3.183 0 5.768-2.586 5.769-5.766 0-3.18-2.586-5.768-5.769-5.768zm4.49 8.219c-.19.53-1.09.98-1.51 1.02-.41.04-.92.05-2.8-0.69-2.31-.91-3.79-3.23-3.9-3.38-.11-.15-.94-1.25-.94-2.39 0-1.13.59-1.69.8-1.92.21-.23.46-.29.61-.29.15 0 .31 0 .44.01.14.01.32-.05.5.38.19.45.64 1.56.7 1.68.06.12.1.26.02.42-.08.16-.12.26-.24.4-.12.14-.25.31-.36.42-.12.12-.24.25-.1.49.14.24.62 1.02 1.33 1.65.91.81 1.68 1.06 1.92 1.18.24.12.38.1.52-.06.14-.16.61-.71.77-.95.16-.24.32-.2.53-.12.21.08 1.34.63 1.57.75.23.12.38.18.44.28.06.1.06.58-.13 1.11z" />
-                  </svg>
+                <div className="w-13 h-13 flex items-center justify-center group-hover:scale-110 active:scale-95 transition-all duration-200 drop-shadow-md group-hover:drop-shadow-lg">
+                  <WhatsAppIcon className="w-full h-full" />
                 </div>
-                <span className="text-[11px] font-semibold text-slate-700">WhatsApp</span>
+                <span className="text-xs font-semibold text-slate-700 group-hover:text-slate-950">WhatsApp</span>
               </button>
 
               {/* Facebook */}
               <button
                 type="button"
                 onClick={handleFacebook}
-                className="flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-slate-50 transition group"
+                className="flex flex-col items-center gap-2 p-2 rounded-2xl hover:bg-slate-50 transition group cursor-pointer"
               >
-                <div className="w-12 h-12 rounded-2xl bg-[#1877F2] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
-                  <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
-                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                  </svg>
+                <div className="w-13 h-13 flex items-center justify-center group-hover:scale-110 active:scale-95 transition-all duration-200 drop-shadow-md group-hover:drop-shadow-lg">
+                  <FacebookIcon className="w-full h-full" />
                 </div>
-                <span className="text-[11px] font-semibold text-slate-700">Facebook</span>
+                <span className="text-xs font-semibold text-slate-700 group-hover:text-slate-950">Facebook</span>
               </button>
 
               {/* Messenger */}
               <button
                 type="button"
                 onClick={handleMessenger}
-                className="flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-slate-50 transition group"
+                className="flex flex-col items-center gap-2 p-2 rounded-2xl hover:bg-slate-50 transition group cursor-pointer"
               >
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#0084FF] via-[#00C6FF] to-[#0078FF] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
-                  <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
-                    <path d="M12 0C5.373 0 0 4.974 0 11.111c0 3.498 1.744 6.614 4.469 8.654V24l4.088-2.242c1.082.3 2.23.464 3.443.464 6.627 0 12-4.975 12-11.111C24 4.974 18.627 0 12 0zm1.191 14.963l-3.055-3.26-5.963 3.26 6.559-6.963 3.13 3.259 5.889-3.259-6.56 6.963z" />
-                  </svg>
+                <div className="w-13 h-13 flex items-center justify-center group-hover:scale-110 active:scale-95 transition-all duration-200 drop-shadow-md group-hover:drop-shadow-lg">
+                  <MessengerIcon className="w-full h-full" />
                 </div>
-                <span className="text-[11px] font-semibold text-slate-700">Messenger</span>
+                <span className="text-xs font-semibold text-slate-700 group-hover:text-slate-950">Messenger</span>
               </button>
 
               {/* Telegram */}
               <button
                 type="button"
                 onClick={handleTelegram}
-                className="flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-slate-50 transition group"
+                className="flex flex-col items-center gap-2 p-2 rounded-2xl hover:bg-slate-50 transition group cursor-pointer"
               >
-                <div className="w-12 h-12 rounded-2xl bg-[#229ED9] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
-                  <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
-                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18.784-1.293 5.485-1.856 7.915-.238 1.028-.62 1.371-.986 1.405-.796.073-1.401-.527-2.172-1.033-1.206-.791-1.887-1.283-3.056-2.053-1.35-.89-.475-1.379.295-2.178.201-.209 3.7-3.39 3.768-3.68.009-.036.017-.17-.063-.241-.08-.071-.198-.047-.283-.028-.121.027-2.046 1.3-5.776 3.818-.546.375-1.04.558-1.482.548-.487-.01-1.424-.275-2.12-.501-.853-.277-1.532-.424-1.473-.895.031-.245.368-.496 1.011-.754 3.96-1.724 6.603-2.862 7.928-3.414 3.774-1.571 4.56-1.844 5.07-1.853.112-.002.364.026.527.158.138.112.176.262.194.368.018.106.04.34.022.525z" />
-                  </svg>
+                <div className="w-13 h-13 flex items-center justify-center group-hover:scale-110 active:scale-95 transition-all duration-200 drop-shadow-md group-hover:drop-shadow-lg">
+                  <TelegramIcon className="w-full h-full" />
                 </div>
-                <span className="text-[11px] font-semibold text-slate-700">Telegram</span>
+                <span className="text-xs font-semibold text-slate-700 group-hover:text-slate-950">Telegram</span>
               </button>
 
               {/* Instagram */}
               <button
                 type="button"
                 onClick={handleInstagram}
-                className="flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-slate-50 transition group"
+                className="flex flex-col items-center gap-2 p-2 rounded-2xl hover:bg-slate-50 transition group cursor-pointer"
               >
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#F58529] via-[#DD2A7B] to-[#8134AF] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
-                  <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
-                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-                  </svg>
+                <div className="w-13 h-13 flex items-center justify-center group-hover:scale-110 active:scale-95 transition-all duration-200 drop-shadow-md group-hover:drop-shadow-lg">
+                  <InstagramIcon className="w-full h-full" />
                 </div>
-                <span className="text-[11px] font-semibold text-slate-700">Instagram</span>
+                <span className="text-xs font-semibold text-slate-700 group-hover:text-slate-950">Instagram</span>
               </button>
 
-              {/* Native Share on Supported Devices */}
-              {canNativeShare && (
-                <button
-                  type="button"
-                  onClick={handleNativeShare}
-                  className="flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-slate-50 transition group"
-                >
-                  <div className="w-12 h-12 rounded-2xl bg-slate-900 text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
-                    <Share2 className="w-5 h-5" />
-                  </div>
-                  <span className="text-[11px] font-semibold text-slate-700">More Apps</span>
-                </button>
-              )}
+              {/* More Apps (Native Share) */}
+              <button
+                type="button"
+                onClick={handleNativeShare}
+                className="flex flex-col items-center gap-2 p-2 rounded-2xl hover:bg-slate-50 transition group cursor-pointer"
+              >
+                <div className="w-13 h-13 flex items-center justify-center group-hover:scale-110 active:scale-95 transition-all duration-200 drop-shadow-md group-hover:drop-shadow-lg">
+                  <MoreAppsIcon className="w-full h-full" />
+                </div>
+                <span className="text-xs font-semibold text-slate-700 group-hover:text-slate-950">More Apps</span>
+              </button>
             </div>
           </div>
 
           {/* Copy Link Input Bar */}
-          <div className="space-y-1.5">
+          <div className="space-y-1.5 pt-1 border-t border-slate-100">
             <span className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">
               Or Copy Direct Link
             </span>
@@ -364,12 +501,12 @@ export default function ProductShareModal({
               >
                 {copied ? (
                   <>
-                    <Check className="w-3.5 h-3.5" />
+                    <Check className="w-3.5 h-3.5 stroke-[2.5]" />
                     <span>Copied!</span>
                   </>
                 ) : (
                   <>
-                    <Copy className="w-3.5 h-3.5" />
+                    <Copy className="w-3.5 h-3.5 stroke-[2.5]" />
                     <span>Copy Link</span>
                   </>
                 )}
@@ -379,15 +516,12 @@ export default function ProductShareModal({
 
           {/* Feedback Toast Banner */}
           {toastMessage && (
-            <div className="p-3 bg-slate-900 text-white text-xs font-bold rounded-2xl flex items-center justify-between gap-2 shadow-lg animate-in fade-in slide-in-from-bottom-2 duration-150">
-              <div className="flex items-center gap-2">
-                <Check className="w-4 h-4 text-emerald-400" />
-                <span>{toastMessage}</span>
-              </div>
+            <div className="p-3 bg-slate-900 text-white text-xs font-medium rounded-xl flex items-center justify-between shadow-lg animate-in fade-in slide-in-from-bottom-2 duration-150">
+              <span>{toastMessage}</span>
               <button
                 type="button"
                 onClick={() => setToastMessage(null)}
-                className="text-slate-400 hover:text-white"
+                className="text-slate-400 hover:text-white ml-2"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
