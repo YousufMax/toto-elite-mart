@@ -39,6 +39,13 @@ export interface StoreSettings {
   reviewAutoApprove: boolean;
   reviewAllowImages?: boolean;
   reviewMinCharacters?: number;
+  rewardPointsEnabled?: boolean;
+  rewardPointsEarnRate?: number;
+  rewardPointValueBdt?: number;
+  rewardMinRedeemPoints?: number;
+  fraudDetectionEnabled?: boolean;
+  fraudMaxCodAmount?: number;
+  fraudHighRiskAdvanceFeeRequired?: boolean;
 }
 
 interface CartContextType {

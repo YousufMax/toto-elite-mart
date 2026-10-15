@@ -357,15 +357,25 @@ export default function ProductCard({ product }: ProductCardProps) {
 
       {/* Pricing & Dual Action Buttons */}
       <div className="p-3.5 sm:p-4 pt-0 space-y-2.5">
-        <div className="flex items-baseline gap-2">
-          <span className="font-price text-base sm:text-lg font-black text-slate-950 tracking-tight">
-            {hasVariableVariantPricing
-              ? `From ${formatBDT(minVariantPrice!)}`
-              : formatBDT(currentPrice)}
-          </span>
-          {hasDiscount && compareAtPrice && (
-            <span className="font-price text-[11px] sm:text-xs text-slate-400 line-through font-medium">
-              {formatBDT(compareAtPrice)}
+        <div className="flex items-center justify-between gap-1 flex-wrap">
+          <div className="flex items-baseline gap-2">
+            <span className="font-price text-base sm:text-lg font-black text-slate-950 tracking-tight">
+              {hasVariableVariantPricing
+                ? `From ${formatBDT(minVariantPrice!)}`
+                : formatBDT(currentPrice)}
+            </span>
+            {hasDiscount && compareAtPrice && (
+              <span className="font-price text-[11px] sm:text-xs text-slate-400 line-through font-medium">
+                {formatBDT(compareAtPrice)}
+              </span>
+            )}
+          </div>
+
+          {/* Elite Reward Points Cashback Chip */}
+          {storeSettings?.rewardPointsEnabled !== false && (
+            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200/80 px-2 py-0.5 rounded-md shrink-0">
+              <span>🪙</span>
+              <span>+{Math.max(1, Math.floor(currentPrice / (storeSettings?.rewardPointsEarnRate || 100)))} pts</span>
             </span>
           )}
         </div>

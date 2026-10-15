@@ -11,6 +11,7 @@ import {
 import { calculateOrderTotals } from './currency';
 import { queueNotification } from './telegram';
 import { logAudit } from './audit';
+import { normalizeBdPhone } from './fraud-engine';
 
 const STORE_FILE = path.join(process.cwd(), 'data', 'local-store.json');
 
@@ -27,6 +28,9 @@ interface GlobalMemoryStore {
   users: any[];
   settings?: Record<string, any>;
   reviews?: any[];
+  rewards?: Record<string, any>;
+  fraudBlacklist?: string[];
+  fraudWhitelist?: string[];
 }
 
 export function saveStoreToDisk() {
@@ -128,14 +132,18 @@ function getStore(): GlobalMemoryStore {
 
   const currentStore = (globalThis as any).__totoGlobalMemoryStore;
   if (!currentStore.settings) {
-    currentStore.settings = {
-      freeDeliveryEnabled: true,
-      freeDeliveryThreshold: 1500,
-      freeDeliveryBannerText: 'Add ৳{remaining} more for FREE Delivery! 🚚',
-      freeDeliveryUnlockedText: '🎉 You have unlocked FREE Delivery!',
-      cardStepperEnabled: true,
-      reviewAutoApprove: true,
-    };
+    currentStore.settings = { ...DEFAULT_STORE_SETTINGS };
+  } else {
+    currentStore.settings = { ...DEFAULT_STORE_SETTINGS, ...currentStore.settings };
+  }
+  if (!currentStore.rewards) {
+    currentStore.rewards = {};
+  }
+  if (!Array.isArray(currentStore.fraudBlacklist)) {
+    currentStore.fraudBlacklist = [];
+  }
+  if (!Array.isArray(currentStore.fraudWhitelist)) {
+    currentStore.fraudWhitelist = [];
   }
   if (!Array.isArray(currentStore.reviews) || currentStore.reviews.length === 0) {
     currentStore.reviews = [
@@ -1844,6 +1852,11 @@ export async function createOrder(data: {
   paymentMethod: 'COD' | 'BKASH' | 'NAGAD' | 'ROCKET';
   couponCode?: string;
   notes?: string;
+  rewardPointsRedeemed?: number;
+  rewardDiscount?: number;
+  fraudRiskScore?: number;
+  fraudRiskTier?: 'LOW' | 'MEDIUM' | 'HIGH';
+  fraudRiskFlags?: string[];
   items: Array<{
     productId: string;
     quantity: number;
@@ -1933,9 +1946,11 @@ export async function createOrder(data: {
   const isFreeDelivery = settings.freeDeliveryEnabled && rawSubtotal >= settings.freeDeliveryThreshold;
   const effectiveDeliveryFee = isFreeDelivery ? 0 : data.deliveryFee;
 
+  const rewardDiscount = Math.max(0, Number(data.rewardDiscount) || 0);
+
   const totals = calculateOrderTotals({
     items: lineItems,
-    discountAmount,
+    discountAmount: discountAmount + rewardDiscount,
     deliveryFee: effectiveDeliveryFee,
   });
 
@@ -2095,10 +2110,19 @@ export async function createOrder(data: {
       paymentStatus: 'UNPAID',
       orderStatus: 'PENDING',
       notes: data.notes || null,
+      rewardPointsRedeemed: data.rewardPointsRedeemed || 0,
+      rewardDiscount: rewardDiscount,
+      fraudRiskScore: data.fraudRiskScore ?? null,
+      fraudRiskTier: data.fraudRiskTier ?? null,
+      fraudRiskFlags: data.fraudRiskFlags ?? [],
       items: lineItems,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
+
+    if (data.rewardPointsRedeemed && data.rewardPointsRedeemed > 0) {
+      await redeemRewardPoints(data.customerPhone, data.rewardPointsRedeemed, orderNumber);
+    }
 
     memoryOrders.unshift(savedOrder);
     saveStoreToDisk();
@@ -2332,6 +2356,30 @@ export async function updateOrderStatus(orderId: string, status: string, notes?:
     ord.orderStatus = status;
     if (notes) ord.internalNotes = notes;
     ord.updatedAt = new Date();
+
+    // Automatically award loyalty points when order is successfully DELIVERED
+    if (status === 'DELIVERED' && !ord.rewardPointsCredited && ord.customerPhone) {
+      try {
+        const currentSettings = await getStoreSettings();
+        if (currentSettings.rewardPointsEnabled) {
+          const earnRate = currentSettings.rewardPointsEarnRate || 100;
+          const pointsEarned = Math.floor((Number(ord.totalAmount) || 0) / earnRate);
+          if (pointsEarned > 0) {
+            await creditRewardPoints(
+              ord.customerPhone,
+              pointsEarned,
+              `Cashback points for delivered order #${ord.orderNumber}`,
+              ord.id
+            );
+            ord.rewardPointsCredited = true;
+            ord.pointsEarned = pointsEarned;
+          }
+        }
+      } catch (err) {
+        console.warn('[REWARD_POINTS_DELIVERY_CREDIT_NOTICE]', err);
+      }
+    }
+    saveStoreToDisk();
   }
   return ord;
 }
@@ -2890,6 +2938,17 @@ export interface StoreSettings {
   reviewAutoApprove: boolean;
   reviewAllowImages: boolean;
   reviewMinCharacters: number;
+  // Phase 3: Rewards & Loyalty
+  rewardPointsEnabled: boolean;
+  rewardPointsEarnRate: number; // e.g. 100 means 1 point per ৳100
+  rewardPointValueBdt: number;  // e.g. 1 means 1 point = ৳1 BDT
+  rewardMinRedeemPoints: number; // e.g. 50
+  // Phase 3: Fake COD & Fraud Shield
+  fraudDetectionEnabled: boolean;
+  fraudMaxCodAmount: number; // e.g. 4000
+  fraudHighRiskAdvanceFeeRequired: boolean;
+  blacklistedPhones: string[];
+  whitelistedPhones: string[];
 }
 
 const DEFAULT_STORE_SETTINGS: StoreSettings = {
@@ -2907,6 +2966,15 @@ const DEFAULT_STORE_SETTINGS: StoreSettings = {
   reviewAutoApprove: true,
   reviewAllowImages: true,
   reviewMinCharacters: 5,
+  rewardPointsEnabled: true,
+  rewardPointsEarnRate: 100,
+  rewardPointValueBdt: 1,
+  rewardMinRedeemPoints: 50,
+  fraudDetectionEnabled: true,
+  fraudMaxCodAmount: 4000,
+  fraudHighRiskAdvanceFeeRequired: true,
+  blacklistedPhones: [],
+  whitelistedPhones: [],
 };
 
 export async function getStoreSettings(): Promise<StoreSettings> {
@@ -3167,4 +3235,196 @@ export async function deleteReview(id: string): Promise<boolean> {
   }
   return false;
 }
+
+// ==========================================
+// ELITE REWARDS & LOYALTY REPOSITORY (PHASE 3)
+// ==========================================
+
+export interface RewardTransaction {
+  id: string;
+  type: 'EARNED' | 'REDEEMED' | 'ADJUSTED_CREDIT' | 'ADJUSTED_DEBIT';
+  points: number;
+  reason: string;
+  orderId?: string | null;
+  createdAt: string;
+}
+
+export interface CustomerRewardProfile {
+  phone: string;
+  points: number;
+  totalEarned: number;
+  totalRedeemed: number;
+  history: RewardTransaction[];
+  updatedAt: string;
+}
+
+export async function getCustomerRewardProfile(phone: string): Promise<CustomerRewardProfile> {
+  const normalized = normalizeBdPhone(phone);
+  const store = getStore();
+  if (!store.rewards) store.rewards = {};
+  if (!store.rewards[normalized]) {
+    store.rewards[normalized] = {
+      phone: normalized,
+      points: 0,
+      totalEarned: 0,
+      totalRedeemed: 0,
+      history: [],
+      updatedAt: new Date().toISOString(),
+    };
+  }
+  return store.rewards[normalized];
+}
+
+export async function creditRewardPoints(
+  phone: string,
+  points: number,
+  reason: string,
+  orderId?: string
+): Promise<CustomerRewardProfile> {
+  const profile = await getCustomerRewardProfile(phone);
+  const pts = Math.max(0, Math.floor(points));
+  if (pts <= 0) return profile;
+
+  profile.points += pts;
+  profile.totalEarned += pts;
+  profile.history.unshift({
+    id: `rw-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+    type: 'EARNED',
+    points: pts,
+    reason,
+    orderId: orderId || null,
+    createdAt: new Date().toISOString(),
+  });
+  profile.updatedAt = new Date().toISOString();
+  saveStoreToDisk();
+  return profile;
+}
+
+export async function redeemRewardPoints(
+  phone: string,
+  points: number,
+  orderId?: string
+): Promise<{ success: boolean; redeemedPoints: number; remainingPoints: number; message: string }> {
+  const profile = await getCustomerRewardProfile(phone);
+  const pts = Math.max(0, Math.floor(points));
+  if (pts <= 0) {
+    return { success: false, redeemedPoints: 0, remainingPoints: profile.points, message: 'Invalid point amount' };
+  }
+  if (profile.points < pts) {
+    return {
+      success: false,
+      redeemedPoints: 0,
+      remainingPoints: profile.points,
+      message: `Insufficient points. Available: ${profile.points}`,
+    };
+  }
+
+  profile.points -= pts;
+  profile.totalRedeemed += pts;
+  profile.history.unshift({
+    id: `rw-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+    type: 'REDEEMED',
+    points: pts,
+    reason: `Redeemed for order discount`,
+    orderId: orderId || null,
+    createdAt: new Date().toISOString(),
+  });
+  profile.updatedAt = new Date().toISOString();
+  saveStoreToDisk();
+
+  return { success: true, redeemedPoints: pts, remainingPoints: profile.points, message: 'Points successfully redeemed' };
+}
+
+// ==========================================
+// FRAUD & BLACKLIST REPOSITORY (PHASE 3)
+// ==========================================
+
+export async function getBlacklistedPhones(): Promise<string[]> {
+  const settings = await getStoreSettings();
+  const store = getStore();
+  const set = new Set([...(settings.blacklistedPhones || []), ...(store.fraudBlacklist || [])]);
+  return Array.from(set).map(normalizeBdPhone).filter(Boolean);
+}
+
+export async function addBlacklistedPhone(phone: string): Promise<string[]> {
+  const normalized = normalizeBdPhone(phone);
+  if (!normalized) return await getBlacklistedPhones();
+
+  const store = getStore();
+  if (!Array.isArray(store.fraudBlacklist)) store.fraudBlacklist = [];
+  if (!store.fraudBlacklist.includes(normalized)) {
+    store.fraudBlacklist.push(normalized);
+  }
+
+  // Also remove from whitelist if present
+  if (Array.isArray(store.fraudWhitelist)) {
+    store.fraudWhitelist = store.fraudWhitelist.filter((p) => p !== normalized);
+  }
+
+  await updateStoreSettings({
+    blacklistedPhones: store.fraudBlacklist,
+    whitelistedPhones: store.fraudWhitelist,
+  });
+
+  saveStoreToDisk();
+  return store.fraudBlacklist;
+}
+
+export async function removeBlacklistedPhone(phone: string): Promise<string[]> {
+  const normalized = normalizeBdPhone(phone);
+  const store = getStore();
+  if (Array.isArray(store.fraudBlacklist)) {
+    store.fraudBlacklist = store.fraudBlacklist.filter((p) => p !== normalized);
+  }
+  await updateStoreSettings({
+    blacklistedPhones: store.fraudBlacklist || [],
+  });
+  saveStoreToDisk();
+  return store.fraudBlacklist || [];
+}
+
+export async function getWhitelistedPhones(): Promise<string[]> {
+  const settings = await getStoreSettings();
+  const store = getStore();
+  const set = new Set([...(settings.whitelistedPhones || []), ...(store.fraudWhitelist || [])]);
+  return Array.from(set).map(normalizeBdPhone).filter(Boolean);
+}
+
+export async function addWhitelistedPhone(phone: string): Promise<string[]> {
+  const normalized = normalizeBdPhone(phone);
+  if (!normalized) return await getWhitelistedPhones();
+
+  const store = getStore();
+  if (!Array.isArray(store.fraudWhitelist)) store.fraudWhitelist = [];
+  if (!store.fraudWhitelist.includes(normalized)) {
+    store.fraudWhitelist.push(normalized);
+  }
+
+  // Also remove from blacklist if present
+  if (Array.isArray(store.fraudBlacklist)) {
+    store.fraudBlacklist = store.fraudBlacklist.filter((p) => p !== normalized);
+  }
+
+  await updateStoreSettings({
+    blacklistedPhones: store.fraudBlacklist,
+    whitelistedPhones: store.fraudWhitelist,
+  });
+
+  saveStoreToDisk();
+  return store.fraudWhitelist;
+}
+
+export async function removeWhitelistedPhone(phone: string): Promise<string[]> {
+  const normalized = normalizeBdPhone(phone);
+  const store = getStore();
+  if (Array.isArray(store.fraudWhitelist)) {
+    store.fraudWhitelist = store.fraudWhitelist.filter((p) => p !== normalized);
+  }
+  await updateStoreSettings({
+    whitelistedPhones: store.fraudWhitelist || [],
+  });
+  saveStoreToDisk();
+  return store.fraudWhitelist || [];
+}
+
 

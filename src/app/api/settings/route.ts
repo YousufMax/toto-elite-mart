@@ -36,6 +36,17 @@ export async function PATCH(req: Request) {
       reviewAutoApprove: body.reviewAutoApprove !== undefined ? Boolean(body.reviewAutoApprove) : undefined,
       reviewAllowImages: body.reviewAllowImages !== undefined ? Boolean(body.reviewAllowImages) : undefined,
       reviewMinCharacters: body.reviewMinCharacters !== undefined ? Math.max(1, Number(body.reviewMinCharacters) || 1) : undefined,
+      // Phase 3: Rewards & Cashback
+      rewardPointsEnabled: body.rewardPointsEnabled !== undefined ? Boolean(body.rewardPointsEnabled) : undefined,
+      rewardPointsEarnRate: body.rewardPointsEarnRate !== undefined ? Math.max(1, Number(body.rewardPointsEarnRate) || 100) : undefined,
+      rewardPointValueBdt: body.rewardPointValueBdt !== undefined ? Math.max(0.1, Number(body.rewardPointValueBdt) || 1) : undefined,
+      rewardMinRedeemPoints: body.rewardMinRedeemPoints !== undefined ? Math.max(0, Number(body.rewardMinRedeemPoints) || 0) : undefined,
+      // Phase 3: Fake COD & Fraud Shield
+      fraudDetectionEnabled: body.fraudDetectionEnabled !== undefined ? Boolean(body.fraudDetectionEnabled) : undefined,
+      fraudMaxCodAmount: body.fraudMaxCodAmount !== undefined ? Math.max(0, Number(body.fraudMaxCodAmount) || 4000) : undefined,
+      fraudHighRiskAdvanceFeeRequired: body.fraudHighRiskAdvanceFeeRequired !== undefined ? Boolean(body.fraudHighRiskAdvanceFeeRequired) : undefined,
+      blacklistedPhones: Array.isArray(body.blacklistedPhones) ? body.blacklistedPhones : undefined,
+      whitelistedPhones: Array.isArray(body.whitelistedPhones) ? body.whitelistedPhones : undefined,
     });
 
     await logAudit({

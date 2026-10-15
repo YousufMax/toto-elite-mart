@@ -80,6 +80,22 @@ export default function CheckoutPage() {
     freeDeliveryThreshold: number;
   }>({ freeDeliveryEnabled: true, freeDeliveryThreshold: 1500 });
 
+  // Phase 3: Reward Points State
+  const [rewardData, setRewardData] = useState<{
+    enabled: boolean;
+    points: number;
+    equivalentBdt: number;
+    canRedeem: boolean;
+    minRedeemPoints: number;
+    pointValueBdt: number;
+  } | null>(null);
+  const [useRewards, setUseRewards] = useState(false);
+  const [rewardLoading, setRewardLoading] = useState(false);
+
+  // Phase 3: Fraud Security Notice State
+  const [fraudRiskNotice, setFraudRiskNotice] = useState<string | null>(null);
+  const [requiresAdvanceFee, setRequiresAdvanceFee] = useState(false);
+
   useEffect(() => {
     fetch('/api/settings')
       .then((res) => res.json())
@@ -94,13 +110,78 @@ export default function CheckoutPage() {
       .catch(() => {});
   }, []);
 
+  // Fetch Reward Points and Fraud Check when Phone reaches 11 digits
+  useEffect(() => {
+    const cleanPhone = customerPhone.replace(/[^0-9]/g, '');
+    if (cleanPhone.length === 11 && /^01[3-9]\d{8}$/.test(cleanPhone)) {
+      setRewardLoading(true);
+      fetch(`/api/rewards?phone=${cleanPhone}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success && data.enabled) {
+            setRewardData(data);
+          } else {
+            setRewardData(null);
+            setUseRewards(false);
+          }
+        })
+        .catch(() => {})
+        .finally(() => setRewardLoading(false));
+
+      fetch('/api/fraud', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'check',
+          phone: cleanPhone,
+          address: deliveryAddress,
+          subtotal,
+          totalAmount: subtotal + (deliveryZone === 'Inside Dhaka' ? 60 : 120),
+          paymentMethod,
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success && data.evaluation) {
+            if (data.evaluation.isBlacklisted) {
+              setFraudRiskNotice('Sorry, this phone number is restricted. Please contact customer support.');
+            } else if (data.evaluation.requiresAdvanceFee) {
+              setRequiresAdvanceFee(true);
+              setFraudRiskNotice(
+                `Security Notice: Due to parcel history, an advance courier confirmation fee of ৳${data.evaluation.advanceFeeAmount} via bKash/Nagad is required to ship this parcel.`
+              );
+            } else {
+              setRequiresAdvanceFee(false);
+              setFraudRiskNotice(null);
+            }
+          }
+        })
+        .catch(() => {});
+    } else {
+      setRewardData(null);
+      setUseRewards(false);
+      setFraudRiskNotice(null);
+      setRequiresAdvanceFee(false);
+    }
+  }, [customerPhone, subtotal, paymentMethod, deliveryAddress, deliveryZone]);
+
   const isFreeDelivery = Boolean(
     storeSettings.freeDeliveryEnabled && subtotal >= storeSettings.freeDeliveryThreshold
   );
   const baseDeliveryFee = deliveryZone === 'Inside Dhaka' ? 60 : 120;
   const deliveryFee = isFreeDelivery ? 0 : baseDeliveryFee;
   const discountAmount = appliedCoupon ? appliedCoupon.discountAmount : 0;
-  const totalAmount = Math.max(0, subtotal - discountAmount + deliveryFee);
+
+  // Reward points discount calculation
+  const maxPossibleRewardDiscount = Math.max(0, subtotal - discountAmount);
+  const rewardDiscount = useRewards && rewardData && rewardData.points > 0
+    ? Math.min(rewardData.equivalentBdt, maxPossibleRewardDiscount)
+    : 0;
+  const rewardPointsRedeemed = rewardDiscount > 0 && rewardData
+    ? Math.ceil(rewardDiscount / (rewardData.pointValueBdt || 1))
+    : 0;
+
+  const totalAmount = Math.max(0, subtotal - discountAmount - rewardDiscount + deliveryFee);
 
   const handleApplyCoupon = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -208,6 +289,8 @@ export default function CheckoutPage() {
         paymentMethod,
         couponCode: appliedCoupon?.code,
         notes: formattedNotes || undefined,
+        rewardPointsRedeemed: useRewards ? rewardPointsRedeemed : 0,
+        rewardDiscount: useRewards ? rewardDiscount : 0,
         paymentSenderPhone: senderNumber.trim() || undefined,
         paymentTrxId: trxId.trim() || undefined,
         items: items.map((i) => ({
@@ -337,6 +420,65 @@ export default function CheckoutPage() {
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
                   />
                   <p className="text-[11px] text-slate-400 mt-1">Our delivery rider will call this number before arrival.</p>
+
+                  {/* Fraud Alert Notice if detected */}
+                  {fraudRiskNotice && (
+                    <div className="mt-2.5 p-3.5 bg-rose-50 border border-rose-200 rounded-2xl flex items-start gap-2.5 text-xs text-rose-800 animate-in fade-in">
+                      <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                      <div className="leading-relaxed font-medium">
+                        <span className="font-bold">Security Notice: </span>
+                        {fraudRiskNotice}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Reward Points Cashback Redemption Widget */}
+                  {rewardLoading && (
+                    <div className="mt-2 text-xs text-amber-600 flex items-center gap-1.5 font-medium">
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>Checking Elite Loyalty Points...</span>
+                    </div>
+                  )}
+
+                  {rewardData && rewardData.points > 0 && !rewardLoading && (
+                    <div className="mt-2.5 p-3.5 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/90 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs animate-in fade-in">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-amber-500 text-white font-black text-lg flex items-center justify-center shrink-0 shadow-sm">
+                          🪙
+                        </div>
+                        <div>
+                          <div className="text-xs font-black text-amber-950 flex items-center gap-1.5">
+                            <span>Elite Loyalty Cashback</span>
+                            <span className="bg-amber-200 text-amber-900 text-[10px] px-1.5 py-0.2 rounded font-bold">
+                              {rewardData.points} Points Available
+                            </span>
+                          </div>
+                          <div className="text-[11px] text-amber-800 mt-0.5">
+                            Worth {formatBDT(rewardData.equivalentBdt)} BDT discount on your purchases.
+                          </div>
+                        </div>
+                      </div>
+
+                      {rewardData.canRedeem ? (
+                        <button
+                          type="button"
+                          onClick={() => setUseRewards(!useRewards)}
+                          className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shrink-0 shadow-xs ${
+                            useRewards
+                              ? 'bg-amber-600 hover:bg-amber-700 text-white'
+                              : 'bg-white hover:bg-amber-100 text-amber-900 border border-amber-300'
+                          }`}
+                        >
+                          <Sparkles className="w-3.5 h-3.5" />
+                          <span>{useRewards ? `Applied (-${formatBDT(rewardDiscount)})` : 'Redeem Points'}</span>
+                        </button>
+                      ) : (
+                        <span className="text-[10px] font-bold text-amber-700 bg-amber-100/70 px-2 py-1 rounded-lg shrink-0">
+                          Min {rewardData.minRedeemPoints} pts needed
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 <div>
@@ -828,6 +970,16 @@ export default function CheckoutPage() {
                   <div className="flex justify-between text-emerald-600 font-bold">
                     <span className="font-display">Coupon Discount</span>
                     <span className="font-price">-{formatBDT(discountAmount)}</span>
+                  </div>
+                )}
+
+                {useRewards && rewardDiscount > 0 && (
+                  <div className="flex justify-between text-amber-600 font-bold">
+                    <span className="font-display flex items-center gap-1">
+                      <span>🪙</span>
+                      <span>Elite Loyalty Discount</span>
+                    </span>
+                    <span className="font-price">-{formatBDT(rewardDiscount)}</span>
                   </div>
                 )}
 

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
+import { formatBDT } from '@/lib/currency';
 import {
   Sliders,
   Truck,
@@ -42,6 +43,16 @@ interface StoreSettings {
   reviewAutoApprove: boolean;
   reviewAllowImages: boolean;
   reviewMinCharacters: number;
+  // Phase 3 Settings
+  rewardPointsEnabled: boolean;
+  rewardPointsEarnRate: number;
+  rewardPointValueBdt: number;
+  rewardMinRedeemPoints: number;
+  fraudDetectionEnabled: boolean;
+  fraudMaxCodAmount: number;
+  fraudHighRiskAdvanceFeeRequired: boolean;
+  blacklistedPhones: string[];
+  whitelistedPhones: string[];
 }
 
 interface Review {
@@ -69,7 +80,7 @@ interface ProductOption {
 }
 
 export default function AdminSettingsPage() {
-  const [activeTab, setActiveTab] = useState<'delivery' | 'reviews' | 'cards'>('delivery');
+  const [activeTab, setActiveTab] = useState<'delivery' | 'reviews' | 'cards' | 'rewards' | 'fraud'>('delivery');
 
   // Settings State
   const [settings, setSettings] = useState<StoreSettings>({
@@ -87,7 +98,21 @@ export default function AdminSettingsPage() {
     reviewAutoApprove: true,
     reviewAllowImages: true,
     reviewMinCharacters: 5,
+    rewardPointsEnabled: true,
+    rewardPointsEarnRate: 100,
+    rewardPointValueBdt: 1,
+    rewardMinRedeemPoints: 50,
+    fraudDetectionEnabled: true,
+    fraudMaxCodAmount: 4000,
+    fraudHighRiskAdvanceFeeRequired: true,
+    blacklistedPhones: [],
+    whitelistedPhones: [],
   });
+
+  // Fraud Phone Management State
+  const [newBlacklistPhone, setNewBlacklistPhone] = useState('');
+  const [newWhitelistPhone, setNewWhitelistPhone] = useState('');
+  const [phoneActionLoading, setPhoneActionLoading] = useState(false);
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -142,7 +167,8 @@ export default function AdminSettingsPage() {
       const res = await fetch('/api/settings');
       const data = await res.json();
       if (data.success && data.settings) {
-        setSettings({
+        setSettings((prev) => ({
+          ...prev,
           freeDeliveryEnabled: data.settings.freeDeliveryEnabled !== false,
           freeDeliveryThreshold: Number(data.settings.freeDeliveryThreshold) || 1500,
           freeDeliveryOutsideThreshold: Number(data.settings.freeDeliveryOutsideThreshold) || 2000,
@@ -157,7 +183,16 @@ export default function AdminSettingsPage() {
           reviewAutoApprove: data.settings.reviewAutoApprove !== false,
           reviewAllowImages: data.settings.reviewAllowImages !== false,
           reviewMinCharacters: Number(data.settings.reviewMinCharacters) || 5,
-        });
+          rewardPointsEnabled: data.settings.rewardPointsEnabled !== false,
+          rewardPointsEarnRate: Number(data.settings.rewardPointsEarnRate) || 100,
+          rewardPointValueBdt: Number(data.settings.rewardPointValueBdt) || 1,
+          rewardMinRedeemPoints: Number(data.settings.rewardMinRedeemPoints) || 50,
+          fraudDetectionEnabled: data.settings.fraudDetectionEnabled !== false,
+          fraudMaxCodAmount: Number(data.settings.fraudMaxCodAmount) || 4000,
+          fraudHighRiskAdvanceFeeRequired: data.settings.fraudHighRiskAdvanceFeeRequired !== false,
+          blacklistedPhones: Array.isArray(data.settings.blacklistedPhones) ? data.settings.blacklistedPhones : [],
+          whitelistedPhones: Array.isArray(data.settings.whitelistedPhones) ? data.settings.whitelistedPhones : [],
+        }));
       }
     } catch (err) {
       console.error('Failed to load settings:', err);
@@ -232,6 +267,102 @@ export default function AdminSettingsPage() {
       setErrorMessage(err instanceof Error ? err.message : 'Save error');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleAddBlacklist = async () => {
+    if (!newBlacklistPhone.trim()) return;
+    setPhoneActionLoading(true);
+    try {
+      const res = await fetch('/api/fraud', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'blacklist', phone: newBlacklistPhone.trim() }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSettings((prev) => ({
+          ...prev,
+          blacklistedPhones: data.blacklisted || [...(prev.blacklistedPhones || []), newBlacklistPhone.trim()],
+        }));
+        setNewBlacklistPhone('');
+      } else {
+        alert(data.error || 'Failed to add to blacklist');
+      }
+    } catch (e: any) {
+      alert(e.message);
+    } finally {
+      setPhoneActionLoading(false);
+    }
+  };
+
+  const handleRemoveBlacklist = async (phone: string) => {
+    setPhoneActionLoading(true);
+    try {
+      const res = await fetch('/api/fraud', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'unblacklist', phone }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSettings((prev) => ({
+          ...prev,
+          blacklistedPhones: data.blacklisted || (prev.blacklistedPhones || []).filter((p) => p !== phone),
+        }));
+      }
+    } catch (e: any) {
+      alert(e.message);
+    } finally {
+      setPhoneActionLoading(false);
+    }
+  };
+
+  const handleAddWhitelist = async () => {
+    if (!newWhitelistPhone.trim()) return;
+    setPhoneActionLoading(true);
+    try {
+      const res = await fetch('/api/fraud', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'whitelist', phone: newWhitelistPhone.trim() }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSettings((prev) => ({
+          ...prev,
+          whitelistedPhones: data.whitelisted || [...(prev.whitelistedPhones || []), newWhitelistPhone.trim()],
+        }));
+        setNewWhitelistPhone('');
+      } else {
+        alert(data.error || 'Failed to add to whitelist');
+      }
+    } catch (e: any) {
+      alert(e.message);
+    } finally {
+      setPhoneActionLoading(false);
+    }
+  };
+
+  const handleRemoveWhitelist = async (phone: string) => {
+    setPhoneActionLoading(true);
+    try {
+      const res = await fetch('/api/fraud', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'unwhitelist', phone }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSettings((prev) => ({
+          ...prev,
+          whitelistedPhones: data.whitelisted || (prev.whitelistedPhones || []).filter((p) => p !== phone),
+        }));
+      }
+    } catch (e: any) {
+      alert(e.message);
+    } finally {
+      setPhoneActionLoading(false);
     }
   };
 
@@ -495,6 +626,30 @@ export default function AdminSettingsPage() {
         >
           <ShoppingBag className="w-4 h-4" />
           <span>Product Cards & Steppers</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('rewards')}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-black transition shrink-0 ${
+            activeTab === 'rewards'
+              ? 'bg-amber-500 text-slate-950 shadow-sm'
+              : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+          }`}
+        >
+          <Sparkles className="w-4 h-4 text-amber-600" />
+          <span>Elite Rewards & Cashback</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('fraud')}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-black transition shrink-0 ${
+            activeTab === 'fraud'
+              ? 'bg-amber-500 text-slate-950 shadow-sm'
+              : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+          }`}
+        >
+          <ShieldCheck className="w-4 h-4 text-rose-600" />
+          <span>Zero-Return Fraud & COD Shield</span>
         </button>
       </div>
 
@@ -1130,6 +1285,354 @@ export default function AdminSettingsPage() {
                 }
                 className="rounded accent-amber-500 w-4 h-4 cursor-pointer"
               />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 4: ELITE REWARDS & CASHBACK SYSTEM */}
+      {activeTab === 'rewards' && (
+        <div className="space-y-6">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
+            {/* Header & Toggle */}
+            <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center text-amber-600 font-bold shrink-0">
+                  <Sparkles className="w-5 h-5" />
+                </div>
+                <div>
+                  <h2 className="text-sm sm:text-base font-black text-slate-950">
+                    Elite Rewards & Cashback System
+                  </h2>
+                  <p className="text-xs text-slate-500">
+                    Automatic loyalty point accumulation and checkout discounts to maximize repeat orders.
+                  </p>
+                </div>
+              </div>
+
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={settings.rewardPointsEnabled}
+                  onChange={(e) =>
+                    setSettings((s) => ({ ...s, rewardPointsEnabled: e.target.checked }))
+                  }
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+              </label>
+            </div>
+
+            {/* Controls Grid */}
+            <div className="p-6 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* Earn Rate */}
+                <div className="p-4 rounded-xl border border-slate-200 space-y-2">
+                  <label className="block text-xs font-bold text-slate-900">
+                    Spend (BDT) to Earn 1 Point
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-2.5 text-xs font-bold text-slate-400">৳</span>
+                    <input
+                      type="number"
+                      min={10}
+                      step={10}
+                      value={settings.rewardPointsEarnRate}
+                      onChange={(e) =>
+                        setSettings((s) => ({
+                          ...s,
+                          rewardPointsEarnRate: Math.max(1, Number(e.target.value) || 100),
+                        }))
+                      }
+                      className="w-full pl-8 pr-3 py-2 rounded-xl border border-slate-300 text-xs font-bold text-slate-900 focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                    />
+                  </div>
+                  <p className="text-[11px] text-slate-500">
+                    e.g. ৳100 spent = 1 point earned on delivered orders (1% cashback).
+                  </p>
+                </div>
+
+                {/* Point Value */}
+                <div className="p-4 rounded-xl border border-slate-200 space-y-2">
+                  <label className="block text-xs font-bold text-slate-900">
+                    1 Point Discount Value (BDT)
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-2.5 text-xs font-bold text-slate-400">৳</span>
+                    <input
+                      type="number"
+                      min={0.1}
+                      step={0.5}
+                      value={settings.rewardPointValueBdt}
+                      onChange={(e) =>
+                        setSettings((s) => ({
+                          ...s,
+                          rewardPointValueBdt: Math.max(0.1, Number(e.target.value) || 1),
+                        }))
+                      }
+                      className="w-full pl-8 pr-3 py-2 rounded-xl border border-slate-300 text-xs font-bold text-slate-900 focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                    />
+                  </div>
+                  <p className="text-[11px] text-slate-500">
+                    Value of 1 point when redeemed at checkout (Default: ৳1 BDT).
+                  </p>
+                </div>
+
+                {/* Min Redeem Limit */}
+                <div className="p-4 rounded-xl border border-slate-200 space-y-2">
+                  <label className="block text-xs font-bold text-slate-900">
+                    Minimum Points to Redeem
+                  </label>
+                  <input
+                    type="number"
+                    min={0}
+                    step={10}
+                    value={settings.rewardMinRedeemPoints}
+                    onChange={(e) =>
+                      setSettings((s) => ({
+                        ...s,
+                        rewardMinRedeemPoints: Math.max(0, Number(e.target.value) || 0),
+                      }))
+                    }
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-bold text-slate-900 focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                  />
+                  <p className="text-[11px] text-slate-500">
+                    Customer must have at least this balance to apply discounts (Default: 50).
+                  </p>
+                </div>
+              </div>
+
+              {/* Live Cashback Simulator Preview */}
+              <div className="p-5 rounded-2xl bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border border-amber-200/80 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">🪙</span>
+                    <h3 className="text-xs font-black text-amber-950 uppercase tracking-wider">
+                      Live Storefront Simulator Preview
+                    </h3>
+                  </div>
+                  <span className="text-[10px] font-bold text-amber-800 bg-amber-200/70 px-2 py-0.5 rounded-full">
+                    Interactive
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="bg-white p-3.5 rounded-xl border border-amber-200 shadow-2xs space-y-1.5">
+                    <div className="text-[11px] font-bold text-slate-500">Customer Product Card Chip</div>
+                    <div className="inline-flex items-center gap-1.5 text-xs font-black text-amber-800 bg-amber-50 border border-amber-300 px-3 py-1 rounded-lg">
+                      <span>🪙</span>
+                      <span>+{Math.floor(1500 / (settings.rewardPointsEarnRate || 100))} pts Cashback</span>
+                    </div>
+                    <p className="text-[10px] text-slate-400">Displays on ৳1,500 product cards.</p>
+                  </div>
+
+                  <div className="bg-white p-3.5 rounded-xl border border-amber-200 shadow-2xs space-y-1.5">
+                    <div className="text-[11px] font-bold text-slate-500">Checkout Redemption Widget</div>
+                    <div className="text-xs font-bold text-slate-800">
+                      Balance: 120 Points = <span className="text-amber-600 font-mono font-black">{formatBDT(120 * (settings.rewardPointValueBdt || 1))}</span>
+                    </div>
+                    <div className="text-[11px] text-emerald-700 font-bold">
+                      ✓ Eligible for instant checkout deduction
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 5: ZERO-RETURN FRAUD & COD SHIELD */}
+      {activeTab === 'fraud' && (
+        <div className="space-y-6">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
+            {/* Header & Toggle */}
+            <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-rose-50 rounded-xl flex items-center justify-center text-rose-600 font-bold shrink-0">
+                  <ShieldCheck className="w-5 h-5" />
+                </div>
+                <div>
+                  <h2 className="text-sm sm:text-base font-black text-slate-950">
+                    Zero-Return Fraud & COD Protection Shield
+                  </h2>
+                  <p className="text-xs text-slate-500">
+                    Real-time risk scoring, velocity checks, and advance courier fee enforcement to stop fake order losses.
+                  </p>
+                </div>
+              </div>
+
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={settings.fraudDetectionEnabled}
+                  onChange={(e) =>
+                    setSettings((s) => ({ ...s, fraudDetectionEnabled: e.target.checked }))
+                  }
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+              </label>
+            </div>
+
+            {/* Policy Controls */}
+            <div className="p-6 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Max COD Amount */}
+                <div className="p-4 rounded-xl border border-slate-200 space-y-2">
+                  <label className="block text-xs font-bold text-slate-900">
+                    Max Safe COD Order Amount (BDT)
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-2.5 text-xs font-bold text-slate-400">৳</span>
+                    <input
+                      type="number"
+                      min={1000}
+                      step={500}
+                      value={settings.fraudMaxCodAmount}
+                      onChange={(e) =>
+                        setSettings((s) => ({
+                          ...s,
+                          fraudMaxCodAmount: Math.max(500, Number(e.target.value) || 4000),
+                        }))
+                      }
+                      className="w-full pl-8 pr-3 py-2 rounded-xl border border-slate-300 text-xs font-bold text-slate-900 focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                    />
+                  </div>
+                  <p className="text-[11px] text-slate-500">
+                    Orders above this value flag for mandatory phone verification before dispatch.
+                  </p>
+                </div>
+
+                {/* Advance Fee Requirement for High Risk */}
+                <div className="p-4 rounded-xl border border-slate-200 flex items-center justify-between">
+                  <div className="space-y-1">
+                    <div className="text-xs font-bold text-slate-900">
+                      Require Advance Courier Fee for High-Risk
+                    </div>
+                    <div className="text-[11px] text-slate-500">
+                      Prompts high-risk buyers to pay ৳60 / ৳120 courier charge via bKash/Nagad before dispatch.
+                    </div>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={settings.fraudHighRiskAdvanceFeeRequired}
+                    onChange={(e) =>
+                      setSettings((s) => ({
+                        ...s,
+                        fraudHighRiskAdvanceFeeRequired: e.target.checked,
+                      }))
+                    }
+                    className="rounded accent-rose-600 w-4 h-4 cursor-pointer"
+                  />
+                </div>
+              </div>
+
+              {/* Active Blacklist Manager */}
+              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-rose-600 font-bold">🚫</span>
+                    <h3 className="text-xs font-black text-slate-900 uppercase tracking-wider">
+                      Fraud Blacklist Manager ({(settings.blacklistedPhones || []).length} Numbers)
+                    </h3>
+                  </div>
+                </div>
+
+                <div className="flex gap-2">
+                  <input
+                    type="tel"
+                    placeholder="Enter 11-digit phone (e.g. 01712345678)"
+                    value={newBlacklistPhone}
+                    onChange={(e) => setNewBlacklistPhone(e.target.value)}
+                    className="flex-1 px-3.5 py-2 rounded-xl border border-slate-300 text-xs font-mono focus:ring-2 focus:ring-rose-500 focus:outline-none bg-white"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAddBlacklist}
+                    disabled={phoneActionLoading || !newBlacklistPhone.trim()}
+                    className="px-4 py-2 bg-rose-600 hover:bg-rose-700 disabled:opacity-50 text-white rounded-xl text-xs font-bold transition shrink-0"
+                  >
+                    Add to Blacklist
+                  </button>
+                </div>
+
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {(settings.blacklistedPhones || []).length === 0 ? (
+                    <span className="text-xs text-slate-400 italic">No blacklisted phone numbers currently.</span>
+                  ) : (
+                    settings.blacklistedPhones.map((ph) => (
+                      <span
+                        key={ph}
+                        className="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-rose-200 text-rose-800 text-xs font-mono font-bold rounded-lg shadow-2xs"
+                      >
+                        <span>{ph}</span>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveBlacklist(ph)}
+                          title="Remove from Blacklist"
+                          className="text-slate-400 hover:text-rose-600 p-0.5 rounded transition"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </span>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              {/* Active Whitelist Manager */}
+              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-emerald-600 font-bold">⭐</span>
+                    <h3 className="text-xs font-black text-slate-900 uppercase tracking-wider">
+                      Trusted VIP Whitelist ({(settings.whitelistedPhones || []).length} Numbers)
+                    </h3>
+                  </div>
+                </div>
+
+                <div className="flex gap-2">
+                  <input
+                    type="tel"
+                    placeholder="Enter 11-digit VIP phone (e.g. 01812345678)"
+                    value={newWhitelistPhone}
+                    onChange={(e) => setNewWhitelistPhone(e.target.value)}
+                    className="flex-1 px-3.5 py-2 rounded-xl border border-slate-300 text-xs font-mono focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-white"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAddWhitelist}
+                    disabled={phoneActionLoading || !newWhitelistPhone.trim()}
+                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-xl text-xs font-bold transition shrink-0"
+                  >
+                    Add to Whitelist
+                  </button>
+                </div>
+
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {(settings.whitelistedPhones || []).length === 0 ? (
+                    <span className="text-xs text-slate-400 italic">No whitelisted numbers currently.</span>
+                  ) : (
+                    settings.whitelistedPhones.map((ph) => (
+                      <span
+                        key={ph}
+                        className="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-emerald-200 text-emerald-800 text-xs font-mono font-bold rounded-lg shadow-2xs"
+                      >
+                        <span>{ph}</span>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveWhitelist(ph)}
+                          title="Remove from Whitelist"
+                          className="text-slate-400 hover:text-emerald-600 p-0.5 rounded transition"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </span>
+                    ))
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </div>

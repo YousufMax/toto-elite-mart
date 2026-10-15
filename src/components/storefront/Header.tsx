@@ -22,6 +22,8 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { useCart } from './CartContext';
+import LiveSearchDropdown from './LiveSearchDropdown';
+import MegaMenu from './MegaMenu';
 
 const NAV_LINKS = [
   { name: 'Home', href: '/', icon: Home },
@@ -121,25 +123,10 @@ export default function Header() {
           </Link>
         </div>
 
-        {/* Search Bar (Desktop) */}
-        <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-xl mx-4">
-          <div className="relative w-full">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search products by name, brand, or SKU..."
-              className="w-full pl-10 pr-24 py-2 rounded-full border border-slate-300 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 text-xs sm:text-sm transition"
-            />
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-2.5 sm:top-3" />
-            <button
-              type="submit"
-              className="absolute right-1 top-1 px-4 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-full text-xs font-semibold transition"
-            >
-              Search
-            </button>
-          </div>
-        </form>
+        {/* Live Search Bar (Desktop) */}
+        <div className="hidden md:flex flex-1 max-w-xl mx-4">
+          <LiveSearchDropdown />
+        </div>
 
         {/* Actions (Track Order, Cart) */}
         <div className="flex items-center space-x-2 sm:space-x-3">
@@ -167,30 +154,19 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile Quick Search Bar (Directly below header logo for rapid shopping) */}
+      {/* Mobile Quick Live Search Bar */}
       <div className="md:hidden px-3 pb-2.5">
-        <form onSubmit={handleSearch} className="relative w-full">
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search products, brands, essentials..."
-            className="w-full pl-9 pr-16 py-1.5 bg-slate-50 border border-slate-200 rounded-full text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500"
-          />
-          <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
-          <button
-            type="submit"
-            className="absolute right-1 top-1 px-2.5 py-1 bg-slate-900 text-white rounded-full text-[10px] font-bold"
-          >
-            Go
-          </button>
-        </form>
+        <LiveSearchDropdown onCloseMobile={() => setMobileMenuOpen(false)} />
       </div>
 
-      {/* Horizontal Responsive Navigation Bar (Mobile & Desktop Dual-Strip) */}
+      {/* Horizontal Responsive Navigation Bar with Mega Menu */}
       <div className="bg-slate-50/90 border-t border-slate-200/80">
         <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
           <nav className="flex items-center gap-1 sm:gap-2 overflow-x-auto py-1.5 sm:py-2 scrollbar-none text-xs font-bold text-slate-700 whitespace-nowrap">
+            {/* Mega Menu Dropdown Trigger (Desktop) */}
+            <div className="hidden md:block shrink-0 mr-1">
+              <MegaMenu />
+            </div>
             {NAV_LINKS.map((item) => {
               const Icon = item.icon;
               const isActive =

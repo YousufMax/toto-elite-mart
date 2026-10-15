@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { createOrder, getAllOrders } from '@/lib/data-store';
+import { createOrder, getAllOrders, getStoreSettings } from '@/lib/data-store';
 import { getSessionUser, hasPermission } from '@/lib/auth';
+import { evaluateOrderFraudRisk } from '@/lib/fraud-engine';
 
 export async function GET(req: Request) {
   try {
@@ -68,6 +69,42 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Cart is empty. Please add items to checkout.' }, { status: 400 });
     }
 
+    // Retrieve settings and historical orders for fraud prevention
+    const settings = await getStoreSettings();
+    const pastOrders = await getAllOrders();
+
+    const approxSubtotal = (items as any[]).reduce(
+      (sum, it) => sum + (Number(it.price) || 0) * (Number(it.quantity) || 1),
+      0
+    );
+    const approxTotal = Math.max(0, approxSubtotal + (Number(deliveryFee) || 60) - (Number(body.rewardDiscount) || 0));
+
+    // Run Fraud Engine
+    let fraudRisk: ReturnType<typeof evaluateOrderFraudRisk> | null = null;
+    if (settings.fraudDetectionEnabled) {
+      fraudRisk = evaluateOrderFraudRisk({
+        phone: cleanPhone,
+        name: customerName,
+        address: deliveryAddress,
+        city: deliveryCity,
+        zone: deliveryZone,
+        subtotal: approxSubtotal,
+        totalAmount: approxTotal,
+        paymentMethod: paymentMethod || 'COD',
+        pastOrders,
+        blacklistedPhones: settings.blacklistedPhones,
+        whitelistedPhones: settings.whitelistedPhones,
+        settings,
+      });
+
+      if (fraudRisk.isBlacklisted) {
+        return NextResponse.json(
+          { error: 'Sorry, this order cannot be processed. Please contact customer support for assistance.' },
+          { status: 403 }
+        );
+      }
+    }
+
     const order = await createOrder({
       customerName: customerName.trim(),
       customerPhone: cleanPhone,
@@ -78,6 +115,11 @@ export async function POST(req: Request) {
       paymentMethod: paymentMethod || 'COD',
       couponCode: couponCode ? couponCode.trim() : undefined,
       notes: notes ? notes.trim() : undefined,
+      rewardPointsRedeemed: Number(body.rewardPointsRedeemed) || 0,
+      rewardDiscount: Number(body.rewardDiscount) || 0,
+      fraudRiskScore: fraudRisk ? fraudRisk.riskScore : 0,
+      fraudRiskTier: fraudRisk ? fraudRisk.riskTier : 'LOW',
+      fraudRiskFlags: fraudRisk ? fraudRisk.flags : [],
       items,
     });
 
@@ -86,6 +128,7 @@ export async function POST(req: Request) {
       message: 'Order placed successfully!',
       orderNumber: order.orderNumber,
       order,
+      fraudRecommendation: fraudRisk ? fraudRisk.recommendation : 'APPROVE',
     });
   } catch (err: unknown) {
     const errorMsg = err instanceof Error ? err.message : 'Failed to place order';

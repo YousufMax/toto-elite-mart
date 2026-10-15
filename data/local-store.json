@@ -2973,11 +2973,19 @@
   ],
   "settings": {
     "freeDeliveryEnabled": true,
-    "freeDeliveryThreshold": 1500,
+    "freeDeliveryThreshold": 2000,
+    "freeDeliveryOutsideThreshold": 2000,
     "freeDeliveryBannerText": "Add ৳{remaining} more for FREE Delivery! 🚚",
     "freeDeliveryUnlockedText": "🎉 You have unlocked FREE Delivery!",
+    "freeDeliveryBarColor": "emerald",
+    "minOrderAmount": 0,
     "cardStepperEnabled": true,
-    "reviewAutoApprove": true
+    "cardShowDiscountBadge": true,
+    "cardShowRating": true,
+    "cardShowStockWarning": true,
+    "reviewAutoApprove": true,
+    "reviewAllowImages": true,
+    "reviewMinCharacters": 5
   },
   "reviews": [
     {
