@@ -121,75 +121,101 @@ export default function FlashSaleSection() {
 
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      {/* Curved Vibrant Top Banner — Matched to User Reference Screenshot */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-[#D7261E] via-[#E84E1C] to-[#D35400] rounded-3xl p-5 sm:p-7 md:p-8 text-white shadow-xl mb-6">
-        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
-          {/* Left Title & Icon Section */}
+      {/* Curved Vibrant Top Banner — Ultra-Premium Glassmorphic Design */}
+      <div className="relative overflow-hidden bg-gradient-to-r from-[#D7261E] via-[#E84E1C] to-[#D35400] rounded-3xl p-5 sm:p-7 md:p-8 text-white shadow-2xl mb-8 border border-red-500/30">
+        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          {/* Left Title & Flame Icon Section with Pulsing Radial Glow */}
           <div className="flex items-center gap-3.5 sm:gap-4">
-            <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-white shrink-0 shadow-inner">
-              <Flame className="w-7 h-7 sm:w-8 sm:h-8 fill-white" />
+            <div className="relative flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-tr from-amber-400 to-red-600 rounded-2xl shrink-0 shadow-xl shadow-red-950/40 ring-4 ring-white/20">
+              <span className="absolute inset-0 rounded-2xl bg-amber-400/40 blur-md animate-pulse" />
+              <Flame className="w-7 h-7 sm:w-8 sm:h-8 fill-white text-white drop-shadow relative z-10 animate-pulse" />
             </div>
             <div>
               <div className="flex items-center gap-2.5 flex-wrap">
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight leading-tight">
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight leading-tight text-white drop-shadow-sm">
                   {campaign.title || 'Flash Sale Discounts'}
                 </h2>
-                <span className="hidden sm:inline-flex items-center gap-1 bg-black/25 backdrop-blur-xs text-[10px] font-black uppercase px-2 py-0.5 rounded-full border border-white/20">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                  <span>Live Deal</span>
+                <span className="inline-flex items-center gap-1.5 bg-black/40 backdrop-blur-md text-[11px] font-black uppercase px-2.5 py-0.5 rounded-full border border-white/25 shadow-inner">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
+                  </span>
+                  <span className="tracking-wider text-emerald-300">Live Deal</span>
                 </span>
               </div>
-              <p className="text-xs sm:text-sm text-red-100 font-medium mt-0.5 opacity-95">
+              <p className="text-xs sm:text-sm text-red-100 font-medium mt-1 opacity-95">
                 {campaign.subtitle || 'Limited stock discounts on selected customer favourites'}
               </p>
             </div>
           </div>
 
-          {/* Right Section: Authoritative Countdown + View All Deals Button */}
+          {/* Right Section: World-Class Tabular Flip-Digit Countdown + View All Deals Button */}
           <div className="flex flex-wrap items-center gap-3 sm:gap-4 w-full md:w-auto justify-between md:justify-end">
-            {/* Live Synchronized Countdown Timer */}
-            <div className="flex items-center gap-1.5 bg-black/30 backdrop-blur-md px-3 py-2 rounded-2xl border border-white/20 text-center select-none shadow-sm">
-              <Clock className="w-4 h-4 text-amber-300 shrink-0 mr-1 hidden sm:block" />
-              {days > 0 && (
-                <>
-                  <div className="min-w-[28px] sm:min-w-[32px]">
-                    <span className="block font-price font-black text-xs sm:text-sm leading-none">{pad(days)}</span>
-                    <span className="text-[8px] font-bold uppercase tracking-wider text-white/70">Days</span>
-                  </div>
-                  <span className="font-bold text-white/50 text-xs sm:text-sm">:</span>
-                </>
-              )}
-              <div className="min-w-[28px] sm:min-w-[32px]">
-                <span className="block font-price font-black text-xs sm:text-sm leading-none">{pad(hours)}</span>
-                <span className="text-[8px] font-bold uppercase tracking-wider text-white/70">Hours</span>
-              </div>
-              <span className="font-bold text-white/50 text-xs sm:text-sm">:</span>
-              <div className="min-w-[28px] sm:min-w-[32px]">
-                <span className="block font-price font-black text-xs sm:text-sm leading-none">{pad(minutes)}</span>
-                <span className="text-[8px] font-bold uppercase tracking-wider text-white/70">Min</span>
-              </div>
-              <span className="font-bold text-white/50 text-xs sm:text-sm">:</span>
-              <div className="min-w-[28px] sm:min-w-[32px]">
-                <span className="block font-price font-black text-xs sm:text-sm leading-none text-amber-300">
-                  {pad(seconds)}
-                </span>
-                <span className="text-[8px] font-bold uppercase tracking-wider text-white/70">Sec</span>
-              </div>
-            </div>
+            {/* World-Class Digit Cards */}
+            <div className="flex items-center gap-1 sm:gap-1.5 select-none">
+              <div className="flex items-center gap-1 sm:gap-1.5 bg-black/50 backdrop-blur-xl p-1.5 sm:p-2 rounded-2xl border border-white/20 shadow-2xl shadow-black/40">
+                {days > 0 && (
+                  <>
+                    <div className="flex flex-col items-center justify-center bg-gradient-to-b from-white/20 to-white/5 border border-white/20 rounded-xl px-2.5 py-1 sm:px-3 sm:py-1.5 min-w-[42px] sm:min-w-[48px] shadow-inner">
+                      <span className="font-mono font-black text-base sm:text-xl md:text-2xl text-white tracking-tight tabular-nums leading-none drop-shadow">
+                        {pad(days)}
+                      </span>
+                      <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-white/80 mt-1">
+                        Days
+                      </span>
+                    </div>
+                    <span className="font-black text-amber-300 text-sm sm:text-lg animate-pulse px-0.5">:</span>
+                  </>
+                )}
 
-            {/* View All Deals Pill Button */}
-            <Link
-              href="/flash-sale"
-              className="bg-white text-slate-950 hover:bg-slate-100 px-5 sm:px-6 py-2.5 rounded-full font-bold text-xs sm:text-sm shadow-md transition-all active:scale-95 shrink-0 flex items-center gap-1.5"
-            >
-              <span>View All Deals</span>
-              <ArrowRight className="w-3.5 h-3.5 text-slate-600" />
-            </Link>
+                <div className="flex flex-col items-center justify-center bg-gradient-to-b from-white/20 to-white/5 border border-white/20 rounded-xl px-2.5 py-1 sm:px-3 sm:py-1.5 min-w-[42px] sm:min-w-[48px] shadow-inner">
+                  <span className="font-mono font-black text-base sm:text-xl md:text-2xl text-white tracking-tight tabular-nums leading-none drop-shadow">
+                    {pad(hours)}
+                  </span>
+                  <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-white/80 mt-1">
+                    Hours
+                  </span>
+                </div>
+
+                <span className="font-black text-amber-300 text-sm sm:text-lg animate-pulse px-0.5">:</span>
+
+                <div className="flex flex-col items-center justify-center bg-gradient-to-b from-white/20 to-white/5 border border-white/20 rounded-xl px-2.5 py-1 sm:px-3 sm:py-1.5 min-w-[42px] sm:min-w-[48px] shadow-inner">
+                  <span className="font-mono font-black text-base sm:text-xl md:text-2xl text-white tracking-tight tabular-nums leading-none drop-shadow">
+                    {pad(minutes)}
+                  </span>
+                  <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-white/80 mt-1">
+                    Mins
+                  </span>
+                </div>
+
+                <span className="font-black text-amber-300 text-sm sm:text-lg animate-pulse px-0.5">:</span>
+
+                {/* Fiery Seconds Box with Pulsing Glow */}
+                <div className="flex flex-col items-center justify-center bg-gradient-to-b from-amber-500/30 to-red-500/20 border border-amber-400/50 rounded-xl px-2.5 py-1 sm:px-3 sm:py-1.5 min-w-[42px] sm:min-w-[48px] shadow-inner ring-1 ring-amber-400/40">
+                  <span className="font-mono font-black text-base sm:text-xl md:text-2xl text-amber-300 tracking-tight tabular-nums leading-none drop-shadow animate-pulse">
+                    {pad(seconds)}
+                  </span>
+                  <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-amber-200 mt-1">
+                    Secs
+                  </span>
+                </div>
+              </div>
+
+              {/* View All Deals Pill Button */}
+              <Link
+                href="/flash-sale"
+                className="group relative overflow-hidden bg-white hover:bg-slate-50 text-slate-950 px-4 sm:px-6 py-2.5 sm:py-3 rounded-full font-black text-xs sm:text-sm shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95 shrink-0 flex items-center gap-1.5 border border-white/50"
+              >
+                <span>View All Deals</span>
+                <ArrowRight className="w-4 h-4 text-slate-800 group-hover:translate-x-1.5 transition-transform duration-300" />
+              </Link>
+            </div>
           </div>
         </div>
 
-        {/* Ambient subtle glow */}
-        <div className="absolute -top-16 -right-16 w-48 h-48 bg-white/10 rounded-full blur-2xl pointer-events-none" />
+        {/* Ambient subtle glow light streaks */}
+        <div className="absolute -top-16 -right-16 w-60 h-60 bg-amber-400/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-16 -left-16 w-60 h-60 bg-red-900/30 rounded-full blur-3xl pointer-events-none" />
       </div>
 
       {/* Flash Sale Product Cards Grid */}

@@ -61,7 +61,7 @@
       "purchaseCost": 2000,
       "sellingPrice": 4500,
       "salePrice": 3000,
-      "stockQuantity": 11,
+      "stockQuantity": 8,
       "lowStockThreshold": 5,
       "status": "ACTIVE",
       "isFeatured": false,
@@ -77,7 +77,7 @@
           "colorCode": "#000000",
           "price": 3000,
           "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiMajuxHisiIhUTsq_JzvvXQJD82dveusJha4o5pT-8g&s=10",
-          "stockQuantity": 2,
+          "stockQuantity": 1,
           "isActive": true,
           "sortOrder": 0,
           "createdAt": "2026-10-14T17:02:18.037Z",
@@ -90,7 +90,7 @@
           "colorCode": "#FFFFFF",
           "price": 3500,
           "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROLLZi1k2IRLFp_vf7qclb4_NGsl-bTDZU-VHW08Qjvg&s=10",
-          "stockQuantity": 9,
+          "stockQuantity": 7,
           "isActive": true,
           "sortOrder": 1,
           "createdAt": "2026-10-14T17:02:18.037Z",
@@ -984,6 +984,88 @@
     }
   ],
   "orders": [
+    {
+      "id": "ord-1792051171138",
+      "orderNumber": "TEM-2026-65840",
+      "customerName": "Flash Sale Test Buyer",
+      "customerPhone": "01799887766",
+      "deliveryAddress": "Mirpur 10, Block D, Dhaka",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "Inside Dhaka",
+      "subtotal": 6300,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 0,
+      "totalAmount": 6300,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "rewardPointsRedeemed": 0,
+      "rewardDiscount": 0,
+      "fraudRiskScore": 0,
+      "fraudRiskTier": "LOW",
+      "fraudRiskFlags": [],
+      "items": [
+        {
+          "productId": "prod-1791997338037",
+          "productName": "Head Phone HOCO ANC",
+          "sku": "HDP 456",
+          "selectedColor": "White",
+          "variantId": "var-1791997338037-1",
+          "unitPrice": 3150,
+          "purchaseCost": 2000,
+          "quantity": 2,
+          "totalPrice": 6300,
+          "isFlashSale": true,
+          "flashCampaignId": "fsc-1792051170151"
+        }
+      ],
+      "createdAt": "2026-10-15T07:59:31.138Z",
+      "updatedAt": "2026-10-15T07:59:31.138Z"
+    },
+    {
+      "id": "ord-1792050190230",
+      "orderNumber": "TEM-2026-16709",
+      "customerName": "yousuf ali",
+      "customerPhone": "01623363623",
+      "deliveryAddress": "azizer mor, boyra bazar, khulna, bangladesh",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "Inside Dhaka",
+      "subtotal": 3000,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 0,
+      "totalAmount": 3000,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "rewardPointsRedeemed": 0,
+      "rewardDiscount": 0,
+      "fraudRiskScore": 0,
+      "fraudRiskTier": "LOW",
+      "fraudRiskFlags": [
+        "Verified Trusted Customer (Admin Whitelist)"
+      ],
+      "items": [
+        {
+          "productId": "prod-1791997338037",
+          "productName": "Head Phone HOCO ANC",
+          "sku": "HDP 456",
+          "selectedColor": "Black",
+          "variantId": "var-1791997338037-0",
+          "unitPrice": 3000,
+          "purchaseCost": 2000,
+          "quantity": 1,
+          "totalPrice": 3000,
+          "isFlashSale": true,
+          "flashCampaignId": "fsc-1792049668407"
+        }
+      ],
+      "createdAt": "2026-10-15T07:43:10.230Z",
+      "updatedAt": "2026-10-15T07:43:10.230Z"
+    },
     {
       "id": "ord-1792049720961",
       "orderNumber": "TEM-2026-54074",
@@ -3294,6 +3376,28 @@
       "reason": "Customer order TEM-2026-54074 (Color: Black)",
       "referenceId": "ord-1792049720961",
       "createdAt": "2026-10-15T07:35:20.963Z"
+    },
+    {
+      "id": "mov-1792050190238",
+      "productId": "prod-1791997338037",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 11,
+      "newStock": 10,
+      "reason": "Customer order TEM-2026-16709 (Color: Black)",
+      "referenceId": "ord-1792050190230",
+      "createdAt": "2026-10-15T07:43:10.238Z"
+    },
+    {
+      "id": "mov-1792051171142",
+      "productId": "prod-1791997338037",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -2,
+      "previousStock": 10,
+      "newStock": 8,
+      "reason": "Customer order TEM-2026-65840 (Color: White)",
+      "referenceId": "ord-1792051171138",
+      "createdAt": "2026-10-15T07:59:31.142Z"
     }
   ],
   "users": [
@@ -3646,8 +3750,8 @@
       "title": "Automated E2E Test Flash Sale",
       "subtitle": "Exclusive Verification Deal",
       "bannerUrl": "",
-      "startDate": "2026-10-15T07:33:28.340Z",
-      "endDate": "2026-10-16T07:34:28.340Z",
+      "startDate": "2026-10-15T07:33:00.000Z",
+      "endDate": "2026-10-16T07:34:00.000Z",
       "status": "ACTIVE",
       "isActive": true,
       "items": [
@@ -3655,15 +3759,25 @@
           "id": "fsi-1792049668407-0",
           "campaignId": "fsc-1792049668407",
           "productId": "prod-1791997338037",
-          "flashPrice": 3150,
+          "flashPrice": 3000,
           "originalPrice": 4500,
-          "allocatedStock": 15,
-          "soldCount": 0,
+          "allocatedStock": 4,
+          "soldCount": 2,
           "sortOrder": 1
+        },
+        {
+          "id": "fsi-1792051225638-1",
+          "campaignId": "fsc-1792049668407",
+          "productId": "prod-1791994778690",
+          "flashPrice": 3732,
+          "originalPrice": 5000,
+          "allocatedStock": 4,
+          "soldCount": 0,
+          "sortOrder": 2
         }
       ],
       "createdAt": "2026-10-15T07:34:28.407Z",
-      "updatedAt": "2026-10-15T07:34:28.407Z"
+      "updatedAt": "2026-10-15T08:00:42.002Z"
     },
     {
       "id": "fsc-seed-1",
