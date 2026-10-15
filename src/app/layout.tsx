@@ -8,8 +8,12 @@ export const metadata: Metadata = {
   description: 'Shop authentic gadgets, fashion, organic foods, and home essentials with Cash on Delivery nationwide.',
   keywords: 'e-commerce bangladesh, online shopping bd, smart gadgets, toto elite mart, cash on delivery dhaka',
   icons: {
-    icon: 'https://cdn.jsdelivr.net/gh/YousufMax/image-server-001@main/toto%20elite%20mart%20logo%20final%20(1).png',
-    apple: 'https://cdn.jsdelivr.net/gh/YousufMax/image-server-001@main/toto%20elite%20mart%20logo%20final%20(1).png',
+    icon: [
+      { url: '/logo.png', type: 'image/png' },
+      { url: 'https://cdn.jsdelivr.net/gh/YousufMax/image-server-001@main/toto%20elite%20mart%20logo%20final%20(1).png', type: 'image/png' },
+    ],
+    shortcut: '/logo.png',
+    apple: '/logo.png',
   },
 };
 
@@ -21,6 +25,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <head>
+        <link rel="icon" type="image/png" href="/logo.png" />
+        <link rel="shortcut icon" href="/logo.png" />
+        <link rel="apple-touch-icon" href="/logo.png" />
         <script
           dangerouslySetInnerHTML={{
             __html: `

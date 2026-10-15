@@ -1,8 +1,21 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import { getSessionUser } from '@/lib/auth';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import AdminHeader from '@/components/admin/AdminHeader';
 import { redirect } from 'next/navigation';
+
+export const metadata: Metadata = {
+  title: 'Admin Dashboard — Toto Elite Mart',
+  icons: {
+    icon: [
+      { url: '/logo.png', type: 'image/png' },
+      { url: 'https://cdn.jsdelivr.net/gh/YousufMax/image-server-001@main/toto%20elite%20mart%20logo%20final%20(1).png', type: 'image/png' },
+    ],
+    shortcut: '/logo.png',
+    apple: '/logo.png',
+  },
+};
 
 export default async function AdminLayout({
   children,

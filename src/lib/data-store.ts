@@ -966,6 +966,10 @@ export async function getProducts(options?: {
         purchaseCost: Number(p.purchaseCost),
         sellingPrice: Number(p.sellingPrice),
         salePrice: p.salePrice ? Number(p.salePrice) : null,
+        colorVariants: (p.colorVariants || []).map((cv) => ({
+          ...cv,
+          price: cv.price != null ? Number(cv.price) : null,
+        })),
       }));
 
       return attachReviewStats(mapped);
@@ -1038,6 +1042,10 @@ export async function getProductBySlugOrId(identifier: string) {
           purchaseCost: Number(p.purchaseCost),
           sellingPrice: Number(p.sellingPrice),
           salePrice: p.salePrice ? Number(p.salePrice) : null,
+          colorVariants: (p.colorVariants || []).map((cv) => ({
+            ...cv,
+            price: cv.price != null ? Number(cv.price) : null,
+          })),
         };
         return attachSingleReviewStats(productObj);
       }
@@ -1238,6 +1246,10 @@ export async function getProductById(id: string) {
           purchaseCost: Number(p.purchaseCost),
           sellingPrice: Number(p.sellingPrice),
           salePrice: p.salePrice ? Number(p.salePrice) : null,
+          colorVariants: (p.colorVariants || []).map((cv) => ({
+            ...cv,
+            price: cv.price != null ? Number(cv.price) : null,
+          })),
         };
       }
     } catch {
