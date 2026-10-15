@@ -18,16 +18,18 @@ export default async function AdminOrderInvoicePage({
     notFound();
   }
 
-  // Format Decimal objects safely for client component
+  // Format Decimal objects safely for client component to prevent React serialization warnings
+  const baseOrder = JSON.parse(JSON.stringify(order));
   const sanitizedOrder = {
-    ...order,
+    ...baseOrder,
     subtotal: Number(order.subtotal || 0),
     discount: Number(order.discount || 0),
     deliveryFee: Number(order.deliveryFee || 0),
     totalAmount: Number(order.totalAmount || 0),
     items: (order.items || []).map((item: any) => ({
-      ...item,
+      ...JSON.parse(JSON.stringify(item)),
       unitPrice: Number(item.unitPrice || 0),
+      purchaseCost: Number(item.purchaseCost || 0),
       totalPrice: Number(item.totalPrice || item.unitPrice * item.quantity || 0),
     })),
   };
