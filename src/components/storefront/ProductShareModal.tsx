@@ -19,7 +19,7 @@ interface ProductShareModalProps {
 }
 
 // 1. Official WhatsApp App Icon
-function WhatsAppIcon({ className = 'w-13 h-13' }: { className?: string }) {
+function WhatsAppIcon({ className = 'w-full h-full' }: { className?: string }) {
   return (
     <svg viewBox="0 0 175.216 175.552" className={className}>
       <defs>
@@ -28,17 +28,17 @@ function WhatsAppIcon({ className = 'w-13 h-13' }: { className?: string }) {
           <stop offset="1" stopColor="#23b33a" />
         </linearGradient>
       </defs>
-      {/* Outer White Border Silhouette */}
+      {/* Outer White Border */}
       <path
         fill="#FFFFFF"
         d="m12.966 161.238 10.439-38.114a73.42 73.42 0 0 1-9.821-36.772c.017-40.556 33.021-73.55 73.578-73.55 19.681.01 38.154 7.669 52.047 21.572s21.537 32.383 21.53 52.037c-.018 40.553-33.027 73.553-73.578 73.553h-.032c-12.313-.005-24.412-3.094-35.159-8.954z"
       />
-      {/* Green Badge */}
+      {/* Green Circle Badge */}
       <path
         fill="url(#wa-official-grad)"
         d="M87.184 25.227c-33.733 0-61.166 27.423-61.178 61.13a60.98 60.98 0 0 0 9.349 32.535l1.455 2.313-6.179 22.558 23.146-6.069 2.235 1.324c9.387 5.571 20.15 8.517 31.126 8.523h.023c33.707 0 61.14-27.426 61.153-61.135a60.75 60.75 0 0 0-17.895-43.251 60.75 60.75 0 0 0-43.235-17.928z"
       />
-      {/* White Phone Receiver */}
+      {/* White Phone Receiver inside */}
       <path
         fill="#FFFFFF"
         fillRule="evenodd"
@@ -49,7 +49,7 @@ function WhatsAppIcon({ className = 'w-13 h-13' }: { className?: string }) {
 }
 
 // 2. Official Facebook App Icon
-function FacebookIcon({ className = 'w-13 h-13' }: { className?: string }) {
+function FacebookIcon({ className = 'w-full h-full' }: { className?: string }) {
   return (
     <svg viewBox="0 0 40 40" className={className}>
       <defs>
@@ -71,7 +71,7 @@ function FacebookIcon({ className = 'w-13 h-13' }: { className?: string }) {
 }
 
 // 3. Official Messenger App Icon
-function MessengerIcon({ className = 'w-13 h-13' }: { className?: string }) {
+function MessengerIcon({ className = 'w-full h-full' }: { className?: string }) {
   return (
     <svg viewBox="0 0 800 800" className={className}>
       <defs>
@@ -95,7 +95,7 @@ function MessengerIcon({ className = 'w-13 h-13' }: { className?: string }) {
 }
 
 // 4. Official Telegram App Icon
-function TelegramIcon({ className = 'w-13 h-13' }: { className?: string }) {
+function TelegramIcon({ className = 'w-full h-full' }: { className?: string }) {
   return (
     <svg viewBox="0 0 496 512" className={className}>
       <defs>
@@ -114,7 +114,7 @@ function TelegramIcon({ className = 'w-13 h-13' }: { className?: string }) {
 }
 
 // 5. Official Instagram App Icon
-function InstagramIcon({ className = 'w-13 h-13' }: { className?: string }) {
+function InstagramIcon({ className = 'w-full h-full' }: { className?: string }) {
   return (
     <svg viewBox="0 0 512 512" className={className}>
       <defs>
@@ -157,12 +157,10 @@ function InstagramIcon({ className = 'w-13 h-13' }: { className?: string }) {
 }
 
 // 6. Native Share / More Apps Icon
-function MoreAppsIcon({ className = 'w-13 h-13' }: { className?: string }) {
+function MoreAppsIcon() {
   return (
-    <div
-      className={`${className} rounded-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 text-white flex items-center justify-center shadow-md`}
-    >
-      <Share2 className="w-6 h-6 text-white stroke-[2.2]" />
+    <div className="w-full h-full rounded-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 text-white flex items-center justify-center shadow-sm">
+      <Share2 className="w-5 h-5 sm:w-6 sm:h-6 text-white stroke-[2.2]" />
     </div>
   );
 }
@@ -332,29 +330,36 @@ export default function ProductShareModal({
   };
 
   return (
-    <div className="fixed inset-0 z-60 bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-200">
+    <div
+      className="fixed inset-0 z-[99999] overflow-y-auto bg-black/75 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Share this product"
+    >
       {/* Click outside backdrop */}
-      <div className="absolute inset-0" onClick={onClose} />
+      <div
+        className="fixed inset-0 -z-10 bg-transparent"
+        onClick={onClose}
+        aria-hidden="true"
+      />
 
       {/* Modal / Bottom Sheet Card */}
       <div
-        className="relative bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden transform transition-all animate-in slide-in-from-bottom sm:zoom-in-95 duration-200 z-10"
-        role="dialog"
-        aria-modal="true"
-        aria-label="Share this product"
+        className="relative bg-white w-full sm:max-w-md max-h-[92vh] sm:max-h-[88vh] rounded-t-[28px] sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col my-0 sm:my-auto transform transition-all animate-in slide-in-from-bottom sm:zoom-in-95 duration-200"
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Mobile Swipe-down indicator */}
-        <div className="w-12 h-1 bg-slate-300 rounded-full mx-auto my-2.5 sm:hidden" />
+        <div className="w-12 h-1 bg-slate-300 rounded-full mx-auto my-2.5 sm:hidden shrink-0" />
 
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100 shrink-0 bg-white">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-200/60">
+            <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-200/60 shrink-0">
               <Share2 className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="font-black text-slate-900 text-sm tracking-tight">Share Product</h3>
-              <p className="text-[11px] text-slate-500">Share with friends on your favorite app</p>
+              <h3 className="font-black text-slate-900 text-sm tracking-tight leading-tight">Share Product</h3>
+              <p className="text-[11px] text-slate-500 leading-tight">Share with friends on your favorite app</p>
             </div>
           </div>
           <button
@@ -367,11 +372,11 @@ export default function ProductShareModal({
           </button>
         </div>
 
-        {/* Content Body */}
-        <div className="p-5 space-y-5">
+        {/* Scrollable Content Body */}
+        <div className="p-4 sm:p-5 space-y-4 overflow-y-auto overscroll-contain">
           {/* Product Mini Preview Box */}
-          <div className="flex items-center gap-3.5 p-3 bg-slate-50 rounded-2xl border border-slate-200/80">
-            <div className="w-14 h-14 rounded-xl overflow-hidden bg-white border border-slate-200 shrink-0">
+          <div className="flex items-center gap-3 p-2.5 bg-slate-50 rounded-2xl border border-slate-200/80">
+            <div className="w-12 h-12 rounded-xl overflow-hidden bg-white border border-slate-200 shrink-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={primaryImage}
@@ -397,92 +402,104 @@ export default function ProductShareModal({
             </div>
           </div>
 
-          {/* Social Platforms Grid - Balanced 3x2 on mobile, 6 on desktop */}
+          {/* Social Platforms Grid - Exact 3 columns on mobile, 6 on desktop */}
           <div>
-            <span className="block text-[11px] font-bold text-slate-500 mb-3 uppercase tracking-wider">
+            <span className="block text-[11px] font-bold text-slate-500 mb-2.5 uppercase tracking-wider">
               Share To Social Platforms
             </span>
-            <div className="grid grid-cols-3 sm:grid-cols-6 gap-3.5 sm:gap-2">
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-2.5">
               {/* WhatsApp */}
               <button
                 type="button"
                 onClick={handleWhatsApp}
-                className="flex flex-col items-center gap-2 p-2 rounded-2xl hover:bg-slate-50 transition group cursor-pointer"
+                className="flex flex-col items-center justify-center gap-1.5 p-2 rounded-2xl hover:bg-slate-100/70 active:bg-slate-200/60 transition group cursor-pointer"
               >
-                <div className="w-13 h-13 flex items-center justify-center group-hover:scale-110 active:scale-95 transition-all duration-200 drop-shadow-md group-hover:drop-shadow-lg">
-                  <WhatsAppIcon className="w-full h-full" />
+                <div className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center shrink-0 group-hover:scale-105 active:scale-95 transition-transform duration-200 drop-shadow-sm">
+                  <WhatsAppIcon />
                 </div>
-                <span className="text-xs font-semibold text-slate-700 group-hover:text-slate-950">WhatsApp</span>
+                <span className="text-[11px] sm:text-xs font-semibold text-slate-700 group-hover:text-slate-950 text-center tracking-tight">
+                  WhatsApp
+                </span>
               </button>
 
               {/* Facebook */}
               <button
                 type="button"
                 onClick={handleFacebook}
-                className="flex flex-col items-center gap-2 p-2 rounded-2xl hover:bg-slate-50 transition group cursor-pointer"
+                className="flex flex-col items-center justify-center gap-1.5 p-2 rounded-2xl hover:bg-slate-100/70 active:bg-slate-200/60 transition group cursor-pointer"
               >
-                <div className="w-13 h-13 flex items-center justify-center group-hover:scale-110 active:scale-95 transition-all duration-200 drop-shadow-md group-hover:drop-shadow-lg">
-                  <FacebookIcon className="w-full h-full" />
+                <div className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center shrink-0 group-hover:scale-105 active:scale-95 transition-transform duration-200 drop-shadow-sm">
+                  <FacebookIcon />
                 </div>
-                <span className="text-xs font-semibold text-slate-700 group-hover:text-slate-950">Facebook</span>
+                <span className="text-[11px] sm:text-xs font-semibold text-slate-700 group-hover:text-slate-950 text-center tracking-tight">
+                  Facebook
+                </span>
               </button>
 
               {/* Messenger */}
               <button
                 type="button"
                 onClick={handleMessenger}
-                className="flex flex-col items-center gap-2 p-2 rounded-2xl hover:bg-slate-50 transition group cursor-pointer"
+                className="flex flex-col items-center justify-center gap-1.5 p-2 rounded-2xl hover:bg-slate-100/70 active:bg-slate-200/60 transition group cursor-pointer"
               >
-                <div className="w-13 h-13 flex items-center justify-center group-hover:scale-110 active:scale-95 transition-all duration-200 drop-shadow-md group-hover:drop-shadow-lg">
-                  <MessengerIcon className="w-full h-full" />
+                <div className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center shrink-0 group-hover:scale-105 active:scale-95 transition-transform duration-200 drop-shadow-sm">
+                  <MessengerIcon />
                 </div>
-                <span className="text-xs font-semibold text-slate-700 group-hover:text-slate-950">Messenger</span>
+                <span className="text-[11px] sm:text-xs font-semibold text-slate-700 group-hover:text-slate-950 text-center tracking-tight">
+                  Messenger
+                </span>
               </button>
 
               {/* Telegram */}
               <button
                 type="button"
                 onClick={handleTelegram}
-                className="flex flex-col items-center gap-2 p-2 rounded-2xl hover:bg-slate-50 transition group cursor-pointer"
+                className="flex flex-col items-center justify-center gap-1.5 p-2 rounded-2xl hover:bg-slate-100/70 active:bg-slate-200/60 transition group cursor-pointer"
               >
-                <div className="w-13 h-13 flex items-center justify-center group-hover:scale-110 active:scale-95 transition-all duration-200 drop-shadow-md group-hover:drop-shadow-lg">
-                  <TelegramIcon className="w-full h-full" />
+                <div className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center shrink-0 group-hover:scale-105 active:scale-95 transition-transform duration-200 drop-shadow-sm">
+                  <TelegramIcon />
                 </div>
-                <span className="text-xs font-semibold text-slate-700 group-hover:text-slate-950">Telegram</span>
+                <span className="text-[11px] sm:text-xs font-semibold text-slate-700 group-hover:text-slate-950 text-center tracking-tight">
+                  Telegram
+                </span>
               </button>
 
               {/* Instagram */}
               <button
                 type="button"
                 onClick={handleInstagram}
-                className="flex flex-col items-center gap-2 p-2 rounded-2xl hover:bg-slate-50 transition group cursor-pointer"
+                className="flex flex-col items-center justify-center gap-1.5 p-2 rounded-2xl hover:bg-slate-100/70 active:bg-slate-200/60 transition group cursor-pointer"
               >
-                <div className="w-13 h-13 flex items-center justify-center group-hover:scale-110 active:scale-95 transition-all duration-200 drop-shadow-md group-hover:drop-shadow-lg">
-                  <InstagramIcon className="w-full h-full" />
+                <div className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center shrink-0 group-hover:scale-105 active:scale-95 transition-transform duration-200 drop-shadow-sm">
+                  <InstagramIcon />
                 </div>
-                <span className="text-xs font-semibold text-slate-700 group-hover:text-slate-950">Instagram</span>
+                <span className="text-[11px] sm:text-xs font-semibold text-slate-700 group-hover:text-slate-950 text-center tracking-tight">
+                  Instagram
+                </span>
               </button>
 
               {/* More Apps (Native Share) */}
               <button
                 type="button"
                 onClick={handleNativeShare}
-                className="flex flex-col items-center gap-2 p-2 rounded-2xl hover:bg-slate-50 transition group cursor-pointer"
+                className="flex flex-col items-center justify-center gap-1.5 p-2 rounded-2xl hover:bg-slate-100/70 active:bg-slate-200/60 transition group cursor-pointer"
               >
-                <div className="w-13 h-13 flex items-center justify-center group-hover:scale-110 active:scale-95 transition-all duration-200 drop-shadow-md group-hover:drop-shadow-lg">
-                  <MoreAppsIcon className="w-full h-full" />
+                <div className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center shrink-0 group-hover:scale-105 active:scale-95 transition-transform duration-200 drop-shadow-sm">
+                  <MoreAppsIcon />
                 </div>
-                <span className="text-xs font-semibold text-slate-700 group-hover:text-slate-950">More Apps</span>
+                <span className="text-[11px] sm:text-xs font-semibold text-slate-700 group-hover:text-slate-950 text-center tracking-tight">
+                  More Apps
+                </span>
               </button>
             </div>
           </div>
 
           {/* Copy Link Input Bar */}
-          <div className="space-y-1.5 pt-1 border-t border-slate-100">
+          <div className="space-y-1.5 pt-2 border-t border-slate-100">
             <span className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">
               Or Copy Direct Link
             </span>
-            <div className="flex items-center gap-2 p-1.5 bg-slate-50 border border-slate-200 rounded-2xl focus-within:ring-2 focus-within:ring-amber-500 focus-within:bg-white transition">
+            <div className="flex items-center gap-2 p-1 bg-slate-50 border border-slate-200 rounded-2xl focus-within:ring-2 focus-within:ring-amber-500 focus-within:bg-white transition">
               <input
                 type="text"
                 readOnly
@@ -493,7 +510,7 @@ export default function ProductShareModal({
               <button
                 type="button"
                 onClick={handleCopy}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-black shrink-0 transition active:scale-95 shadow-2xs ${
+                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-black shrink-0 transition active:scale-95 shadow-2xs ${
                   copied
                     ? 'bg-emerald-600 text-white'
                     : 'bg-slate-900 hover:bg-slate-800 text-white'

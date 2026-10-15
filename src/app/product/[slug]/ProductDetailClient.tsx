@@ -163,17 +163,6 @@ export default function ProductDetailClient({ product }: { product: any }) {
             </span>
           )}
 
-          {/* Floating Share Button on Image */}
-          <button
-            type="button"
-            onClick={() => setIsShareOpen(true)}
-            className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/90 hover:bg-white text-slate-700 hover:text-amber-600 flex items-center justify-center transition shadow-md backdrop-blur-xs active:scale-90 z-10"
-            title="Share this product"
-            aria-label="Share this product"
-          >
-            <Share2 className="w-4 h-4" />
-          </button>
-
           {/* Mobile Next/Prev Arrows */}
           {allImages.length > 1 && (
             <>
