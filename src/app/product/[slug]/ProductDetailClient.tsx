@@ -2,9 +2,10 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ShoppingBag, Zap, Plus, Minus, CheckCircle, ShieldAlert, ChevronLeft, ChevronRight, Check } from 'lucide-react';
+import { ShoppingBag, Zap, Plus, Minus, CheckCircle, ShieldAlert, ChevronLeft, ChevronRight, Check, Share2 } from 'lucide-react';
 import { useCart } from '@/components/storefront/CartContext';
 import { formatBDT } from '@/lib/currency';
+import ProductShareModal from '@/components/storefront/ProductShareModal';
 
 function isLightColor(hexStr?: string): boolean {
   if (!hexStr) return true;
@@ -56,6 +57,7 @@ export default function ProductDetailClient({ product }: { product: any }) {
   });
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
   const [quantity, setQuantity] = useState(1);
+  const [isShareOpen, setIsShareOpen] = useState(false);
 
   // Active displayed main image strictly follows activeImageIndex so clicking thumbnails or swatches always works
   const activeImage = allImages[activeImageIndex] || allImages[0];
@@ -161,6 +163,17 @@ export default function ProductDetailClient({ product }: { product: any }) {
             </span>
           )}
 
+          {/* Floating Share Button on Image */}
+          <button
+            type="button"
+            onClick={() => setIsShareOpen(true)}
+            className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/90 hover:bg-white text-slate-700 hover:text-amber-600 flex items-center justify-center transition shadow-md backdrop-blur-xs active:scale-90 z-10"
+            title="Share this product"
+            aria-label="Share this product"
+          >
+            <Share2 className="w-4 h-4" />
+          </button>
+
           {/* Mobile Next/Prev Arrows */}
           {allImages.length > 1 && (
             <>
@@ -219,11 +232,24 @@ export default function ProductDetailClient({ product }: { product: any }) {
       {/* Product Information & Buy Actions */}
       <div className="flex flex-col justify-between space-y-6">
         <div className="space-y-4">
-          <div className="flex items-center gap-2">
-            <span className="bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-bold">
-              {product.category?.name || 'Category'}
-            </span>
-            <span className="text-slate-400 text-xs font-mono">SKU: {product.sku}</span>
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-bold">
+                {product.category?.name || 'Category'}
+              </span>
+              <span className="text-slate-400 text-xs font-mono">SKU: {product.sku}</span>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setIsShareOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-amber-50 text-slate-700 hover:text-amber-800 text-xs font-bold border border-slate-200/80 transition shadow-2xs hover:border-amber-300 active:scale-95 shrink-0"
+              title="Share this product"
+              aria-label="Share this product"
+            >
+              <Share2 className="w-3.5 h-3.5 text-amber-600" />
+              <span>Share</span>
+            </button>
           </div>
 
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-display font-black text-slate-950 leading-tight tracking-tight">
@@ -466,6 +492,13 @@ export default function ProductDetailClient({ product }: { product: any }) {
           </div>
         </div>
       </div>
+
+      {/* Universal Product Share Modal */}
+      <ProductShareModal
+        isOpen={isShareOpen}
+        onClose={() => setIsShareOpen(false)}
+        product={product}
+      />
     </div>
   );
 }
