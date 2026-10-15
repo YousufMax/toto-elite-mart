@@ -5,7 +5,7 @@ import Header from '@/components/storefront/Header';
 import Footer from '@/components/storefront/Footer';
 import { getOrderByNumber } from '@/lib/data-store';
 import { formatBDT } from '@/lib/currency';
-import { CheckCircle2, PackageCheck, ShoppingBag } from 'lucide-react';
+import { CheckCircle2, PackageCheck, ShoppingBag, Printer } from 'lucide-react';
 
 export default async function OrderConfirmationPage({
   params,
@@ -137,10 +137,19 @@ export default async function OrderConfirmationPage({
         </div>
 
         {/* Next Actions */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center pt-2">
+        <div className="flex flex-col sm:flex-row gap-3.5 justify-center pt-2">
+          <Link
+            href={`/admin/orders/${order.orderNumber}/invoice`}
+            target="_blank"
+            className="px-5 py-3.5 bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition shadow-2xs"
+          >
+            <Printer className="w-4 h-4 text-slate-600" />
+            <span>Official Invoice / রসিদ</span>
+          </Link>
+
           <Link
             href={`/track-order?orderNumber=${order.orderNumber}&phone=${order.customerPhone}`}
-            className="px-6 py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition"
+            className="px-5 py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition"
           >
             <PackageCheck className="w-4 h-4 text-amber-400" />
             <span>Track Order Status</span>
@@ -148,7 +157,7 @@ export default async function OrderConfirmationPage({
 
           <Link
             href="/shop"
-            className="px-6 py-3.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition"
+            className="px-5 py-3.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition"
           >
             <ShoppingBag className="w-4 h-4" />
             <span>Continue Shopping</span>

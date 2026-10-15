@@ -2447,7 +2447,10 @@ export async function getOrderByNumber(orderNumber: string, phone?: string) {
   const isConnected = await isDatabaseConnected();
   if (isConnected) {
     try {
-      const where: any = { orderNumber, isDeleted: false };
+      const where: any = {
+        isDeleted: false,
+        OR: [{ orderNumber }, { id: orderNumber }],
+      };
       if (phone) where.customerPhone = phone;
 
       const order = await prisma.order.findFirst({
@@ -2462,7 +2465,7 @@ export async function getOrderByNumber(orderNumber: string, phone?: string) {
 
   await initMemoryFallback();
   return memoryOrders.find(
-    (o) => o.orderNumber === orderNumber && (!phone || o.customerPhone === phone)
+    (o) => (o.orderNumber === orderNumber || o.id === orderNumber) && (!phone || o.customerPhone === phone)
   );
 }
 

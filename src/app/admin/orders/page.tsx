@@ -10,6 +10,7 @@ import {
   type OrderAgingInfo,
   type AgingStatus,
 } from '@/lib/order-aging';
+import OrderInvoicePrint from '@/components/admin/OrderInvoicePrint';
 import {
   Search,
   Printer,
@@ -63,6 +64,7 @@ export default function AdminOrdersPage() {
   const [search, setSearch] = useState('');
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [timelineOrder, setTimelineOrder] = useState<any>(null);
+  const [invoiceOrder, setInvoiceOrder] = useState<any>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
@@ -753,6 +755,15 @@ export default function AdminOrdersPage() {
                       {/* 8. Actions (History Timeline, View Manifest, Delete) */}
                       <td className="py-3.5 px-4 text-right">
                         <div className="flex items-center justify-end gap-1.5">
+                          {/* 1-Click Print Invoice & Courier Slip */}
+                          <button
+                            onClick={() => setInvoiceOrder(ord)}
+                            className="p-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 rounded-lg transition"
+                            title="Print Invoice & Courier Slip (চালান)"
+                          >
+                            <Printer className="w-4 h-4 text-amber-700" />
+                          </button>
+
                           {/* Order Journey / Timeline Button */}
                           <button
                             onClick={() => setTimelineOrder(ord)}
@@ -967,11 +978,11 @@ export default function AdminOrdersPage() {
 
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => window.print()}
-                  className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold flex items-center gap-1.5 transition"
+                  onClick={() => setInvoiceOrder(selectedOrder)}
+                  className="px-3.5 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs flex items-center gap-1.5 transition shadow-sm active:scale-95"
                 >
                   <Printer className="w-4 h-4" />
-                  <span>Print Invoice</span>
+                  <span>Print Invoice & Slip</span>
                 </button>
 
                 {isSuperAdmin && (
@@ -1341,6 +1352,14 @@ export default function AdminOrdersPage() {
             </form>
           </div>
         </div>
+      )}
+
+      {/* 1-Click Order Invoice & Courier Slip Modal */}
+      {invoiceOrder && (
+        <OrderInvoicePrint
+          order={invoiceOrder}
+          onClose={() => setInvoiceOrder(null)}
+        />
       )}
     </div>
   );
