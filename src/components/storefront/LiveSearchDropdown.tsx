@@ -12,7 +12,7 @@ interface SearchProduct {
   slug: string;
   sellingPrice: number;
   salePrice?: number | null;
-  images?: string[];
+  images?: any[];
   stockQuantity: number;
   category?: {
     name: string;
@@ -217,6 +217,9 @@ export default function LiveSearchDropdown({
                     product.salePrice < product.sellingPrice;
                   const isSelected = selectedIndex === idx;
 
+                  const firstImg = product.images?.[0];
+                  const thumbnailUrl = typeof firstImg === 'string' ? firstImg : (firstImg as any)?.url || null;
+
                   return (
                     <Link
                       key={product.id}
@@ -231,9 +234,9 @@ export default function LiveSearchDropdown({
                     >
                       {/* Thumbnail */}
                       <div className="w-12 h-12 rounded-xl bg-slate-100 shrink-0 border border-slate-200 overflow-hidden flex items-center justify-center">
-                        {product.images && product.images[0] ? (
+                        {thumbnailUrl ? (
                           <img
-                            src={product.images[0]}
+                            src={thumbnailUrl}
                             alt={product.name}
                             className="w-full h-full object-cover"
                             onError={(e) => {

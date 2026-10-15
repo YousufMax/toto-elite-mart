@@ -26,11 +26,11 @@ function isLightColor(hexStr?: string): boolean {
 
 export default function ProductDetailClient({ product }: { product: any }) {
   const router = useRouter();
-  const { addItem } = useCart();
+  const { addItem, storeSettings } = useCart();
 
   // Combine gallery images + any variant photos (no duplicates)
   const rawImages = product.images && product.images.length > 0
-    ? product.images.map((img: any) => img.url).filter(Boolean)
+    ? product.images.map((img: any) => (typeof img === 'string' ? img : img?.url)).filter(Boolean)
     : ['https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80'];
 
   const variantImages = (product.colorVariants || [])
@@ -246,6 +246,26 @@ export default function ProductDetailClient({ product }: { product: any }) {
               </span>
             )}
           </div>
+
+          {/* Elite Reward Points Cashback Motivator */}
+          {storeSettings?.rewardPointsEnabled !== false && (
+            <div className="flex items-center gap-3 p-3 sm:p-3.5 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/90 rounded-2xl text-amber-950 shadow-2xs">
+              <span className="text-2xl select-none">🪙</span>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="font-extrabold text-xs sm:text-sm text-amber-950">
+                    Earn +{Math.max(1, Math.floor(currentPrice / (storeSettings?.rewardPointsEarnRate || 100)))} Elite Points on this item
+                  </span>
+                  <span className="text-[10px] font-bold bg-amber-500/20 text-amber-900 border border-amber-400/40 px-2 py-0.5 rounded-full">
+                    Member Cashback
+                  </span>
+                </div>
+                <p className="text-[11px] text-amber-800/90 mt-0.5 leading-snug">
+                  Points are credited upon delivery and can be redeemed for instant cash discounts at checkout!
+                </p>
+              </div>
+            </div>
+          )}
 
           {/* Stock Availability */}
           <div className="flex items-center gap-2 text-xs font-semibold">

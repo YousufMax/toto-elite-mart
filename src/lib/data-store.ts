@@ -2086,6 +2086,10 @@ export async function createOrder(data: {
 
         return order;
       });
+
+      if (savedOrder && data.rewardPointsRedeemed && data.rewardPointsRedeemed > 0) {
+        await redeemRewardPoints(data.customerPhone, data.rewardPointsRedeemed, orderNumber);
+      }
     } catch (e) {
       console.warn('[TRANSACTIONAL_ORDER_FALLBACK]', e);
     }
@@ -2349,6 +2353,34 @@ export async function updateOrderStatus(orderId: string, status: string, notes?:
             referenceId: ord.id,
             createdAt: new Date(),
           });
+        }
+      }
+
+      // Refund redeemed points back to customer balance
+      if (ord.rewardPointsRedeemed && ord.rewardPointsRedeemed > 0 && ord.customerPhone) {
+        try {
+          await creditRewardPoints(
+            ord.customerPhone,
+            ord.rewardPointsRedeemed,
+            `Refund of redeemed points for cancelled order #${ord.orderNumber}`,
+            ord.id
+          );
+        } catch (e) {
+          console.warn('[REWARD_POINTS_CANCEL_REFUND_FAIL]', e);
+        }
+      }
+
+      // Reverse cashback points if already credited from previous DELIVERED status
+      if (ord.rewardPointsCredited && ord.pointsEarned && ord.customerPhone) {
+        try {
+          await redeemRewardPoints(
+            ord.customerPhone,
+            ord.pointsEarned,
+            ord.id
+          );
+          ord.rewardPointsCredited = false;
+        } catch (e) {
+          console.warn('[REWARD_POINTS_CANCEL_REVERSAL_FAIL]', e);
         }
       }
     }

@@ -13,8 +13,9 @@ export async function GET(req: Request) {
     const sort = searchParams.get('sort') || undefined;
     const minPrice = searchParams.get('minPrice') ? parseFloat(searchParams.get('minPrice')!) : undefined;
     const maxPrice = searchParams.get('maxPrice') ? parseFloat(searchParams.get('maxPrice')!) : undefined;
+    const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')!, 10) : undefined;
 
-    const products = await getProducts({
+    let products = await getProducts({
       categorySlug,
       search,
       featuredOnly,
@@ -22,6 +23,10 @@ export async function GET(req: Request) {
       minPrice,
       maxPrice,
     });
+
+    if (limit && limit > 0) {
+      products = products.slice(0, limit);
+    }
 
     return NextResponse.json({ success: true, count: products.length, products });
   } catch (err: unknown) {

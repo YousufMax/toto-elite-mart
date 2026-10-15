@@ -18,6 +18,7 @@ export default function CartDrawer() {
     itemCount,
     appliedCoupon,
     discountAmount,
+    storeSettings,
   } = useCart();
 
   if (!isDrawerOpen) return null;
@@ -186,6 +187,19 @@ export default function CartDrawer() {
                   </span>
                 </div>
               </div>
+
+              {/* Elite Cashback Points Preview */}
+              {storeSettings?.rewardPointsEnabled !== false && subtotal > 0 && (
+                <div className="p-2 sm:p-2.5 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/80 text-[11px] text-amber-950 flex items-center justify-between">
+                  <span className="flex items-center gap-1.5 font-bold">
+                    <span>🪙</span>
+                    <span>Earn Elite Cashback:</span>
+                  </span>
+                  <span className="font-price font-extrabold text-amber-900 bg-amber-200/60 px-2 py-0.5 rounded-md">
+                    +{Math.max(1, Math.floor(subtotal / (storeSettings?.rewardPointsEarnRate || 100)))} pts
+                  </span>
+                </div>
+              )}
 
               <div className="p-2 sm:p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-[10.5px] sm:text-[11px] text-amber-900 flex items-center gap-2">
                 <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />

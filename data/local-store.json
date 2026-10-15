@@ -139,7 +139,7 @@
       "purchaseCost": 3000,
       "sellingPrice": 5000,
       "salePrice": 3987,
-      "stockQuantity": 20,
+      "stockQuantity": 19,
       "lowStockThreshold": 5,
       "status": "ACTIVE",
       "isFeatured": false,
@@ -155,7 +155,7 @@
           "colorCode": "#10B981",
           "price": 6000,
           "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRO3NeAvUuARLJrarINsa3EPFlBi2ljVXTI-_sfwoPZ_w&s=10",
-          "stockQuantity": 10,
+          "stockQuantity": 9,
           "isActive": true,
           "sortOrder": 0,
           "createdAt": "2026-10-14T16:23:01.057Z",
@@ -466,7 +466,7 @@
       "purchaseCost": 1100,
       "sellingPrice": 1850,
       "salePrice": 1599,
-      "stockQuantity": 44,
+      "stockQuantity": 38,
       "lowStockThreshold": 10,
       "isFeatured": true,
       "tags": "earbuds, audio, bluetooth, wireless, anc",
@@ -508,7 +508,7 @@
           "name": "Matte Black",
           "colorCode": "#111827",
           "imageUrl": "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=800&auto=format&fit=crop&q=80",
-          "stockQuantity": 24,
+          "stockQuantity": 18,
           "isActive": true,
           "sortOrder": 0,
           "createdAt": "2026-10-12T19:07:15.893Z",
@@ -984,6 +984,171 @@
     }
   ],
   "orders": [
+    {
+      "id": "ord-1792046833526",
+      "orderNumber": "TEM-2026-60594",
+      "customerName": "Loyal Buyer",
+      "customerPhone": "01712349999",
+      "deliveryAddress": "House 5, Road 12, Dhanmondi, Dhaka",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "Inside Dhaka",
+      "subtotal": 1599,
+      "discount": 50,
+      "couponCode": null,
+      "deliveryFee": 60,
+      "totalAmount": 1609,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "DELIVERED",
+      "notes": null,
+      "rewardPointsRedeemed": 50,
+      "rewardDiscount": 50,
+      "fraudRiskScore": 0,
+      "fraudRiskTier": "LOW",
+      "fraudRiskFlags": [],
+      "items": [
+        {
+          "productId": "prod-1",
+          "productName": "Pro ANC Wireless Earbuds with ENC Mic",
+          "sku": "TEM-TWS-001",
+          "selectedColor": "Matte Black",
+          "variantId": "var-tws-1",
+          "unitPrice": 1599,
+          "purchaseCost": 1100,
+          "quantity": 1,
+          "totalPrice": 1599
+        }
+      ],
+      "createdAt": "2026-10-15T06:47:13.526Z",
+      "updatedAt": "2026-10-15T06:47:16.650Z",
+      "rewardPointsCredited": true,
+      "pointsEarned": 16
+    },
+    {
+      "id": "ord-1792046716562",
+      "orderNumber": "TEM-2026-91432",
+      "customerName": "Blacklisted Scammer",
+      "customerPhone": "01711223344",
+      "deliveryAddress": "Fake Street 12345",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "Inside Dhaka",
+      "subtotal": 1599,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 60,
+      "totalAmount": 1659,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "rewardPointsRedeemed": 0,
+      "rewardDiscount": 0,
+      "fraudRiskScore": 0,
+      "fraudRiskTier": "LOW",
+      "fraudRiskFlags": [],
+      "items": [
+        {
+          "productId": "prod-1",
+          "productName": "Pro ANC Wireless Earbuds with ENC Mic",
+          "sku": "TEM-TWS-001",
+          "selectedColor": "Matte Black",
+          "variantId": "var-tws-1",
+          "unitPrice": 1599,
+          "purchaseCost": 1100,
+          "quantity": 1,
+          "totalPrice": 1599
+        }
+      ],
+      "createdAt": "2026-10-15T06:45:16.562Z",
+      "updatedAt": "2026-10-15T06:45:16.562Z"
+    },
+    {
+      "id": "ord-1792046712706",
+      "orderNumber": "TEM-2026-15740",
+      "customerName": "Loyal Customer",
+      "customerPhone": "01799887766",
+      "deliveryAddress": "House 14, Road 5, Sector 3, Uttara, Dhaka",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "Inside Dhaka",
+      "subtotal": 1599,
+      "discount": 30,
+      "couponCode": null,
+      "deliveryFee": 60,
+      "totalAmount": 1629,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "rewardPointsRedeemed": 30,
+      "rewardDiscount": 30,
+      "fraudRiskScore": 0,
+      "fraudRiskTier": "LOW",
+      "fraudRiskFlags": [],
+      "items": [
+        {
+          "productId": "prod-1",
+          "productName": "Pro ANC Wireless Earbuds with ENC Mic",
+          "sku": "TEM-TWS-001",
+          "selectedColor": "Matte Black",
+          "variantId": "var-tws-1",
+          "unitPrice": 1599,
+          "purchaseCost": 1100,
+          "quantity": 1,
+          "totalPrice": 1599
+        }
+      ],
+      "createdAt": "2026-10-15T06:45:12.706Z",
+      "updatedAt": "2026-10-15T06:45:12.706Z"
+    },
+    {
+      "id": "ord-1792040912875",
+      "orderNumber": "TEM-2026-78117",
+      "customerName": "Yousuf Rahman",
+      "customerPhone": "01623363623",
+      "deliveryAddress": "Benapole Jashore Khulna",
+      "deliveryCity": "Dhaka",
+      "deliveryZone": "Outside Dhaka",
+      "subtotal": 10797,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 0,
+      "totalAmount": 10797,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "rewardPointsRedeemed": 0,
+      "rewardDiscount": 0,
+      "fraudRiskScore": 0,
+      "fraudRiskTier": "LOW",
+      "fraudRiskFlags": [],
+      "items": [
+        {
+          "productId": "prod-1",
+          "productName": "Pro ANC Wireless Earbuds with ENC Mic",
+          "sku": "TEM-TWS-001",
+          "selectedColor": "Matte Black",
+          "variantId": "var-tws-1",
+          "unitPrice": 1599,
+          "purchaseCost": 1100,
+          "quantity": 3,
+          "totalPrice": 4797
+        },
+        {
+          "productId": "prod-1791994778690",
+          "productName": "Water Frish",
+          "sku": "WTR 654",
+          "selectedColor": "Emerald",
+          "variantId": "var-1791994778690-0",
+          "unitPrice": 6000,
+          "purchaseCost": 3000,
+          "quantity": 1,
+          "totalPrice": 6000
+        }
+      ],
+      "createdAt": "2026-10-15T05:08:32.876Z",
+      "updatedAt": "2026-10-15T05:08:32.876Z"
+    },
     {
       "id": "ord-1792000473263",
       "orderNumber": "TEM-2026-94990",
@@ -2897,6 +3062,61 @@
       "reason": "Customer order TEM-2026-94990",
       "referenceId": "ord-1792000473263",
       "createdAt": "2026-10-14T17:54:33.265Z"
+    },
+    {
+      "id": "mov-1792040912881",
+      "productId": "prod-1",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -3,
+      "previousStock": 44,
+      "newStock": 41,
+      "reason": "Customer order TEM-2026-78117 (Color: Matte Black)",
+      "referenceId": "ord-1792040912875",
+      "createdAt": "2026-10-15T05:08:32.882Z"
+    },
+    {
+      "id": "mov-1792040912882",
+      "productId": "prod-1791994778690",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 20,
+      "newStock": 19,
+      "reason": "Customer order TEM-2026-78117 (Color: Emerald)",
+      "referenceId": "ord-1792040912875",
+      "createdAt": "2026-10-15T05:08:32.882Z"
+    },
+    {
+      "id": "mov-1792046712709",
+      "productId": "prod-1",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 41,
+      "newStock": 40,
+      "reason": "Customer order TEM-2026-15740 (Color: Matte Black)",
+      "referenceId": "ord-1792046712706",
+      "createdAt": "2026-10-15T06:45:12.709Z"
+    },
+    {
+      "id": "mov-1792046716564",
+      "productId": "prod-1",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 40,
+      "newStock": 39,
+      "reason": "Customer order TEM-2026-91432 (Color: Matte Black)",
+      "referenceId": "ord-1792046716562",
+      "createdAt": "2026-10-15T06:45:16.564Z"
+    },
+    {
+      "id": "mov-1792046833530",
+      "productId": "prod-1",
+      "movementType": "SALE_DEDUCTION",
+      "quantity": -1,
+      "previousStock": 39,
+      "newStock": 38,
+      "reason": "Customer order TEM-2026-60594 (Color: Matte Black)",
+      "referenceId": "ord-1792046833526",
+      "createdAt": "2026-10-15T06:47:13.530Z"
     }
   ],
   "users": [
@@ -2985,7 +3205,16 @@
     "cardShowStockWarning": true,
     "reviewAutoApprove": true,
     "reviewAllowImages": true,
-    "reviewMinCharacters": 5
+    "reviewMinCharacters": 5,
+    "rewardPointsEnabled": true,
+    "rewardPointsEarnRate": 100,
+    "rewardPointValueBdt": 1,
+    "rewardMinRedeemPoints": 50,
+    "fraudDetectionEnabled": true,
+    "fraudMaxCodAmount": 4000,
+    "fraudHighRiskAdvanceFeeRequired": true,
+    "blacklistedPhones": [],
+    "whitelistedPhones": []
   },
   "reviews": [
     {
@@ -3168,5 +3397,66 @@
       "status": "APPROVED",
       "createdAt": "2026-10-14T09:00:00.000Z"
     }
-  ]
+  ],
+  "rewards": {
+    "01712345678": {
+      "phone": "01712345678",
+      "points": 0,
+      "totalEarned": 0,
+      "totalRedeemed": 0,
+      "history": [],
+      "updatedAt": "2026-10-15T05:04:41.598Z"
+    },
+    "01623363623": {
+      "phone": "01623363623",
+      "points": 0,
+      "totalEarned": 0,
+      "totalRedeemed": 0,
+      "history": [],
+      "updatedAt": "2026-10-15T05:06:57.931Z"
+    },
+    "01799887766": {
+      "phone": "01799887766",
+      "points": 0,
+      "totalEarned": 0,
+      "totalRedeemed": 0,
+      "history": [],
+      "updatedAt": "2026-10-15T06:45:12.706Z"
+    },
+    "01712349999": {
+      "phone": "01712349999",
+      "points": 66,
+      "totalEarned": 116,
+      "totalRedeemed": 50,
+      "history": [
+        {
+          "id": "rw-1792046836651-c0qy",
+          "type": "EARNED",
+          "points": 16,
+          "reason": "Cashback points for delivered order #TEM-2026-60594",
+          "orderId": "ord-1792046833526",
+          "createdAt": "2026-10-15T06:47:16.651Z"
+        },
+        {
+          "id": "rw-1792046833526-r4c9",
+          "type": "REDEEMED",
+          "points": 50,
+          "reason": "Redeemed for order discount",
+          "orderId": "TEM-2026-60594",
+          "createdAt": "2026-10-15T06:47:13.526Z"
+        },
+        {
+          "id": "rw-1792046833380-4agz",
+          "type": "EARNED",
+          "points": 100,
+          "reason": "Loyalty welcome award",
+          "orderId": null,
+          "createdAt": "2026-10-15T06:47:13.380Z"
+        }
+      ],
+      "updatedAt": "2026-10-15T06:47:16.651Z"
+    }
+  },
+  "fraudBlacklist": [],
+  "fraudWhitelist": []
 }
