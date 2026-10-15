@@ -2,7 +2,11 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { formatBDT } from '@/lib/currency';
-import type { ComprehensiveFinancialReport, FinancialTimeRange } from '@/lib/financial-analytics';
+import type {
+  ComprehensiveFinancialReport,
+  FinancialTimeRange,
+  TimeSeriesTrendPoint,
+} from '@/lib/financial-analytics';
 import {
   TrendingUp,
   TrendingDown,
@@ -58,6 +62,10 @@ export default function AdminReportsPage() {
 
   // Export dropdown
   const [showExportMenu, setShowExportMenu] = useState(false);
+
+  // Chart view mode & interaction
+  const [chartViewMode, setChartViewMode] = useState<'sales' | 'profit' | 'all'>('sales');
+  const [hoveredPoint, setHoveredPoint] = useState<TimeSeriesTrendPoint | null>(null);
 
   const fetchReport = async (rangeParam = range, start = startDate, end = endDate) => {
     setLoading(true);
@@ -576,36 +584,133 @@ export default function AdminReportsPage() {
 
           {/* ===================== Interactive SVG Time-Series Chart ===================== */}
           <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-sm space-y-6">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
               <div>
                 <h2 className="text-base font-bold text-slate-950 flex items-center gap-2">
                   <BarChart3 className="w-5 h-5 text-indigo-600" />
-                  <span>Financial Trajectory Over Time</span>
+                  <span>Financial Trajectory & Sales Volume</span>
                 </h2>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Comparison of Delivered Revenue, Product COGS, Operating Expenses, and Net Profit across selected timeline.
+                  Visualizing daily transaction velocity, booked sales (GMV), delivered revenue, and cost trends.
                 </p>
               </div>
 
-              {/* Chart Legend */}
-              <div className="flex flex-wrap items-center gap-4 text-xs font-semibold">
-                <span className="inline-flex items-center gap-1.5 text-emerald-700">
-                  <span className="w-3 h-3 rounded bg-emerald-500 inline-block" />
-                  <span>Delivered Revenue</span>
-                </span>
-                <span className="inline-flex items-center gap-1.5 text-rose-600">
-                  <span className="w-3 h-3 rounded bg-rose-400 inline-block" />
-                  <span>COGS</span>
-                </span>
-                <span className="inline-flex items-center gap-1.5 text-amber-600">
-                  <span className="w-3 h-3 rounded bg-amber-400 inline-block" />
-                  <span>Expenses</span>
-                </span>
-                <span className="inline-flex items-center gap-1.5 text-indigo-700">
-                  <span className="w-3 h-3 rounded bg-indigo-600 inline-block" />
-                  <span>Net Profit</span>
-                </span>
+              {/* View Mode Switcher Pills */}
+              <div className="flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl text-xs font-bold">
+                <button
+                  type="button"
+                  onClick={() => setChartViewMode('sales')}
+                  className={`px-3 py-1.5 rounded-xl transition ${
+                    chartViewMode === 'sales'
+                      ? 'bg-white text-indigo-700 shadow-sm'
+                      : 'text-slate-600 hover:text-slate-950'
+                  }`}
+                >
+                  Sales & Orders (GMV)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setChartViewMode('profit')}
+                  className={`px-3 py-1.5 rounded-xl transition ${
+                    chartViewMode === 'profit'
+                      ? 'bg-white text-emerald-700 shadow-sm'
+                      : 'text-slate-600 hover:text-slate-950'
+                  }`}
+                >
+                  P&L & Profitability
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setChartViewMode('all')}
+                  className={`px-3 py-1.5 rounded-xl transition ${
+                    chartViewMode === 'all'
+                      ? 'bg-white text-slate-950 shadow-sm'
+                      : 'text-slate-600 hover:text-slate-950'
+                  }`}
+                >
+                  All 5 Streams
+                </button>
               </div>
+            </div>
+
+            {/* Quick Stat Highlights */}
+            {(() => {
+              const points = report.timeSeriesTrends;
+              const peakSales = points.reduce(
+                (max, p) => (p.bookedSales > max.bookedSales ? p : max),
+                points[0] || { bookedSales: 0, label: '-' }
+              );
+              const activeDays = points.filter((p) => p.bookedSales > 0 || p.deliveredRevenue > 0).length;
+
+              return (
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50/80 p-3.5 rounded-2xl border border-slate-100 text-xs">
+                  <div>
+                    <span className="text-[10px] text-slate-400 font-bold uppercase block">
+                      Total Booked GMV
+                    </span>
+                    <span className="font-black text-indigo-950 text-sm">
+                      {formatBDT(report.summary.bookedSales.current)}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-400 font-bold uppercase block">
+                      Peak Sales Day
+                    </span>
+                    <span className="font-bold text-slate-800 text-xs">
+                      {peakSales.label} ({formatBDT(peakSales.bookedSales)})
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-400 font-bold uppercase block">
+                      Delivered Revenue
+                    </span>
+                    <span className="font-bold text-emerald-700 text-sm">
+                      {formatBDT(report.summary.deliveredRevenue.current)}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-400 font-bold uppercase block">
+                      Active Trading Days
+                    </span>
+                    <span className="font-bold text-slate-700 text-xs">
+                      {activeDays} of {points.length} days active
+                    </span>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Hover Inspector Banner */}
+            <div className="h-10 flex items-center px-4 rounded-xl bg-slate-900 text-white text-xs font-medium justify-between shadow-sm">
+              {hoveredPoint ? (
+                <>
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-amber-400">{hoveredPoint.label}</span>
+                    <span className="text-slate-400">({hoveredPoint.date})</span>
+                  </div>
+                  <div className="flex items-center gap-4 text-[11px]">
+                    <span>
+                      Booked Sales: <strong className="text-indigo-300">{formatBDT(hoveredPoint.bookedSales)}</strong>
+                    </span>
+                    <span>
+                      Delivered: <strong className="text-emerald-300">{formatBDT(hoveredPoint.deliveredRevenue)}</strong>
+                    </span>
+                    <span>
+                      COGS: <strong className="text-rose-300">-{formatBDT(hoveredPoint.cogs)}</strong>
+                    </span>
+                    <span>
+                      Net Profit: <strong className={hoveredPoint.netProfit >= 0 ? 'text-emerald-400' : 'text-rose-400'}>
+                        {formatBDT(hoveredPoint.netProfit)}
+                      </strong>
+                    </span>
+                  </div>
+                </>
+              ) : (
+                <div className="flex items-center gap-2 text-slate-400 text-[11px]">
+                  <HelpCircle className="w-3.5 h-3.5" />
+                  <span>Hover over any day bar or data column below to inspect detailed figures.</span>
+                </div>
+              )}
             </div>
 
             {/* Responsive Native SVG Bar/Trend Chart */}
@@ -615,41 +720,80 @@ export default function AdminReportsPage() {
                   No transaction data available for this time window.
                 </div>
               ) : (
-                <div className="min-w-[650px]">
+                <div className="min-w-[700px]">
                   {(() => {
                     const points = report.timeSeriesTrends;
+
+                    // Calculate maxVal according to current view mode
                     const maxVal = Math.max(
                       1000,
-                      ...points.map((p) => Math.max(p.deliveredRevenue, p.cogs, p.expenses, Math.abs(p.netProfit)))
+                      ...points.map((p) => {
+                        if (chartViewMode === 'sales') {
+                          return Math.max(p.bookedSales, p.deliveredRevenue);
+                        }
+                        if (chartViewMode === 'profit') {
+                          return Math.max(p.deliveredRevenue, p.cogs, p.expenses, Math.abs(p.netProfit));
+                        }
+                        return Math.max(p.bookedSales, p.deliveredRevenue, p.cogs, p.expenses, Math.abs(p.netProfit));
+                      })
                     );
 
-                    const svgHeight = 260;
-                    const chartTop = 20;
-                    const chartBottom = 210;
+                    const svgHeight = 280;
+                    const chartTop = 25;
+                    const chartBottom = 230;
                     const chartHeight = chartBottom - chartTop;
+                    const pointSpacing = 72;
+                    const leftMargin = 75;
+                    const svgWidth = points.length * pointSpacing + leftMargin + 40;
+
+                    // Helper to get bar height without ghost bumps on 0
+                    const getBarH = (val: number) => {
+                      if (!val || val <= 0) return 0;
+                      return Math.max(3, (val / maxVal) * chartHeight);
+                    };
+
+                    // Trendline polyline points for sales
+                    const trendPolylinePoints = points
+                      .map((p, idx) => {
+                        const x = leftMargin + idx * pointSpacing + 25;
+                        const y = chartBottom - getBarH(p.bookedSales);
+                        return `${x},${y}`;
+                      })
+                      .join(' ');
 
                     return (
                       <div className="relative">
                         <svg
-                          viewBox={`0 0 ${points.length * 75 + 100} ${svgHeight}`}
-                          className="w-full h-64 overflow-visible"
+                          viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+                          className="w-full h-72 overflow-visible select-none"
                         >
-                          {/* Y-Axis Grid Lines */}
+                          <defs>
+                            <linearGradient id="salesBarGrad" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="0%" stopColor="#6366f1" />
+                              <stop offset="100%" stopColor="#4338ca" />
+                            </linearGradient>
+                            <linearGradient id="deliveredBarGrad" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="0%" stopColor="#10b981" />
+                              <stop offset="100%" stopColor="#059669" />
+                            </linearGradient>
+                          </defs>
+
+                          {/* Y-Axis Grid Lines & Tick Labels */}
                           {[0, 0.25, 0.5, 0.75, 1].map((ratio) => {
                             const y = chartBottom - ratio * chartHeight;
                             const labelVal = Math.round(maxVal * ratio);
                             return (
                               <g key={ratio}>
                                 <line
-                                  x1="60"
+                                  x1={leftMargin - 15}
                                   y1={y}
-                                  x2={points.length * 75 + 80}
+                                  x2={svgWidth - 20}
                                   y2={y}
                                   stroke="#f1f5f9"
                                   strokeDasharray="4 4"
                                 />
                                 <text
-                                  x="50"
+                                  x={leftMargin - 20}
                                   y={y + 4}
                                   textAnchor="end"
                                   className="text-[10px] fill-slate-400 font-mono font-medium"
@@ -660,95 +804,262 @@ export default function AdminReportsPage() {
                             );
                           })}
 
-                          {/* Data points (group of bars for each date bucket) */}
+                          {/* Sales Trendline (rendered behind bars in sales mode) */}
+                          {chartViewMode === 'sales' && (
+                            <polyline
+                              fill="none"
+                              stroke="#c7d2fe"
+                              strokeWidth="2"
+                              strokeDasharray="4 4"
+                              points={trendPolylinePoints}
+                            />
+                          )}
+
+                          {/* Data points for each date bucket */}
                           {points.map((p, idx) => {
-                            const groupX = 80 + idx * 75;
-                            const barWidth = 10;
+                            const groupX = leftMargin + idx * pointSpacing;
+                            const isHovered = hoveredPoint?.date === p.date;
 
-                            const revHeight = Math.max(2, (p.deliveredRevenue / maxVal) * chartHeight);
-                            const revY = chartBottom - revHeight;
+                            if (chartViewMode === 'sales') {
+                              // Sales Mode: Prominent Booked Sales (GMV) + Delivered Revenue
+                              const bookedH = getBarH(p.bookedSales);
+                              const deliveredH = getBarH(p.deliveredRevenue);
 
-                            const cogsHeight = Math.max(2, (p.cogs / maxVal) * chartHeight);
-                            const cogsY = chartBottom - cogsHeight;
+                              return (
+                                <g
+                                  key={p.date}
+                                  className="cursor-pointer"
+                                  onMouseEnter={() => setHoveredPoint(p)}
+                                  onMouseLeave={() => setHoveredPoint(null)}
+                                >
+                                  {/* Hover background column */}
+                                  <rect
+                                    x={groupX - 6}
+                                    y={chartTop - 10}
+                                    width={pointSpacing - 8}
+                                    height={chartHeight + 20}
+                                    fill={isHovered ? '#eef2ff' : '#f8fafc'}
+                                    rx="10"
+                                    className="transition-colors"
+                                  />
 
-                            const expHeight = Math.max(2, (p.expenses / maxVal) * chartHeight);
-                            const expY = chartBottom - expHeight;
+                                  {/* Bar 1: Total Booked Sales (GMV) */}
+                                  {bookedH > 0 && (
+                                    <rect
+                                      x={groupX}
+                                      y={chartBottom - bookedH}
+                                      width={20}
+                                      height={bookedH}
+                                      fill="url(#salesBarGrad)"
+                                      rx="5"
+                                      className="transition-all hover:opacity-90"
+                                    />
+                                  )}
 
-                            const netVal = p.netProfit;
-                            const netHeight = Math.max(2, (Math.abs(netVal) / maxVal) * chartHeight);
-                            const netY = chartBottom - netHeight;
+                                  {/* Bar 2: Delivered Revenue */}
+                                  {deliveredH > 0 && (
+                                    <rect
+                                      x={groupX + 22}
+                                      y={chartBottom - deliveredH}
+                                      width={16}
+                                      height={deliveredH}
+                                      fill="url(#deliveredBarGrad)"
+                                      rx="4"
+                                      className="transition-all hover:opacity-90"
+                                    />
+                                  )}
+
+                                  {/* Top label for high volume days */}
+                                  {p.bookedSales > 0 && (
+                                    <text
+                                      x={groupX + 10}
+                                      y={Math.max(chartTop + 10, chartBottom - bookedH - 6)}
+                                      textAnchor="middle"
+                                      className="text-[9px] fill-indigo-900 font-bold font-mono"
+                                    >
+                                      {Math.round(p.bookedSales / 1000)}k
+                                    </text>
+                                  )}
+
+                                  {/* X-Axis Date Label */}
+                                  <text
+                                    x={groupX + 18}
+                                    y={chartBottom + 20}
+                                    textAnchor="middle"
+                                    className={`text-[10px] font-semibold ${
+                                      isHovered
+                                        ? 'fill-indigo-950 font-bold'
+                                        : p.bookedSales > 0
+                                        ? 'fill-slate-800'
+                                        : 'fill-slate-400'
+                                    }`}
+                                  >
+                                    {p.label}
+                                  </text>
+                                </g>
+                              );
+                            }
+
+                            if (chartViewMode === 'profit') {
+                              // Profitability Mode: Delivered Revenue, COGS, Net Profit
+                              const deliveredH = getBarH(p.deliveredRevenue);
+                              const cogsH = getBarH(p.cogs);
+                              const netH = getBarH(Math.abs(p.netProfit));
+
+                              return (
+                                <g
+                                  key={p.date}
+                                  className="cursor-pointer"
+                                  onMouseEnter={() => setHoveredPoint(p)}
+                                  onMouseLeave={() => setHoveredPoint(null)}
+                                >
+                                  {/* Hover background */}
+                                  <rect
+                                    x={groupX - 4}
+                                    y={chartTop - 10}
+                                    width={pointSpacing - 8}
+                                    height={chartHeight + 20}
+                                    fill={isHovered ? '#ecfdf5' : '#f8fafc'}
+                                    rx="10"
+                                    className="transition-colors"
+                                  />
+
+                                  {/* Delivered Revenue */}
+                                  {deliveredH > 0 && (
+                                    <rect
+                                      x={groupX}
+                                      y={chartBottom - deliveredH}
+                                      width={14}
+                                      height={deliveredH}
+                                      fill="#10b981"
+                                      rx="4"
+                                    />
+                                  )}
+
+                                  {/* COGS */}
+                                  {cogsH > 0 && (
+                                    <rect
+                                      x={groupX + 16}
+                                      y={chartBottom - cogsH}
+                                      width={14}
+                                      height={cogsH}
+                                      fill="#fb7185"
+                                      rx="4"
+                                    />
+                                  )}
+
+                                  {/* Net Profit */}
+                                  {netH > 0 && (
+                                    <rect
+                                      x={groupX + 32}
+                                      y={chartBottom - netH}
+                                      width={14}
+                                      height={netH}
+                                      fill={p.netProfit >= 0 ? '#0284c7' : '#ef4444'}
+                                      rx="4"
+                                    />
+                                  )}
+
+                                  <text
+                                    x={groupX + 23}
+                                    y={chartBottom + 20}
+                                    textAnchor="middle"
+                                    className={`text-[10px] font-semibold ${
+                                      isHovered ? 'fill-slate-950 font-bold' : 'fill-slate-400'
+                                    }`}
+                                  >
+                                    {p.label}
+                                  </text>
+                                </g>
+                              );
+                            }
+
+                            // 'all' Mode: 5 grouped bars
+                            const barW = 8;
+                            const bookedH = getBarH(p.bookedSales);
+                            const deliveredH = getBarH(p.deliveredRevenue);
+                            const cogsH = getBarH(p.cogs);
+                            const expH = getBarH(p.expenses);
+                            const netH = getBarH(Math.abs(p.netProfit));
 
                             return (
-                              <g key={p.date} className="group cursor-pointer">
-                                {/* Hover background pill */}
+                              <g
+                                key={p.date}
+                                className="cursor-pointer"
+                                onMouseEnter={() => setHoveredPoint(p)}
+                                onMouseLeave={() => setHoveredPoint(null)}
+                              >
                                 <rect
-                                  x={groupX - 6}
-                                  y={chartTop}
-                                  width="54"
-                                  height={chartHeight + 10}
-                                  fill="#f8fafc"
+                                  x={groupX - 4}
+                                  y={chartTop - 10}
+                                  width={pointSpacing - 8}
+                                  height={chartHeight + 20}
+                                  fill={isHovered ? '#f1f5f9' : '#f8fafc'}
                                   rx="8"
-                                  className="opacity-0 group-hover:opacity-100 transition-opacity"
+                                  className="transition-colors"
                                 />
 
-                                {/* Bar 1: Delivered Revenue */}
-                                <rect
-                                  x={groupX}
-                                  y={revY}
-                                  width={barWidth}
-                                  height={revHeight}
-                                  fill="#10b981"
-                                  rx="3"
-                                />
+                                {bookedH > 0 && (
+                                  <rect
+                                    x={groupX}
+                                    y={chartBottom - bookedH}
+                                    width={barW}
+                                    height={bookedH}
+                                    fill="#6366f1"
+                                    rx="2"
+                                  />
+                                )}
+                                {deliveredH > 0 && (
+                                  <rect
+                                    x={groupX + 9}
+                                    y={chartBottom - deliveredH}
+                                    width={barW}
+                                    height={deliveredH}
+                                    fill="#10b981"
+                                    rx="2"
+                                  />
+                                )}
+                                {cogsH > 0 && (
+                                  <rect
+                                    x={groupX + 18}
+                                    y={chartBottom - cogsH}
+                                    width={barW}
+                                    height={cogsH}
+                                    fill="#fb7185"
+                                    rx="2"
+                                  />
+                                )}
+                                {expH > 0 && (
+                                  <rect
+                                    x={groupX + 27}
+                                    y={chartBottom - expH}
+                                    width={barW}
+                                    height={expH}
+                                    fill="#fbbf24"
+                                    rx="2"
+                                  />
+                                )}
+                                {netH > 0 && (
+                                  <rect
+                                    x={groupX + 36}
+                                    y={chartBottom - netH}
+                                    width={barW}
+                                    height={netH}
+                                    fill={p.netProfit >= 0 ? '#0284c7' : '#ef4444'}
+                                    rx="2"
+                                  />
+                                )}
 
-                                {/* Bar 2: COGS */}
-                                <rect
-                                  x={groupX + 11}
-                                  y={cogsY}
-                                  width={barWidth}
-                                  height={cogsHeight}
-                                  fill="#fb7185"
-                                  rx="3"
-                                />
-
-                                {/* Bar 3: OPEX */}
-                                <rect
-                                  x={groupX + 22}
-                                  y={expY}
-                                  width={barWidth}
-                                  height={expHeight}
-                                  fill="#fbbf24"
-                                  rx="3"
-                                />
-
-                                {/* Bar 4: Net Profit */}
-                                <rect
-                                  x={groupX + 33}
-                                  y={netY}
-                                  width={barWidth}
-                                  height={netHeight}
-                                  fill={netVal >= 0 ? '#4f46e5' : '#ef4444'}
-                                  rx="3"
-                                />
-
-                                {/* X-Axis Date Label */}
                                 <text
-                                  x={groupX + 20}
+                                  x={groupX + 22}
                                   y={chartBottom + 20}
                                   textAnchor="middle"
-                                  className="text-[10px] fill-slate-500 font-semibold"
+                                  className={`text-[10px] font-semibold ${
+                                    isHovered ? 'fill-slate-950 font-bold' : 'fill-slate-400'
+                                  }`}
                                 >
                                   {p.label}
                                 </text>
-
-                                {/* Native SVG Tooltip */}
-                                <title>
-                                  {`${p.label} (${p.date})
-• Delivered Revenue: ${formatBDT(p.deliveredRevenue)}
-• Product COGS: ${formatBDT(p.cogs)}
-• Operating Expenses: ${formatBDT(p.expenses)}
-• Net Operating Profit: ${formatBDT(p.netProfit)}`}
-                                </title>
                               </g>
                             );
                           })}
@@ -758,6 +1069,74 @@ export default function AdminReportsPage() {
                   })()}
                 </div>
               )}
+            </div>
+
+            {/* Interactive Legend for Active View Mode */}
+            <div className="flex flex-wrap items-center justify-between pt-3 border-t border-slate-100 text-xs">
+              <div className="flex flex-wrap items-center gap-5 font-semibold">
+                {chartViewMode === 'sales' && (
+                  <>
+                    <span className="inline-flex items-center gap-1.5 text-indigo-700">
+                      <span className="w-3.5 h-3.5 rounded bg-indigo-600 inline-block" />
+                      <span>Total Booked Sales (GMV)</span>
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 text-emerald-700">
+                      <span className="w-3.5 h-3.5 rounded bg-emerald-500 inline-block" />
+                      <span>Delivered Revenue</span>
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 text-slate-500">
+                      <span className="w-4 h-0.5 bg-indigo-300 inline-block border-t border-dashed border-indigo-400" />
+                      <span>Sales Trajectory</span>
+                    </span>
+                  </>
+                )}
+
+                {chartViewMode === 'profit' && (
+                  <>
+                    <span className="inline-flex items-center gap-1.5 text-emerald-700">
+                      <span className="w-3.5 h-3.5 rounded bg-emerald-500 inline-block" />
+                      <span>Delivered Revenue</span>
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 text-rose-600">
+                      <span className="w-3.5 h-3.5 rounded bg-rose-400 inline-block" />
+                      <span>COGS (Procurement)</span>
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 text-sky-700">
+                      <span className="w-3.5 h-3.5 rounded bg-sky-600 inline-block" />
+                      <span>Net Operating Margin</span>
+                    </span>
+                  </>
+                )}
+
+                {chartViewMode === 'all' && (
+                  <>
+                    <span className="inline-flex items-center gap-1.5 text-indigo-700">
+                      <span className="w-3 h-3 rounded bg-indigo-600 inline-block" />
+                      <span>Booked Sales</span>
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 text-emerald-700">
+                      <span className="w-3 h-3 rounded bg-emerald-500 inline-block" />
+                      <span>Delivered</span>
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 text-rose-600">
+                      <span className="w-3 h-3 rounded bg-rose-400 inline-block" />
+                      <span>COGS</span>
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 text-amber-600">
+                      <span className="w-3 h-3 rounded bg-amber-400 inline-block" />
+                      <span>Expenses</span>
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 text-sky-700">
+                      <span className="w-3 h-3 rounded bg-sky-600 inline-block" />
+                      <span>Net Profit</span>
+                    </span>
+                  </>
+                )}
+              </div>
+
+              <span className="text-[11px] text-slate-400">
+                Data updated in real time from PostgreSQL order ledger
+              </span>
             </div>
           </div>
 

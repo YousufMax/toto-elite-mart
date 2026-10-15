@@ -507,16 +507,28 @@ export async function getComprehensiveFinancialReport(
   });
 
   // --- TIME-SERIES TRENDS (FOR CHARTS) ---
+  // Time-series trend bucketing
   const timeSeriesTrends: TimeSeriesTrendPoint[] = [];
   const daysDiff = Math.max(1, Math.round((end.getTime() - start.getTime()) / (24 * 60 * 60 * 1000)));
 
+  function toLocalDateKey(d: Date): string {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
   if (daysDiff <= 31) {
-    // Daily buckets
+    // Daily buckets using local calendar dates
     const bucketMap: Record<string, TimeSeriesTrendPoint> = {};
-    for (let i = 0; i < daysDiff; i++) {
-      const d = new Date(start.getTime() + i * 24 * 60 * 60 * 1000);
-      const dateKey = d.toISOString().slice(0, 10);
-      const label = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    const cur = new Date(start);
+    cur.setHours(0, 0, 0, 0);
+    const endBoundary = new Date(end);
+    endBoundary.setHours(23, 59, 59, 999);
+
+    while (cur <= endBoundary) {
+      const dateKey = toLocalDateKey(cur);
+      const label = cur.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
       bucketMap[dateKey] = {
         date: dateKey,
         label,
@@ -526,11 +538,12 @@ export async function getComprehensiveFinancialReport(
         expenses: 0,
         netProfit: 0,
       };
+      cur.setDate(cur.getDate() + 1);
     }
 
     for (const o of currentOrders) {
       if (o.orderStatus === 'CANCELLED') continue;
-      const dateKey = new Date(o.createdAt).toISOString().slice(0, 10);
+      const dateKey = toLocalDateKey(new Date(o.createdAt));
       if (bucketMap[dateKey]) {
         bucketMap[dateKey].bookedSales += Number(o.totalAmount || 0);
         if (o.orderStatus === 'DELIVERED') {
@@ -545,7 +558,7 @@ export async function getComprehensiveFinancialReport(
     }
 
     for (const exp of currentExpenses) {
-      const dateKey = new Date(exp.expenseDate || exp.createdAt).toISOString().slice(0, 10);
+      const dateKey = toLocalDateKey(new Date(exp.expenseDate || exp.createdAt));
       if (bucketMap[dateKey]) {
         bucketMap[dateKey].expenses += Number(exp.amount || 0);
       }
