@@ -180,6 +180,7 @@ model Product {
   orderItems         OrderItem[]
   inventoryMovements InventoryMovement[]
   flashSaleItems     FlashSaleItem[]
+  redirects          ProductRedirect[]
 
   @@index([sku])
   @@index([slug])
@@ -221,6 +222,19 @@ model ProductImage {
 
   @@index([productId])
   @@index([isPrimary])
+}
+
+model ProductRedirect {
+  id        String   @id @default(uuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  oldSlug   String   @unique
+  newSlug   String
+  createdAt DateTime @default(now())
+
+  @@index([oldSlug])
+  @@index([newSlug])
+  @@index([productId])
 }
 
 model Banner {

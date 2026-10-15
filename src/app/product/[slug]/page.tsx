@@ -1,12 +1,12 @@
 import React from 'react';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import Header from '@/components/storefront/Header';
 import Footer from '@/components/storefront/Footer';
 import ProductCard from '@/components/storefront/ProductCard';
 import ProductDetailClient from './ProductDetailClient';
 import { Metadata } from 'next';
-import { getProductBySlugOrId, getProducts, getReviewsByProductId } from '@/lib/data-store';
+import { getProductBySlugOrId, getProducts, getReviewsByProductId, getProductRedirect } from '@/lib/data-store';
 import ProductReviewsSection from '@/components/storefront/ProductReviewsSection';
 import { Truck, ShieldCheck, RefreshCw, PhoneCall } from 'lucide-react';
 
@@ -14,7 +14,14 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const product = await getProductBySlugOrId(params.slug);
+  let product = await getProductBySlugOrId(params.slug);
+  if (!product) {
+    const redirectedSlug = await getProductRedirect(params.slug);
+    if (redirectedSlug) {
+      product = await getProductBySlugOrId(redirectedSlug);
+    }
+  }
+
   if (!product) {
     return {
       title: 'Product Not Found | Toto Elite Mart',
@@ -86,10 +93,22 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 export default async function ProductPage({ params }: { params: { slug: string } }) {
+  // 1. Check if the incoming slug was moved and has a registered 301 redirect
+  const redirectSlug = await getProductRedirect(params.slug);
+  if (redirectSlug && redirectSlug !== params.slug) {
+    permanentRedirect(`/product/${redirectSlug}`);
+  }
+
+  // 2. Fetch product by slug or ID
   const product = await getProductBySlugOrId(params.slug);
 
   if (!product) {
     notFound();
+  }
+
+  // 3. If accessed by ID or non-canonical slug, permanently 301-redirect to canonical slug
+  if (product.slug && product.slug !== params.slug) {
+    permanentRedirect(`/product/${product.slug}`);
   }
 
   // Fetch approved customer reviews on server

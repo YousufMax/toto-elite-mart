@@ -21,7 +21,10 @@ import {
   CheckCircle2,
   Sparkles,
   Star,
+  ExternalLink,
+  Globe,
 } from 'lucide-react';
+import { slugify } from '@/lib/slugify';
 
 interface AdminColorVariant {
   id?: string;
@@ -716,6 +719,8 @@ export default function AdminProductsPage() {
 
   // Form State
   const [name, setName] = useState('');
+  const [slug, setSlug] = useState('');
+  const [isSlugCustomized, setIsSlugCustomized] = useState(false);
   const [sku, setSku] = useState('');
   const [categoryId, setCategoryId] = useState('');
   const [description, setDescription] = useState('');
@@ -732,6 +737,7 @@ export default function AdminProductsPage() {
   // Edit Product State
   const [editingProduct, setEditingProduct] = useState<any | null>(null);
   const [editName, setEditName] = useState('');
+  const [editSlug, setEditSlug] = useState('');
   const [editSku, setEditSku] = useState('');
   const [editCategoryId, setEditCategoryId] = useState('');
   const [editDescription, setEditDescription] = useState('');
@@ -750,6 +756,7 @@ export default function AdminProductsPage() {
   const openEditModal = (p: any) => {
     setEditingProduct(p);
     setEditName(p.name || '');
+    setEditSlug(p.slug || '');
     setEditSku(p.sku || '');
     setEditCategoryId(p.categoryId || p.category?.id || (categories[0]?.id || ''));
     setEditDescription(p.description || '');
@@ -797,6 +804,7 @@ export default function AdminProductsPage() {
 
       const payload: any = {
         name: editName.trim(),
+        slug: editSlug.trim() || undefined,
         sku: editSku.trim().toUpperCase(),
         categoryId: editCategoryId || categories[0]?.id || 'cat-1',
         description: editDescription.trim(),
@@ -902,6 +910,7 @@ export default function AdminProductsPage() {
 
       const payload = {
         name: name.trim(),
+        slug: slug.trim() || undefined,
         sku: sku.trim().toUpperCase(),
         categoryId: categoryId || categories[0]?.id || 'cat-1',
         description: description.trim(),
@@ -941,6 +950,8 @@ export default function AdminProductsPage() {
       setShowAddModal(false);
       // Reset form
       setName('');
+      setSlug('');
+      setIsSlugCustomized(false);
       setSku('');
       setDescription('');
       setPurchaseCost('');
@@ -1043,6 +1054,9 @@ export default function AdminProductsPage() {
                         </div>
                         <div className="min-w-0">
                           <span className="font-semibold text-slate-900 line-clamp-1">{p.name}</span>
+                          <span className="block text-[10px] font-mono text-slate-400 truncate max-w-[190px]">
+                            /product/{p.slug}
+                          </span>
                           {p.colorVariants && p.colorVariants.length > 0 && (
                             <div className="flex items-center gap-1.5 mt-1">
                               <div className="flex items-center -space-x-1">
@@ -1127,6 +1141,15 @@ export default function AdminProductsPage() {
                       </td>
                       <td className="py-3.5 px-4 text-right">
                         <div className="flex items-center justify-end gap-1.5">
+                          <a
+                            href={`/product/${p.slug}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-1.5 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                            title="View Live Product Page"
+                          >
+                            <ExternalLink className="w-3.5 h-3.5" />
+                          </a>
                           <button
                             onClick={() => openEditModal(p)}
                             className="p-1.5 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition"
@@ -1186,7 +1209,13 @@ export default function AdminProductsPage() {
                     type="text"
                     required
                     value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setName(val);
+                      if (!isSlugCustomized) {
+                        setSlug(slugify(val));
+                      }
+                    }}
                     placeholder="e.g. Wireless ANC Earbuds"
                     className="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500"
                   />
@@ -1203,6 +1232,37 @@ export default function AdminProductsPage() {
                     className="w-full px-3.5 py-2 rounded-xl border border-slate-300 font-mono uppercase focus:outline-none focus:ring-2 focus:ring-amber-500"
                   />
                 </div>
+              </div>
+
+              {/* SEO URL Slug Field */}
+              <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <label className="flex items-center gap-1.5 font-bold text-slate-800">
+                    <Globe className="w-3.5 h-3.5 text-amber-500" />
+                    <span>SEO URL Slug (Permalink)</span>
+                  </label>
+                  <span className="text-[10px] text-slate-400">
+                    Auto-generated from title • Editable
+                  </span>
+                </div>
+                <div className="flex items-center rounded-xl border border-slate-300 bg-white overflow-hidden focus-within:ring-2 focus-within:ring-amber-500">
+                  <span className="px-3 py-2 text-slate-400 bg-slate-100 border-r border-slate-200 font-mono text-[11px] shrink-0 select-none">
+                    /product/
+                  </span>
+                  <input
+                    type="text"
+                    value={slug}
+                    onChange={(e) => {
+                      setIsSlugCustomized(true);
+                      setSlug(slugify(e.target.value));
+                    }}
+                    placeholder="product-url-slug"
+                    className="w-full px-3 py-2 text-xs font-mono text-slate-800 focus:outline-none"
+                  />
+                </div>
+                <p className="text-[10px] text-slate-400">
+                  Clean, lowercase, hyphen-separated. Determines the exact product URL for Google search and social share cards.
+                </p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1447,6 +1507,37 @@ export default function AdminProductsPage() {
                     placeholder="e.g. TEM-TWS-009"
                     className="w-full px-3.5 py-2 rounded-xl border border-slate-300 font-mono uppercase focus:outline-none focus:ring-2 focus:ring-amber-500"
                   />
+                </div>
+              </div>
+
+              {/* SEO URL Slug Field & 301 Redirect Advisory */}
+              <div className="bg-amber-50/60 p-4 rounded-2xl border border-amber-200/80 space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="flex items-center gap-1.5 font-bold text-slate-900">
+                    <Globe className="w-4 h-4 text-amber-600" />
+                    <span>SEO URL Slug (Permalink)</span>
+                  </label>
+                  <span className="text-[10px] font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full">
+                    301 Redirect Protected
+                  </span>
+                </div>
+                <div className="flex items-center rounded-xl border border-amber-300 bg-white overflow-hidden focus-within:ring-2 focus-within:ring-amber-500">
+                  <span className="px-3 py-2 text-slate-400 bg-slate-100 border-r border-slate-200 font-mono text-[11px] shrink-0 select-none">
+                    /product/
+                  </span>
+                  <input
+                    type="text"
+                    value={editSlug}
+                    onChange={(e) => setEditSlug(slugify(e.target.value))}
+                    placeholder="product-url-slug"
+                    className="w-full px-3 py-2 text-xs font-mono text-slate-800 focus:outline-none"
+                  />
+                </div>
+                <div className="flex items-start gap-2 text-[11px] text-slate-600">
+                  <span className="text-amber-600 font-bold shrink-0">⚡ SEO Note:</span>
+                  <span>
+                    If you change this slug, a permanent <strong>301 redirect</strong> will automatically be registered in the database so old backlinks, Facebook shares, and Google rankings never break.
+                  </span>
                 </div>
               </div>
 

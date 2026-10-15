@@ -12,6 +12,7 @@ import { calculateOrderTotals } from './currency';
 import { queueNotification } from './telegram';
 import { logAudit } from './audit';
 import { normalizeBdPhone } from './fraud-engine';
+import { slugify, resolveUniqueProductSlug } from './slugify';
 
 const STORE_FILE = path.join(process.cwd(), 'data', 'local-store.json');
 
@@ -1081,6 +1082,31 @@ export async function getProductBySlug(slug: string) {
   return getProductBySlugOrId(slug);
 }
 
+export async function getProductRedirect(oldSlug: string): Promise<string | null> {
+  if (!oldSlug) return null;
+  const clean = oldSlug.trim().toLowerCase();
+  const isConnected = await isDatabaseConnected();
+  if (isConnected) {
+    try {
+      const redirect = await prisma.productRedirect.findUnique({
+        where: { oldSlug: clean },
+      });
+      if (redirect) {
+        return redirect.newSlug;
+      }
+    } catch {
+      // fallback
+    }
+  }
+
+  await initMemoryFallback();
+  const store = getStore();
+  const memRedirect = (store as any).productRedirects?.find(
+    (r: any) => r.oldSlug?.toLowerCase() === clean
+  );
+  return memRedirect ? memRedirect.newSlug : null;
+}
+
 export async function createProduct(data: {
   name: string;
   slug?: string;
@@ -1107,7 +1133,7 @@ export async function createProduct(data: {
   }>;
 }) {
   const cleanSku = data.sku.trim().toUpperCase();
-  const cleanSlug = data.slug || data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+  const cleanSlug = await resolveUniqueProductSlug(data.slug || data.name);
   const isConnected = await isDatabaseConnected();
 
   const variantStockTotal = data.colorVariants && data.colorVariants.length > 0
@@ -1340,11 +1366,36 @@ export async function updateProduct(id: string, data: {
       const updateData: any = {};
       if (data.name !== undefined) {
         updateData.name = data.name;
-        if (!data.slug) {
-          updateData.slug = data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+      }
+
+      if (data.slug !== undefined && data.slug.trim()) {
+        const existingProduct = await prisma.product.findUnique({
+          where: { id },
+          select: { slug: true },
+        });
+        const currentSlug = existingProduct?.slug;
+        const candidateSlug = await resolveUniqueProductSlug(data.slug, id);
+
+        if (currentSlug && candidateSlug !== currentSlug) {
+          // Slug changed: create 301 permanent redirect record and resolve redirect chains
+          await prisma.productRedirect.updateMany({
+            where: { newSlug: currentSlug },
+            data: { newSlug: candidateSlug },
+          });
+
+          await prisma.productRedirect.upsert({
+            where: { oldSlug: currentSlug },
+            update: { newSlug: candidateSlug, productId: id },
+            create: {
+              oldSlug: currentSlug,
+              newSlug: candidateSlug,
+              productId: id,
+            },
+          });
+
+          updateData.slug = candidateSlug;
         }
       }
-      if (data.slug !== undefined) updateData.slug = data.slug;
       if (cleanSku !== undefined) updateData.sku = cleanSku;
       if (data.description !== undefined) updateData.description = data.description;
       if (data.categoryId !== undefined) updateData.categoryId = data.categoryId;
@@ -1447,7 +1498,7 @@ export async function updateProduct(id: string, data: {
   const updatedProd = {
     ...existingProd,
     name: data.name !== undefined ? data.name : existingProd.name,
-    slug: data.slug || (data.name ? data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') : existingProd.slug),
+    slug: data.slug ? slugify(data.slug) : existingProd.slug,
     sku: cleanSku !== undefined ? cleanSku : existingProd.sku,
     description: data.description !== undefined ? data.description : existingProd.description,
     categoryId: data.categoryId || existingProd.categoryId,

@@ -54,12 +54,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  const productRoutes: MetadataRoute.Sitemap = products.map((product) => ({
-    url: `${baseUrl}/product/${product.slug}`,
-    lastModified: product.updatedAt ? new Date(product.updatedAt) : new Date(),
-    changeFrequency: 'daily',
-    priority: 0.8,
-  }));
+  const productRoutes: MetadataRoute.Sitemap = products
+    .filter((product) => !product.isArchived && product.status !== 'ARCHIVED' && Boolean(product.slug))
+    .map((product) => ({
+      url: `${baseUrl}/product/${product.slug}`,
+      lastModified: product.updatedAt ? new Date(product.updatedAt) : new Date(),
+      changeFrequency: 'daily',
+      priority: 0.8,
+    }));
 
   const categoryRoutes: MetadataRoute.Sitemap = categories.map((cat) => ({
     url: `${baseUrl}/shop?category=${cat.slug}`,
