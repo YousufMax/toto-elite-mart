@@ -129,24 +129,29 @@ export default function Header() {
         </div>
 
         {/* Actions (Track Order, Cart) */}
-        <div className="flex items-center space-x-2 sm:space-x-3">
+        <div className="flex items-center gap-1.5 sm:gap-3">
+          {/* Track Order Button - Visible on Mobile & Desktop */}
           <Link
             href="/track-order"
-            className="hidden sm:flex items-center gap-1.5 text-xs font-semibold text-slate-700 hover:text-amber-600 bg-slate-100 hover:bg-slate-200/80 px-3 py-2 rounded-xl transition"
+            aria-label="Track Order"
+            title="Track Order"
+            className="flex items-center justify-center gap-1.5 p-2 sm:px-3 sm:py-2 rounded-xl text-slate-700 hover:text-amber-600 bg-slate-100 hover:bg-slate-200/80 border border-slate-200/70 transition active:scale-95"
           >
-            <PackageCheck className="w-4 h-4 text-amber-500" />
-            <span className="hidden md:inline">Track Order</span>
+            <PackageCheck className="w-4 h-4 sm:w-4 sm:h-4 text-amber-500 shrink-0" />
+            <span className="hidden md:inline text-xs font-semibold">Track Order</span>
           </Link>
 
           {/* Cart Button */}
           <button
             onClick={() => setIsDrawerOpen(true)}
-            className="relative flex items-center gap-1.5 sm:gap-2 bg-amber-500 hover:bg-amber-600 text-slate-950 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl font-bold text-xs sm:text-sm shadow-md shadow-amber-500/20 transition active:scale-95"
+            aria-label="Shopping Cart"
+            title="Shopping Cart"
+            className="relative flex items-center justify-center gap-1.5 sm:gap-2 bg-amber-500 hover:bg-amber-600 text-slate-950 p-2 sm:px-4 sm:py-2 rounded-xl font-bold text-xs sm:text-sm shadow-md shadow-amber-500/20 transition active:scale-95"
           >
-            <ShoppingBag className="w-4 h-4" />
+            <ShoppingBag className="w-4 h-4 shrink-0" />
             <span className="hidden sm:inline">Cart</span>
             {itemCount > 0 && (
-              <span className="bg-slate-950 text-white text-[10px] sm:text-[11px] font-black rounded-full px-1.5 py-0.2 sm:px-2 sm:py-0.5 ml-0.5 sm:ml-1">
+              <span className="bg-slate-950 text-white text-[10px] sm:text-[11px] font-black rounded-full px-1.5 py-0.2 sm:px-2 sm:py-0.5 ml-0.5 sm:ml-1 leading-tight">
                 {itemCount}
               </span>
             )}

@@ -39,11 +39,11 @@ export default async function HomePage() {
 
 
         {/* Categories Bar */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-6">
+        <section className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
             <div>
-              <h2 className="text-xl sm:text-2xl font-black text-slate-950">Featured Categories</h2>
-              <p className="text-xs text-slate-500 mt-0.5">Explore our curated collections</p>
+              <h2 className="text-lg sm:text-2xl font-black text-slate-950">Featured Categories</h2>
+              <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">Explore our curated collections</p>
             </div>
             <Link
               href="/shop"
@@ -54,21 +54,21 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5 sm:gap-4">
             {categories.map((cat) => (
               <Link
                 key={cat.id}
                 href={`/shop?category=${cat.slug}`}
-                className="group bg-white rounded-2xl border border-slate-200/80 hover:border-amber-400 p-4 text-center transition-all hover:shadow-lg flex flex-col items-center"
+                className="group bg-white rounded-xl sm:rounded-2xl border border-slate-200/80 hover:border-amber-400 p-2.5 sm:p-4 text-center transition-all hover:shadow-lg flex flex-col items-center"
               >
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden bg-slate-100 mb-3 border-2 border-slate-100 group-hover:border-amber-400 transition">
+                <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-full overflow-hidden bg-slate-100 mb-2 sm:mb-3 border-2 border-slate-100 group-hover:border-amber-400 transition">
                   <img
                     src={cat.imageUrl || '/placeholder.png'}
                     alt={cat.name}
                     className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
                   />
                 </div>
-                <h3 className="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-amber-600 transition line-clamp-1">
+                <h3 className="text-[11px] sm:text-sm font-bold text-slate-900 group-hover:text-amber-600 transition line-clamp-2 leading-tight">
                   {cat.name}
                 </h3>
               </Link>
@@ -80,11 +80,11 @@ export default async function HomePage() {
         <FlashSaleSection />
 
         {/* Featured Products Grid */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-6">
+        <section className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
             <div>
-              <h2 className="text-xl sm:text-2xl font-black text-slate-950">Trending at Toto Elite Mart</h2>
-              <p className="text-xs text-slate-500 mt-0.5">Top-rated quality items backed by authentic warranty</p>
+              <h2 className="text-lg sm:text-2xl font-black text-slate-950">Trending at Toto Elite Mart</h2>
+              <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">Top-rated quality items backed by authentic warranty</p>
             </div>
             <Link
               href="/shop"
@@ -95,7 +95,7 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-6">
             {featuredProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}

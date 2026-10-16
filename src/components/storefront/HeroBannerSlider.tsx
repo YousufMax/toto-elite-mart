@@ -90,20 +90,23 @@ export default function HeroBannerSlider({ banners }: HeroBannerSliderProps) {
         ))}
 
         {/* Soft, Light Left Vignette (Keeps the picture clear & vibrant) */}
-        <div className="absolute inset-y-0 left-0 w-3/4 sm:w-1/2 bg-gradient-to-r from-slate-950/60 via-slate-950/20 to-transparent z-[1] pointer-events-none" />
+        <div className="absolute inset-y-0 left-0 w-2/3 sm:w-1/2 bg-gradient-to-r from-slate-950/60 via-slate-950/15 to-transparent z-[1] pointer-events-none" />
 
         {/* Compact, Sleek Floating Text Card - Non-Intrusive, Preserves Full Picture Visibility */}
-        <div className="relative z-10 p-3 sm:p-6 lg:p-8 max-w-[85%] xs:max-w-[78%] sm:max-w-md lg:max-w-lg">
-          <div className="backdrop-blur-md bg-slate-950/65 p-3 sm:p-4.5 md:p-5 rounded-xl sm:rounded-2xl border border-white/15 shadow-xl space-y-1.5 sm:space-y-2.5">
-            <div className="inline-flex items-center gap-1.5 bg-amber-500/20 border border-amber-500/35 text-amber-400 px-2 sm:px-2.5 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold tracking-wide uppercase shadow-2xs">
-              <Sparkles className="w-3 h-3 shrink-0" />
-              <span className="truncate">Premier Online Mart in Bangladesh</span>
+        <div className="relative z-10 p-2.5 xs:p-3 sm:p-6 lg:p-8 max-w-[70%] xs:max-w-[64%] sm:max-w-md lg:max-w-lg">
+          <div className="backdrop-blur-md bg-slate-950/70 p-2.5 xs:p-3 sm:p-4.5 md:p-5 rounded-xl sm:rounded-2xl border border-white/15 shadow-xl space-y-1 xs:space-y-1.5 sm:space-y-2.5">
+            <div className="inline-flex items-center gap-1 sm:gap-1.5 bg-amber-500/20 border border-amber-500/35 text-amber-400 px-1.5 sm:px-2.5 py-0.5 rounded-full text-[8.5px] sm:text-[10px] font-bold tracking-wide uppercase shadow-2xs">
+              <Sparkles className="w-2.5 h-2.5 sm:w-3 sm:h-3 shrink-0" />
+              <span className="truncate max-w-[120px] sm:max-w-none">
+                <span className="sm:hidden">Special Offer</span>
+                <span className="hidden sm:inline">Premier Online Mart in Bangladesh</span>
+              </span>
             </div>
 
             {/* DYNAMIC BANNER TITLE - Crisp & Scaled to Never Block Banner Visuals */}
             <h1
               key={`title-${currentBanner.id}-${currentIndex}`}
-              className="text-sm xs:text-base sm:text-2xl lg:text-3xl font-black tracking-tight leading-tight text-white animate-in fade-in slide-in-from-bottom-1 duration-300 drop-shadow-md line-clamp-2"
+              className="text-xs xs:text-sm sm:text-2xl lg:text-3xl font-black tracking-tight leading-snug sm:leading-tight text-white animate-in fade-in slide-in-from-bottom-1 duration-300 drop-shadow-md line-clamp-2"
             >
               {currentBanner.title}
             </h1>
@@ -112,24 +115,25 @@ export default function HeroBannerSlider({ banners }: HeroBannerSliderProps) {
             {currentBanner.subtitle && (
               <p
                 key={`sub-${currentBanner.id}-${currentIndex}`}
-                className="text-slate-200 text-[10px] sm:text-xs leading-normal line-clamp-1 sm:line-clamp-2 animate-in fade-in slide-in-from-bottom-2 duration-500 font-medium drop-shadow"
+                className="text-slate-200 text-[9px] xs:text-[10px] sm:text-xs leading-tight sm:leading-normal line-clamp-1 sm:line-clamp-2 animate-in fade-in slide-in-from-bottom-2 duration-500 font-medium drop-shadow"
               >
                 {currentBanner.subtitle}
               </p>
             )}
 
             {/* CTA & Voucher Code */}
-            <div className="flex flex-wrap items-center gap-2 pt-0.5">
+            <div className="flex items-center gap-1.5 sm:gap-2 pt-0.5 flex-wrap">
               <Link
                 href={currentBanner.targetUrl || '/shop'}
-                className="px-3 py-1.5 sm:px-4 sm:py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-lg sm:rounded-xl text-[10px] sm:text-xs shadow-md shadow-amber-500/20 flex items-center gap-1 sm:gap-1.5 transition hover:-translate-y-0.5 active:translate-y-0"
+                className="px-2.5 py-1 sm:px-4 sm:py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-lg sm:rounded-xl text-[9px] xs:text-[10px] sm:text-xs shadow-md shadow-amber-500/20 flex items-center gap-1 sm:gap-1.5 transition hover:-translate-y-0.5 active:translate-y-0 shrink-0"
               >
-                <span>Explore Catalog</span>
-                <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                <span>Explore</span>
+                <span className="hidden xs:inline"> Catalog</span>
+                <ArrowRight className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5" />
               </Link>
 
-              <div className="flex items-center gap-1.5 bg-slate-900/85 border border-slate-700/80 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg sm:rounded-xl text-[9px] sm:text-[11px] text-slate-300 font-semibold shadow-2xs">
-                <Tag className="w-3 h-3 text-amber-400 shrink-0" />
+              <div className="hidden xs:flex items-center gap-1 bg-slate-900/85 border border-slate-700/80 px-2 py-0.5 sm:px-3 sm:py-1.5 rounded-lg sm:rounded-xl text-[8.5px] sm:text-[11px] text-slate-300 font-semibold shadow-2xs shrink-0">
+                <Tag className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-amber-400 shrink-0" />
                 <span>
                   Code: <b className="text-white">WELCOME100</b>
                 </span>
