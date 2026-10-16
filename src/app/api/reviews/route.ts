@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { getReviewsByProductId, getAllReviews, createReview, auditAndSyncAllReviews } from '@/lib/data-store';
+import { getReviewsByProductId, getAllReviews, createReview, auditAndSyncAllReviews, getProductReviewStats } from '@/lib/data-store';
 import { getSessionUser } from '@/lib/auth';
+import { revalidatePath } from 'next/cache';
 
 export async function GET(req: Request) {
   try {
@@ -41,6 +42,11 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'Unauthorized.' }, { status: 403 });
       }
       const report = await auditAndSyncAllReviews();
+      try {
+        revalidatePath('/', 'page');
+        revalidatePath('/shop', 'page');
+        revalidatePath('/product/[slug]', 'page');
+      } catch {}
       return NextResponse.json({ success: true, report });
     }
 
@@ -63,7 +69,15 @@ export async function POST(req: Request) {
       isVerified: true,
     });
 
-    return NextResponse.json({ success: true, review });
+    const stats = await getProductReviewStats(productId);
+
+    try {
+      revalidatePath('/', 'page');
+      revalidatePath('/shop', 'page');
+      revalidatePath('/product/[slug]', 'page');
+    } catch {}
+
+    return NextResponse.json({ success: true, review, stats });
   } catch (err: unknown) {
     const errorMsg = err instanceof Error ? err.message : 'Server error';
     return NextResponse.json({ error: errorMsg }, { status: 500 });

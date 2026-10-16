@@ -95,6 +95,12 @@ enum FlashSaleStatus {
   CANCELLED
 }
 
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model User {
   id            String      @id @default(uuid())
   email         String      @unique
@@ -181,6 +187,7 @@ model Product {
   inventoryMovements InventoryMovement[]
   flashSaleItems     FlashSaleItem[]
   redirects          ProductRedirect[]
+  reviews            Review[]
 
   @@index([sku])
   @@index([slug])
@@ -235,6 +242,27 @@ model ProductRedirect {
   @@index([oldSlug])
   @@index([newSlug])
   @@index([productId])
+}
+
+model Review {
+  id            String       @id @default(uuid())
+  productId     String
+  product       Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  customerName  String
+  customerPhone String?
+  rating        Int          @default(5)
+  comment       String       @db.Text
+  images        String[]     @default([])
+  isVerified    Boolean      @default(true)
+  status        ReviewStatus @default(APPROVED)
+  adminReply    String?      @db.Text
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@index([productId])
+  @@index([status])
+  @@index([rating])
+  @@index([createdAt])
 }
 
 model Banner {

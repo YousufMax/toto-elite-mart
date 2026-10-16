@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ShoppingBag, Zap, ChevronLeft, ChevronRight, Plus, Minus, Star, CheckCircle2 } from 'lucide-react';
@@ -41,8 +41,45 @@ export default function ProductCard({ product }: ProductCardProps) {
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
 
   // Dynamic Product Rating & Reviews (Directly matched to Real Storefront Reviews)
-  const reviewCount = product.reviewCount !== undefined ? Number(product.reviewCount) : 0;
-  const productRating = reviewCount > 0 ? Number(product.rating || 5) : 0;
+  const [liveReviewStats, setLiveReviewStats] = useState<{ rating: number; count: number } | null>(null);
+
+  useEffect(() => {
+    const handleReviewUpdate = (e: Event) => {
+      const customEvent = e as CustomEvent<{ productId: string; reviewCount?: number; rating?: number }>;
+      if (
+        customEvent.detail &&
+        customEvent.detail.productId &&
+        (customEvent.detail.productId === product.id ||
+          String(customEvent.detail.productId).toLowerCase() === String(product.id).toLowerCase() ||
+          (product.slug && String(customEvent.detail.productId).toLowerCase() === product.slug.toLowerCase()) ||
+          (product.sku && String(customEvent.detail.productId).toLowerCase() === product.sku.toLowerCase()))
+      ) {
+        if (customEvent.detail.reviewCount !== undefined) {
+          setLiveReviewStats({
+            rating: customEvent.detail.rating ?? 5.0,
+            count: customEvent.detail.reviewCount,
+          });
+        }
+      }
+    };
+
+    window.addEventListener('product-review-updated', handleReviewUpdate);
+    return () => window.removeEventListener('product-review-updated', handleReviewUpdate);
+  }, [product.id, product.slug, product.sku]);
+
+  const reviewCount =
+    liveReviewStats !== null
+      ? liveReviewStats.count
+      : product.reviewCount !== undefined
+      ? Number(product.reviewCount)
+      : 0;
+
+  const productRating =
+    liveReviewStats !== null
+      ? liveReviewStats.rating
+      : reviewCount > 0
+      ? Number(product.rating || 5)
+      : 0;
 
   const itemInCart = items.find((i) => i.id === product.id);
   const qtyInCart = itemInCart ? itemInCart.quantity : 0;

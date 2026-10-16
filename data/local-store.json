@@ -3501,6 +3501,18 @@
   },
   "reviews": [
     {
+      "id": "rev-1792126245475-29",
+      "productId": "prod-1791700536997",
+      "customerName": "Habib",
+      "customerPhone": "01869850682",
+      "rating": 5,
+      "comment": "Greate product",
+      "images": [],
+      "isVerified": true,
+      "status": "APPROVED",
+      "createdAt": "2026-10-16T04:50:45.475Z"
+    },
+    {
       "id": "rev-1792004686737-866",
       "productId": "prod-1791700536997",
       "customerName": "kazim",

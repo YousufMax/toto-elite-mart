@@ -60,13 +60,14 @@ export default function ProductReviewsSection({ productId, productName, initialR
   };
 
   // Aggregated Stats
-  const { avgRating, totalReviews, ratingCounts, photoCount } = useMemo(() => {
+  const { avgRating, totalReviews, ratingCounts, photoCount, recommendPercent } = useMemo(() => {
     if (!reviews.length) {
       return {
         avgRating: 5.0,
         totalReviews: 0,
         ratingCounts: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 },
         photoCount: 0,
+        recommendPercent: 100,
       };
     }
     const counts: Record<number, number> = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
@@ -82,13 +83,32 @@ export default function ProductReviewsSection({ productId, productName, initialR
       }
     });
 
+    const positiveReviews = (counts[5] || 0) + (counts[4] || 0);
+    const recommendRate = reviews.length > 0 ? Math.round((positiveReviews / reviews.length) * 100) : 100;
+
     return {
       avgRating: Number((totalScore / reviews.length).toFixed(1)),
       totalReviews: reviews.length,
       ratingCounts: counts,
       photoCount: photos,
+      recommendPercent: recommendRate,
     };
   }, [reviews]);
+
+  // Synchronize product review statistics across the entire page (Product Cards, Header, etc.)
+  useEffect(() => {
+    if (typeof window !== 'undefined' && reviews.length > 0) {
+      window.dispatchEvent(
+        new CustomEvent('product-review-updated', {
+          detail: {
+            productId,
+            reviewCount: totalReviews,
+            rating: avgRating,
+          },
+        })
+      );
+    }
+  }, [productId, totalReviews, avgRating, reviews.length]);
 
   // Extract all photos with parent review reference for gallery
   const allCustomerPhotos = useMemo(() => {
@@ -236,7 +256,7 @@ export default function ProductReviewsSection({ productId, productName, initialR
           </p>
           <div className="mt-2 text-[11px] font-medium text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100 flex items-center gap-1.5">
             <CheckCircle className="w-3.5 h-3.5" />
-            <span>98% of customers recommend this item</span>
+            <span>{recommendPercent}% of customers recommend this item</span>
           </div>
         </div>
 

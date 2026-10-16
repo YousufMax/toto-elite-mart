@@ -958,22 +958,36 @@ export async function getProducts(options?: {
           category: true,
           images: { orderBy: { sortOrder: 'asc' } },
           colorVariants: { orderBy: { sortOrder: 'asc' } },
+          reviews: {
+            where: { status: 'APPROVED' },
+            select: { rating: true },
+          },
         },
         orderBy,
       });
 
-      const mapped = products.map((p) => ({
-        ...p,
-        purchaseCost: Number(p.purchaseCost),
-        sellingPrice: Number(p.sellingPrice),
-        salePrice: p.salePrice ? Number(p.salePrice) : null,
-        colorVariants: (p.colorVariants || []).map((cv) => ({
-          ...cv,
-          price: cv.price != null ? Number(cv.price) : null,
-        })),
-      }));
+      const mapped = products.map((p: any) => {
+        const approvedReviews = p.reviews || [];
+        const reviewCount = approvedReviews.length;
+        const rating = reviewCount > 0
+          ? Number((approvedReviews.reduce((sum: number, r: any) => sum + (Number(r.rating) || 5), 0) / reviewCount).toFixed(1))
+          : 0;
 
-      return attachReviewStats(mapped);
+        return {
+          ...p,
+          rating,
+          reviewCount,
+          purchaseCost: Number(p.purchaseCost),
+          sellingPrice: Number(p.sellingPrice),
+          salePrice: p.salePrice ? Number(p.salePrice) : null,
+          colorVariants: (p.colorVariants || []).map((cv: any) => ({
+            ...cv,
+            price: cv.price != null ? Number(cv.price) : null,
+          })),
+        };
+      });
+
+      return mapped;
     } catch (e) {
       console.warn('[PRISMA_PRODUCT_FETCH_FALLBACK]', e);
     }
@@ -1024,6 +1038,10 @@ export async function getProductBySlugOrId(identifier: string) {
           category: true,
           images: { orderBy: { sortOrder: 'asc' } },
           colorVariants: { orderBy: { sortOrder: 'asc' } },
+          reviews: {
+            where: { status: 'APPROVED' },
+            select: { rating: true },
+          },
         },
       });
       // If not found by slug, attempt lookup by ID
@@ -1034,21 +1052,33 @@ export async function getProductBySlugOrId(identifier: string) {
             category: true,
             images: { orderBy: { sortOrder: 'asc' } },
             colorVariants: { orderBy: { sortOrder: 'asc' } },
+            reviews: {
+              where: { status: 'APPROVED' },
+              select: { rating: true },
+            },
           },
         });
       }
       if (p) {
+        const approvedReviews = (p as any).reviews || [];
+        const reviewCount = approvedReviews.length;
+        const rating = reviewCount > 0
+          ? Number((approvedReviews.reduce((sum: number, r: any) => sum + (Number(r.rating) || 5), 0) / reviewCount).toFixed(1))
+          : 0;
+
         const productObj = {
           ...p,
+          rating,
+          reviewCount,
           purchaseCost: Number(p.purchaseCost),
           sellingPrice: Number(p.sellingPrice),
           salePrice: p.salePrice ? Number(p.salePrice) : null,
-          colorVariants: (p.colorVariants || []).map((cv) => ({
+          colorVariants: (p.colorVariants || []).map((cv: any) => ({
             ...cv,
             price: cv.price != null ? Number(cv.price) : null,
           })),
         };
-        return attachSingleReviewStats(productObj);
+        return productObj;
       }
     } catch {
       // fallback
@@ -3384,6 +3414,51 @@ export interface CustomerReview {
 }
 
 export async function getReviewsByProductId(productId: string, status = 'APPROVED'): Promise<CustomerReview[]> {
+  const isConnected = await isDatabaseConnected();
+  if (isConnected) {
+    try {
+      const target = await prisma.product.findFirst({
+        where: {
+          OR: [
+            { id: productId },
+            { slug: productId },
+            { sku: productId },
+          ],
+        },
+        select: { id: true },
+      });
+      const canonicalId = target ? target.id : productId;
+
+      const whereClause: any = {
+        productId: canonicalId,
+      };
+      if (status !== 'ALL') {
+        whereClause.status = status as any;
+      }
+
+      const dbReviews = await (prisma as any).review.findMany({
+        where: whereClause,
+        orderBy: { createdAt: 'desc' },
+      });
+
+      return dbReviews.map((r: any) => ({
+        id: r.id,
+        productId: r.productId,
+        customerName: r.customerName,
+        customerPhone: r.customerPhone,
+        rating: Number(r.rating),
+        comment: r.comment,
+        images: r.images || [],
+        isVerified: r.isVerified,
+        status: r.status,
+        adminReply: r.adminReply,
+        createdAt: r.createdAt,
+      }));
+    } catch (e) {
+      console.warn('[PRISMA_GET_REVIEWS_FALLBACK]', e);
+    }
+  }
+
   const store = getStore();
   const reviews = (store.reviews || []) as CustomerReview[];
 
@@ -3417,6 +3492,45 @@ export async function getReviewsByProductId(productId: string, status = 'APPROVE
 }
 
 export async function getAllReviews(options?: { status?: string; search?: string }): Promise<CustomerReview[]> {
+  const isConnected = await isDatabaseConnected();
+  if (isConnected) {
+    try {
+      const where: any = {};
+      if (options?.status && options.status !== 'ALL') {
+        where.status = options.status as any;
+      }
+      if (options?.search) {
+        const q = options.search;
+        where.OR = [
+          { customerName: { contains: q, mode: 'insensitive' } },
+          { comment: { contains: q, mode: 'insensitive' } },
+          { customerPhone: { contains: q, mode: 'insensitive' } },
+        ];
+      }
+
+      const dbReviews = await (prisma as any).review.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+      });
+
+      return dbReviews.map((r: any) => ({
+        id: r.id,
+        productId: r.productId,
+        customerName: r.customerName,
+        customerPhone: r.customerPhone,
+        rating: Number(r.rating),
+        comment: r.comment,
+        images: r.images || [],
+        isVerified: r.isVerified,
+        status: r.status,
+        adminReply: r.adminReply,
+        createdAt: r.createdAt,
+      }));
+    } catch (e) {
+      console.warn('[PRISMA_GET_ALL_REVIEWS_FALLBACK]', e);
+    }
+  }
+
   const store = getStore();
   let list = [...(store.reviews || [])] as CustomerReview[];
 
@@ -3448,9 +3562,67 @@ export async function createReview(data: {
   const store = getStore();
   const settings = await getStoreSettings();
   const defaultStatus = data.status || (settings.reviewAutoApprove ? 'APPROVED' : 'PENDING');
+  const reviewId = `rev-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
-  // Canonicalize productId to product ID
+  const isConnected = await isDatabaseConnected();
   let canonicalProductId = data.productId;
+
+  if (isConnected) {
+    try {
+      const target = await prisma.product.findFirst({
+        where: {
+          OR: [
+            { id: data.productId },
+            { slug: data.productId },
+            { sku: data.productId },
+          ],
+        },
+        select: { id: true },
+      });
+      if (target) {
+        canonicalProductId = target.id;
+      }
+
+      const created = await (prisma as any).review.create({
+        data: {
+          id: reviewId,
+          productId: canonicalProductId,
+          customerName: data.customerName.trim(),
+          customerPhone: data.customerPhone?.trim() || null,
+          rating: Math.max(1, Math.min(5, Number(data.rating) || 5)),
+          comment: data.comment.trim(),
+          images: Array.isArray(data.images) ? data.images.filter(Boolean) : [],
+          isVerified: data.isVerified !== false,
+          status: defaultStatus as any,
+          createdAt: new Date(),
+        },
+      });
+
+      const result: CustomerReview = {
+        id: created.id,
+        productId: created.productId,
+        customerName: created.customerName,
+        customerPhone: created.customerPhone,
+        rating: Number(created.rating),
+        comment: created.comment,
+        images: created.images || [],
+        isVerified: created.isVerified,
+        status: created.status,
+        adminReply: created.adminReply,
+        createdAt: created.createdAt,
+      };
+
+      store.reviews = store.reviews || [];
+      store.reviews.unshift(result);
+      saveStoreToDisk();
+
+      return result;
+    } catch (e) {
+      console.warn('[PRISMA_CREATE_REVIEW_FALLBACK]', e);
+    }
+  }
+
+  // Canonicalize productId to product ID in store fallback
   const pList = (store.products || []) as any[];
   const matchedProd = pList.find(
     (p) =>
@@ -3465,7 +3637,7 @@ export async function createReview(data: {
   }
 
   const newReview: CustomerReview = {
-    id: `rev-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+    id: reviewId,
     productId: canonicalProductId,
     customerName: data.customerName.trim(),
     customerPhone: data.customerPhone?.trim() || null,
@@ -3529,6 +3701,43 @@ export async function updateReviewStatus(
   status: 'APPROVED' | 'PENDING' | 'REJECTED',
   adminReply?: string
 ): Promise<CustomerReview | null> {
+  const isConnected = await isDatabaseConnected();
+  if (isConnected) {
+    try {
+      const updated = await (prisma as any).review.update({
+        where: { id },
+        data: {
+          status: status as any,
+          ...(adminReply !== undefined ? { adminReply } : {}),
+        },
+      });
+
+      const store = getStore();
+      const rev = (store.reviews || []).find((r: CustomerReview) => r.id === id);
+      if (rev) {
+        rev.status = status;
+        if (adminReply !== undefined) rev.adminReply = adminReply;
+        saveStoreToDisk();
+      }
+
+      return {
+        id: updated.id,
+        productId: updated.productId,
+        customerName: updated.customerName,
+        customerPhone: updated.customerPhone,
+        rating: Number(updated.rating),
+        comment: updated.comment,
+        images: updated.images || [],
+        isVerified: updated.isVerified,
+        status: updated.status,
+        adminReply: updated.adminReply,
+        createdAt: updated.createdAt,
+      };
+    } catch (e) {
+      console.warn('[PRISMA_UPDATE_REVIEW_STATUS_FALLBACK]', e);
+    }
+  }
+
   const store = getStore();
   const rev = (store.reviews || []).find((r: CustomerReview) => r.id === id);
   if (!rev) return null;
@@ -3543,6 +3752,58 @@ export async function updateReview(
   id: string,
   data: Partial<Omit<CustomerReview, 'id' | 'createdAt'>>
 ): Promise<CustomerReview | null> {
+  const isConnected = await isDatabaseConnected();
+  if (isConnected) {
+    try {
+      const updateData: any = {};
+      if (data.status !== undefined) updateData.status = data.status;
+      if (data.adminReply !== undefined) updateData.adminReply = data.adminReply ? data.adminReply.trim() : null;
+      if (data.customerName !== undefined) updateData.customerName = data.customerName.trim();
+      if (data.customerPhone !== undefined) updateData.customerPhone = data.customerPhone ? data.customerPhone.trim() : null;
+      if (data.rating !== undefined) updateData.rating = Math.max(1, Math.min(5, Number(data.rating) || 5));
+      if (data.comment !== undefined) updateData.comment = data.comment.trim();
+      if (data.images !== undefined) updateData.images = Array.isArray(data.images) ? data.images.filter(Boolean) : [];
+      if (data.isVerified !== undefined) updateData.isVerified = Boolean(data.isVerified);
+      if (data.productId !== undefined) updateData.productId = data.productId;
+
+      const updated = await (prisma as any).review.update({
+        where: { id },
+        data: updateData,
+      });
+
+      const store = getStore();
+      const rev = (store.reviews || []).find((r: CustomerReview) => r.id === id);
+      if (rev) {
+        if (data.productId !== undefined) rev.productId = data.productId;
+        if (data.customerName !== undefined) rev.customerName = data.customerName.trim();
+        if (data.customerPhone !== undefined) rev.customerPhone = data.customerPhone ? data.customerPhone.trim() : null;
+        if (data.rating !== undefined) rev.rating = Math.max(1, Math.min(5, Number(data.rating) || 5));
+        if (data.comment !== undefined) rev.comment = data.comment.trim();
+        if (data.images !== undefined) rev.images = Array.isArray(data.images) ? data.images.filter(Boolean) : [];
+        if (data.isVerified !== undefined) rev.isVerified = Boolean(data.isVerified);
+        if (data.status !== undefined) rev.status = data.status;
+        if (data.adminReply !== undefined) rev.adminReply = data.adminReply ? data.adminReply.trim() : null;
+        saveStoreToDisk();
+      }
+
+      return {
+        id: updated.id,
+        productId: updated.productId,
+        customerName: updated.customerName,
+        customerPhone: updated.customerPhone,
+        rating: Number(updated.rating),
+        comment: updated.comment,
+        images: updated.images || [],
+        isVerified: updated.isVerified,
+        status: updated.status,
+        adminReply: updated.adminReply,
+        createdAt: updated.createdAt,
+      };
+    } catch (e) {
+      console.warn('[PRISMA_UPDATE_REVIEW_FALLBACK]', e);
+    }
+  }
+
   const store = getStore();
   const rev = (store.reviews || []).find((r: CustomerReview) => r.id === id);
   if (!rev) return null;
@@ -3562,6 +3823,19 @@ export async function updateReview(
 }
 
 export async function deleteReview(id: string): Promise<boolean> {
+  const isConnected = await isDatabaseConnected();
+  if (isConnected) {
+    try {
+      await (prisma as any).review.delete({ where: { id } });
+      const store = getStore();
+      store.reviews = (store.reviews || []).filter((r: CustomerReview) => r.id !== id);
+      saveStoreToDisk();
+      return true;
+    } catch (e) {
+      console.warn('[PRISMA_DELETE_REVIEW_FALLBACK]', e);
+    }
+  }
+
   const store = getStore();
   const initialLen = (store.reviews || []).length;
   store.reviews = (store.reviews || []).filter((r: CustomerReview) => r.id !== id);
@@ -3570,6 +3844,48 @@ export async function deleteReview(id: string): Promise<boolean> {
     return true;
   }
   return false;
+}
+
+export async function getProductReviewStats(productId: string): Promise<{ rating: number; reviewCount: number }> {
+  const isConnected = await isDatabaseConnected();
+  if (isConnected) {
+    try {
+      const target = await prisma.product.findFirst({
+        where: {
+          OR: [
+            { id: productId },
+            { slug: productId },
+            { sku: productId },
+          ],
+        },
+        select: {
+          id: true,
+          reviews: {
+            where: { status: 'APPROVED' },
+            select: { rating: true },
+          },
+        },
+      });
+
+      if (target) {
+        const approved = (target as any).reviews || [];
+        const count = approved.length;
+        const avg = count > 0
+          ? Number((approved.reduce((s: number, r: any) => s + (Number(r.rating) || 5), 0) / count).toFixed(1))
+          : 0;
+        return { rating: avg, reviewCount: count };
+      }
+    } catch (e) {
+      console.warn('[PRISMA_REVIEW_STATS_FALLBACK]', e);
+    }
+  }
+
+  const reviews = await getReviewsByProductId(productId, 'APPROVED');
+  const count = reviews.length;
+  const avg = count > 0
+    ? Number((reviews.reduce((s, r) => s + (Number(r.rating) || 5), 0) / count).toFixed(1))
+    : 0;
+  return { rating: avg, reviewCount: count };
 }
 
 // ==========================================

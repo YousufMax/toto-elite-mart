@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
-import { updateReview, deleteReview } from '@/lib/data-store';
+import { updateReview, deleteReview, getProductReviewStats } from '@/lib/data-store';
 import { getSessionUser } from '@/lib/auth';
 import { logAudit } from '@/lib/audit';
+import { revalidatePath } from 'next/cache';
 
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
   try {
@@ -41,7 +42,14 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       afterState: updated as any,
     });
 
-    return NextResponse.json({ success: true, review: updated });
+    const stats = updated.productId ? await getProductReviewStats(updated.productId) : null;
+    try {
+      revalidatePath('/', 'page');
+      revalidatePath('/shop', 'page');
+      revalidatePath('/product/[slug]', 'page');
+    } catch {}
+
+    return NextResponse.json({ success: true, review: updated, stats });
   } catch (err: unknown) {
     const errorMsg = err instanceof Error ? err.message : 'Server error';
     return NextResponse.json({ error: errorMsg }, { status: 500 });
@@ -66,6 +74,12 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
       entityType: 'REVIEW' as any,
       entityId: params.id,
     });
+
+    try {
+      revalidatePath('/', 'page');
+      revalidatePath('/shop', 'page');
+      revalidatePath('/product/[slug]', 'page');
+    } catch {}
 
     return NextResponse.json({ success: true, message: 'Review deleted successfully.' });
   } catch (err: unknown) {
