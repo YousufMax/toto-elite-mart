@@ -421,16 +421,16 @@ export default function ProductCard({ product }: ProductCardProps) {
             <button
               onClick={handleAddToCart}
               disabled={isOutOfStock}
-              aria-label={isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
-              title={isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
-              className={`py-2 sm:py-2.5 px-2.5 sm:px-3 rounded-xl font-bold text-[11px] sm:text-xs flex items-center justify-center gap-1.5 transition-all duration-200 active:scale-95 border shrink-0 sm:shrink w-9 h-9 sm:w-auto sm:h-auto ${
+              aria-label={isOutOfStock ? 'Out of Stock' : 'Cart'}
+              title={isOutOfStock ? 'Out of Stock' : 'Cart'}
+              className={`py-2 sm:py-2.5 px-2.5 sm:px-3 rounded-xl font-bold text-[11px] sm:text-xs flex items-center justify-center gap-1 sm:gap-1.5 transition-all duration-200 active:scale-95 border shrink-0 sm:shrink w-9 h-9 sm:w-auto sm:h-auto ${
                 isOutOfStock
                   ? 'bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed'
                   : 'bg-white hover:bg-slate-100 border-slate-300/80 text-slate-800 shadow-2xs hover:shadow-xs'
               }`}
             >
               <ShoppingBag className="w-4 h-4 sm:w-3.5 sm:h-3.5 text-slate-700 shrink-0" />
-              <span className="hidden sm:inline truncate">{isOutOfStock ? 'Sold Out' : 'Add to Cart'}</span>
+              <span className="hidden sm:inline whitespace-nowrap">{isOutOfStock ? 'Sold Out' : 'Cart'}</span>
             </button>
           )}
 

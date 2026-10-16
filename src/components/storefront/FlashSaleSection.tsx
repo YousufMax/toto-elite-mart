@@ -380,12 +380,12 @@ export default function FlashSaleSection() {
                     type="button"
                     disabled={isSoldOut}
                     onClick={handleAddToCart}
-                    aria-label={isSoldOut ? 'Sold Out' : 'Add to Bag'}
-                    title={isSoldOut ? 'Sold Out' : 'Add to Bag'}
+                    aria-label={isSoldOut ? 'Sold Out' : 'Cart'}
+                    title={isSoldOut ? 'Sold Out' : 'Cart'}
                     className="w-9 h-9 sm:w-full py-2 px-2 sm:px-3 bg-slate-100 hover:bg-slate-200 text-slate-900 text-xs font-bold rounded-xl transition active:scale-95 disabled:opacity-40 disabled:pointer-events-none flex items-center justify-center gap-1 shrink-0 sm:shrink"
                   >
                     <ShoppingBag className="w-4 h-4 sm:w-3.5 sm:h-3.5 shrink-0" />
-                    <span className="hidden sm:inline truncate">Add to Bag</span>
+                    <span className="hidden sm:inline whitespace-nowrap">{isSoldOut ? 'Sold Out' : 'Cart'}</span>
                   </button>
 
                   <button
