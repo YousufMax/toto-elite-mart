@@ -156,13 +156,19 @@ export default function Footer() {
             {/* Brand Logo & Company Name (Exact Match with Header Logo) */}
             <Link href="/" className="inline-flex items-center gap-2 sm:gap-2.5 shrink-0 group">
               <img
-                src="https://cdn.jsdelivr.net/gh/YousufMax/image-server-001@main/toto%20elite%20mart%20logo%20final%20(1).png"
+                src="/logo.png"
                 alt="TOTO ELITE MART"
-                height={44}
+                width={48}
+                height={48}
+                decoding="async"
                 style={{ maxHeight: '48px', width: 'auto' }}
                 className="h-10 sm:h-11 w-auto object-contain shrink-0 transition-transform duration-200 group-hover:scale-102"
                 onError={(e) => {
                   const target = e.currentTarget;
+                  if (!target.src.includes('cdn.jsdelivr.net')) {
+                    target.src = 'https://cdn.jsdelivr.net/gh/YousufMax/image-server-001@main/toto%20elite%20mart%20logo%20final%20(1).png';
+                    return;
+                  }
                   target.style.display = 'none';
                   const fallback = target.nextElementSibling as HTMLElement | null;
                   if (fallback) fallback.style.display = 'flex';

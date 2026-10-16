@@ -151,6 +151,11 @@ export default function ProductDetailClient({ product }: { product: any }) {
           <img
             src={activeImage}
             alt={product.name}
+            width={600}
+            height={600}
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
             onError={(e) => {
               (e.target as HTMLImageElement).src =
                 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80';
@@ -211,7 +216,15 @@ export default function ProductDetailClient({ product }: { product: any }) {
                   activeImageIndex === idx ? 'border-amber-500 shadow-md' : 'border-slate-200 opacity-70 hover:opacity-100'
                 }`}
               >
-                <img src={imgUrl} alt="Thumbnail" className="w-full h-full object-cover" />
+                <img
+                  src={imgUrl}
+                  alt={`Thumbnail ${idx + 1}`}
+                  width={80}
+                  height={80}
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-cover"
+                />
               </button>
             ))}
           </div>

@@ -65,6 +65,10 @@ export default async function HomePage() {
                   <img
                     src={cat.imageUrl || '/placeholder.png'}
                     alt={cat.name}
+                    width={80}
+                    height={80}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
                   />
                 </div>

@@ -242,6 +242,10 @@ export default function ProductCard({ product }: ProductCardProps) {
             <img
               src={currentImageUrl}
               alt={product.name}
+              width={400}
+              height={400}
+              loading="lazy"
+              decoding="async"
               onError={(e) => {
                 (e.target as HTMLImageElement).src =
                   'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80';
@@ -393,34 +397,36 @@ export default function ProductCard({ product }: ProductCardProps) {
       </div>
 
       {/* Pricing & Dual Action Buttons */}
-      <div className="p-2.5 xs:p-3 sm:p-4 pt-0 space-y-2 sm:space-y-2.5">
-        <div className="flex items-center justify-between gap-1 flex-wrap">
+      <div className="p-2 xs:p-2.5 sm:p-4 pt-0 space-y-1.5 sm:space-y-2">
+        <div className="space-y-1">
           <div className="flex items-baseline gap-1.5 sm:gap-2">
-            <span className="font-price text-[15px] sm:text-lg font-black text-slate-950 tracking-tight">
+            <span className="font-price text-sm sm:text-lg font-black text-slate-950 tracking-tight">
               {hasVariableVariantPricing
                 ? `From ${formatBDT(minVariantPrice!)}`
                 : formatBDT(currentPrice)}
             </span>
             {hasDiscount && compareAtPrice && (
-              <span className="font-price text-[10.5px] sm:text-xs text-slate-400 line-through font-medium">
+              <span className="font-price text-[10px] sm:text-xs text-slate-400 line-through font-medium">
                 {formatBDT(compareAtPrice)}
               </span>
             )}
           </div>
 
-          {/* Elite Reward Points Cashback Chip */}
+          {/* Elite Reward Points Cashback Chip - 100% visible on ALL mobile & desktop cards */}
           {storeSettings?.rewardPointsEnabled !== false && (
-            <span className="hidden xs:inline-flex items-center gap-0.5 text-[8.5px] sm:text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200/80 px-1.5 py-0.5 rounded shrink-0">
-              <span>🪙</span>
-              <span>+{Math.max(1, Math.floor(currentPrice / (storeSettings?.rewardPointsEarnRate || 100)))} pts</span>
-            </span>
+            <div className="flex items-center">
+              <span className="inline-flex items-center gap-1 text-[8.5px] xs:text-[9.5px] sm:text-[10.5px] font-extrabold text-amber-800 bg-amber-50/90 border border-amber-200/90 px-1.5 py-0.5 rounded-md shadow-2xs">
+                <span>🪙</span>
+                <span>+{Math.max(1, Math.floor(currentPrice / (storeSettings?.rewardPointsEarnRate || 100)))} pts Cashback</span>
+              </span>
+            </div>
           )}
         </div>
 
         {/* Dual Actions: Add to Cart (Icon on Mobile, Text on Desktop) + Buy Now */}
-        <div className="flex items-center gap-1.5 sm:grid sm:grid-cols-2 sm:gap-2">
+        <div className="flex items-center gap-1 sm:grid sm:grid-cols-2 sm:gap-2">
           {storeSettings?.cardStepperEnabled !== false && qtyInCart > 0 && itemInCart ? (
-            <div className="flex items-center justify-between bg-amber-500 text-slate-950 font-black rounded-xl p-0.5 sm:p-1 shadow-sm border border-amber-400 select-none shrink-0 sm:shrink min-w-[76px] sm:min-w-0">
+            <div className="flex items-center justify-between bg-amber-500 text-slate-950 font-black rounded-lg sm:rounded-xl p-0.5 shadow-sm border border-amber-400 select-none shrink-0 sm:shrink min-w-[64px] sm:min-w-0">
               <button
                 type="button"
                 onClick={(e) => {
@@ -428,12 +434,12 @@ export default function ProductCard({ product }: ProductCardProps) {
                   e.stopPropagation();
                   updateQuantity(itemInCart.itemKey || itemInCart.id, qtyInCart - 1);
                 }}
-                className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-black/10 hover:bg-slate-950 hover:text-white flex items-center justify-center transition active:scale-90 shrink-0"
+                className="w-5 h-5 sm:w-7 sm:h-7 rounded-md sm:rounded-lg bg-black/10 hover:bg-slate-950 hover:text-white flex items-center justify-center transition active:scale-90 shrink-0"
                 aria-label="Decrease quantity"
               >
-                <Minus className="w-3 h-3 stroke-[3]" />
+                <Minus className="w-2.5 h-2.5 sm:w-3 sm:h-3 stroke-[3]" />
               </button>
-              <span className="font-price font-black text-[10px] sm:text-xs px-1 text-slate-950 truncate">
+              <span className="font-price font-black text-[9px] sm:text-xs px-0.5 text-slate-950 truncate">
                 <span className="sm:hidden">{qtyInCart}</span>
                 <span className="hidden sm:inline">{qtyInCart} in Bag</span>
               </span>
@@ -448,10 +454,10 @@ export default function ProductCard({ product }: ProductCardProps) {
                   }
                 }}
                 disabled={qtyInCart >= (itemInCart.stockQuantity || product.stockQuantity || 99)}
-                className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-black/10 hover:bg-slate-950 hover:text-white disabled:opacity-30 flex items-center justify-center transition active:scale-90 shrink-0"
+                className="w-5 h-5 sm:w-7 sm:h-7 rounded-md sm:rounded-lg bg-black/10 hover:bg-slate-950 hover:text-white disabled:opacity-30 flex items-center justify-center transition active:scale-90 shrink-0"
                 aria-label="Increase quantity"
               >
-                <Plus className="w-3 h-3 stroke-[3]" />
+                <Plus className="w-2.5 h-2.5 sm:w-3 sm:h-3 stroke-[3]" />
               </button>
             </div>
           ) : (
@@ -460,13 +466,13 @@ export default function ProductCard({ product }: ProductCardProps) {
               disabled={isOutOfStock}
               aria-label={isOutOfStock ? 'Out of Stock' : 'Cart'}
               title={isOutOfStock ? 'Out of Stock' : 'Cart'}
-              className={`py-2 sm:py-2.5 px-2.5 sm:px-3 rounded-xl font-bold text-[11px] sm:text-xs flex items-center justify-center gap-1 sm:gap-1.5 transition-all duration-200 active:scale-95 border shrink-0 sm:shrink w-9 h-9 sm:w-auto sm:h-auto ${
+              className={`py-1.5 sm:py-2.5 px-1.5 sm:px-3 rounded-lg sm:rounded-xl font-bold text-[11px] sm:text-xs flex items-center justify-center gap-1 sm:gap-1.5 transition-all duration-200 active:scale-95 border shrink-0 sm:shrink w-8 h-8 sm:w-auto sm:h-auto ${
                 isOutOfStock
                   ? 'bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed'
                   : 'bg-white hover:bg-slate-100 border-slate-300/80 text-slate-800 shadow-2xs hover:shadow-xs'
               }`}
             >
-              <ShoppingBag className="w-4 h-4 sm:w-3.5 sm:h-3.5 text-slate-700 shrink-0" />
+              <ShoppingBag className="w-3.5 h-3.5 sm:w-3.5 sm:h-3.5 text-slate-700 shrink-0" />
               <span className="hidden sm:inline whitespace-nowrap">{isOutOfStock ? 'Sold Out' : 'Cart'}</span>
             </button>
           )}
@@ -476,14 +482,14 @@ export default function ProductCard({ product }: ProductCardProps) {
             disabled={isOutOfStock}
             aria-label={isOutOfStock ? 'Out of Stock' : 'Buy Now'}
             title={isOutOfStock ? 'Out of Stock' : 'Buy Now'}
-            className={`flex-1 py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl font-display font-black text-[11px] sm:text-xs flex items-center justify-center gap-1 transition-all duration-200 active:scale-95 shadow-sm h-9 sm:h-auto ${
+            className={`flex-1 py-1.5 sm:py-2.5 px-1 sm:px-3 rounded-lg sm:rounded-xl font-display font-black text-[9.5px] xs:text-[10.5px] sm:text-xs flex items-center justify-center gap-0.5 sm:gap-1 transition-all duration-200 active:scale-95 shadow-sm h-8 sm:h-auto ${
               isOutOfStock
                 ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
                 : 'bg-gradient-to-r from-[#FF5E00] via-[#FF6A00] to-[#E64A19] hover:from-[#F4511E] hover:to-[#D84315] text-white shadow-md shadow-orange-500/25 hover:shadow-lg hover:shadow-orange-500/35'
             }`}
           >
-            <Zap className="w-3.5 h-3.5 fill-white text-white shrink-0" />
-            <span className="truncate tracking-wide">Buy Now</span>
+            <Zap className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-white text-white shrink-0" />
+            <span className="tracking-tight whitespace-nowrap uppercase">Buy Now</span>
           </button>
         </div>
       </div>

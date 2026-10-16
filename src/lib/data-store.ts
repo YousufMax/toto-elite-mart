@@ -3315,6 +3315,10 @@ export interface StoreSettings {
   fraudHighRiskAdvanceFeeRequired: boolean;
   blacklistedPhones: string[];
   whitelistedPhones: string[];
+  // Telegram Bot Integrations
+  telegramBotToken?: string;
+  telegramChatId?: string;
+  telegramEnableAlerts?: boolean;
 }
 
 const DEFAULT_STORE_SETTINGS: StoreSettings = {
@@ -3341,6 +3345,9 @@ const DEFAULT_STORE_SETTINGS: StoreSettings = {
   fraudHighRiskAdvanceFeeRequired: true,
   blacklistedPhones: [],
   whitelistedPhones: [],
+  telegramBotToken: '',
+  telegramChatId: '',
+  telegramEnableAlerts: true,
 };
 
 export async function getStoreSettings(): Promise<StoreSettings> {

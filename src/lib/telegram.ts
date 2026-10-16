@@ -1,5 +1,6 @@
 import { prisma } from './prisma';
 import { formatBDT } from './currency';
+import { getStoreSettings } from './data-store';
 
 const TELEGRAM_API_BASE = 'https://api.telegram.org';
 
@@ -24,13 +25,51 @@ interface StockAlertPayload {
 }
 
 /**
+ * Helper to resolve Telegram credentials from StoreSettings or process.env
+ */
+export async function getActiveTelegramCredentials(customToken?: string, customChatId?: string): Promise<{ token: string; chatId: string; isConfigured: boolean }> {
+  let token = customToken;
+  let chatId = customChatId;
+
+  if (!token || !chatId) {
+    try {
+      const settings = await getStoreSettings();
+      if (!token && settings.telegramBotToken) {
+        token = settings.telegramBotToken.trim();
+      }
+      if (!chatId && settings.telegramChatId) {
+        chatId = settings.telegramChatId.trim();
+      }
+    } catch {
+      // ignore
+    }
+  }
+
+  // Fallback to environment variables
+  if (!token) token = process.env.TELEGRAM_BOT_TOKEN;
+  if (!chatId) chatId = process.env.TELEGRAM_CHAT_ID;
+
+  const isConfigured = Boolean(
+    token &&
+    !token.startsWith('mock_') &&
+    chatId &&
+    !chatId.startsWith('mock_')
+  );
+
+  return {
+    token: token || '',
+    chatId: chatId || '',
+    isConfigured,
+  };
+}
+
+/**
  * Direct Telegram Bot message sender
  */
 export async function sendTelegramMessage(text: string, customToken?: string, customChatId?: string): Promise<{ success: boolean; error?: string }> {
-  const token = customToken || process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = customChatId || process.env.TELEGRAM_CHAT_ID;
+  const { token, chatId, isConfigured } = await getActiveTelegramCredentials(customToken, customChatId);
 
-  if (!token || token.startsWith('mock_') || !chatId || chatId.startsWith('mock_')) {
+  if (!isConfigured) {
     return { success: false, error: 'Telegram credentials are not configured or still using placeholder values.' };
   }
 
@@ -59,54 +98,16 @@ export async function sendTelegramMessage(text: string, customToken?: string, cu
 }
 
 /**
- * Queue a notification into PostgreSQL NotificationOutbox table
+ * Format message HTML based on event type
  */
-export async function queueNotification(eventType: string, payload: Record<string, unknown>): Promise<string | null> {
-  const chatId = process.env.TELEGRAM_CHAT_ID || 'UNCONFIGURED';
-  try {
-    const outbox = await prisma.notificationOutbox.create({
-      data: {
-        eventType,
-        channel: 'TELEGRAM',
-        recipient: chatId,
-        payload: JSON.parse(JSON.stringify(payload)),
-        status: 'PENDING',
-      },
-    });
-
-    // Proactively attempt delivery non-blockingly
-    setTimeout(() => {
-      processOutboxItem(outbox.id).catch((err) => console.error('[TELEGRAM_ASYNC_DISPATCH_FAIL]', err));
-    }, 100);
-
-    return outbox.id;
-  } catch (err) {
-    console.error('[OUTBOX_QUEUE_ERROR]', err);
-    return null;
-  }
-}
-
-/**
- * Format and process a single outbox item
- */
-export async function processOutboxItem(outboxId: string): Promise<boolean> {
-  const item = await prisma.notificationOutbox.findUnique({
-    where: { id: outboxId },
-  });
-
-  if (!item || item.status === 'SENT') return true;
-
-  // Format message text based on event type
-  let messageHtml = '';
-  const payload = item.payload as Record<string, unknown>;
-
-  if (item.eventType === 'NEW_ORDER') {
+export function formatTelegramNotificationHtml(eventType: string, payload: Record<string, unknown>): string {
+  if (eventType === 'NEW_ORDER') {
     const order = payload as unknown as OrderNotificationPayload;
     const itemsList = (order.items || [])
       .map((i) => `• <b>${i.productName}</b> × ${i.quantity} (${formatBDT(i.unitPrice)})`)
       .join('\n');
 
-    messageHtml = `
+    return `
 🛒 <b>NEW ORDER RECEIVED!</b> — Toto Elite Mart
 ━━━━━━━━━━━━━━━━━━
 📦 <b>Order ID:</b> <code>${order.orderNumber}</code>
@@ -123,9 +124,9 @@ ${itemsList}
 ━━━━━━━━━━━━━━━━━━
 🔗 <i>View in Admin: ${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/admin/orders</i>
     `.trim();
-  } else if (item.eventType === 'LOW_STOCK') {
+  } else if (eventType === 'LOW_STOCK') {
     const stock = payload as unknown as StockAlertPayload;
-    messageHtml = `
+    return `
 ⚠️ <b>LOW STOCK ALERT!</b>
 ━━━━━━━━━━━━━━━━━━
 📦 <b>Product:</b> ${stock.productName}
@@ -134,8 +135,8 @@ ${itemsList}
 ━━━━━━━━━━━━━━━━━━
 <i>Please reorder or restock promptly.</i>
     `.trim();
-  } else if (item.eventType === 'ORDER_CANCELLED') {
-    messageHtml = `
+  } else if (eventType === 'ORDER_CANCELLED') {
+    return `
 ❌ <b>ORDER CANCELLED</b>
 ━━━━━━━━━━━━━━━━━━
 📦 <b>Order ID:</b> <code>${payload.orderNumber}</code>
@@ -143,35 +144,107 @@ ${itemsList}
 Reason / Note: ${payload.reason || 'Customer request'}
     `.trim();
   } else {
-    messageHtml = `
-🔔 <b>SYSTEM NOTIFICATION</b> [${item.eventType}]
+    return `
+🔔 <b>SYSTEM NOTIFICATION</b> [${eventType}]
 ━━━━━━━━━━━━━━━━━━
 ${JSON.stringify(payload, null, 2)}
     `.trim();
   }
+}
+
+/**
+ * Queue or dispatch a notification into PostgreSQL NotificationOutbox table (or direct dispatch in memory mode)
+ */
+export async function queueNotification(eventType: string, payload: Record<string, unknown>): Promise<string | null> {
+  const { chatId } = await getActiveTelegramCredentials();
+
+  // 1. Try to record into PostgreSQL NotificationOutbox
+  try {
+    const outbox = await prisma.notificationOutbox.create({
+      data: {
+        eventType,
+        channel: 'TELEGRAM',
+        recipient: chatId || 'UNCONFIGURED',
+        payload: JSON.parse(JSON.stringify(payload)),
+        status: 'PENDING',
+      },
+    });
+
+    // Proactively attempt delivery asynchronously
+    setTimeout(() => {
+      processOutboxItem(outbox.id).catch((err) => console.error('[TELEGRAM_ASYNC_DISPATCH_FAIL]', err));
+    }, 100);
+
+    return outbox.id;
+  } catch (err) {
+    // 2. Direct Fallback if PostgreSQL is unreachable or table doesn't exist
+    console.warn('[OUTBOX_QUEUE_FALLBACK_DIRECT_DISPATCH]', err instanceof Error ? err.message : err);
+    setTimeout(async () => {
+      try {
+        const messageHtml = formatTelegramNotificationHtml(eventType, payload);
+        const res = await sendTelegramMessage(messageHtml);
+        if (!res.success) {
+          console.warn('[TELEGRAM_DIRECT_DISPATCH_FAILED]', res.error);
+        } else {
+          console.log(`[TELEGRAM_DIRECT_DISPATCH_SUCCESS] Event: ${eventType}`);
+        }
+      } catch (directErr) {
+        console.error('[TELEGRAM_DIRECT_DISPATCH_ERROR]', directErr);
+      }
+    }, 100);
+    return 'direct-dispatch';
+  }
+}
+
+/**
+ * Format and process a single outbox item
+ */
+export async function processOutboxItem(outboxId: string): Promise<boolean> {
+  let item: any = null;
+  try {
+    item = await prisma.notificationOutbox.findUnique({
+      where: { id: outboxId },
+    });
+  } catch (e) {
+    console.warn('[OUTBOX_FETCH_FAIL]', e);
+    return false;
+  }
+
+  if (!item || item.status === 'SENT') return true;
+
+  const payload = item.payload as Record<string, unknown>;
+  const messageHtml = formatTelegramNotificationHtml(item.eventType, payload);
 
   const result = await sendTelegramMessage(messageHtml);
 
   if (result.success) {
-    await prisma.notificationOutbox.update({
-      where: { id: outboxId },
-      data: {
-        status: 'SENT',
-        sentAt: new Date(),
-        lastError: null,
-      },
-    });
+    try {
+      await prisma.notificationOutbox.update({
+        where: { id: outboxId },
+        data: {
+          status: 'SENT',
+          sentAt: new Date(),
+          lastError: null,
+        },
+      });
+    } catch {
+      // ignore
+    }
     return true;
   } else {
-    await prisma.notificationOutbox.update({
-      where: { id: outboxId },
-      data: {
-        status: item.retryCount >= 5 ? 'FAILED' : 'PENDING',
-        retryCount: { increment: 1 },
-        lastError: result.error,
-        nextRetryAt: new Date(Date.now() + Math.min(1000 * 60 * Math.pow(2, item.retryCount), 1000 * 60 * 30)),
-      },
-    });
+    try {
+      await prisma.notificationOutbox.update({
+        where: { id: outboxId },
+        data: {
+          status: item.retryCount >= 5 ? 'FAILED' : 'PENDING',
+          retryCount: { increment: 1 },
+          lastError: result.error,
+          nextRetryAt: new Date(Date.now() + Math.min(1000 * 60 * Math.pow(2, item.retryCount), 1000 * 60 * 30)),
+        },
+      });
+    } catch {
+      // ignore
+    }
     return false;
   }
 }

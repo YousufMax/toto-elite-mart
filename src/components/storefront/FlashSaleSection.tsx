@@ -290,6 +290,10 @@ export default function FlashSaleSection() {
                   <img
                     src={displayImage}
                     alt={prod.name}
+                    width={400}
+                    height={400}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src =
@@ -336,14 +340,26 @@ export default function FlashSaleSection() {
                     </h3>
                   </Link>
 
-                  {/* Pricing Box */}
-                  <div className="flex items-baseline gap-2 pt-0.5 flex-wrap">
-                    <span className="font-price text-base sm:text-lg font-black text-red-600 tracking-tight">
-                      {formatBDT(item.flashPrice)}
-                    </span>
-                    <span className="font-price text-xs text-slate-400 line-through">
-                      {formatBDT(item.originalPrice)}
-                    </span>
+                  {/* Pricing Box & Reward Token */}
+                  <div className="space-y-1 pt-0.5">
+                    <div className="flex items-baseline gap-2">
+                      <span className="font-price text-base sm:text-lg font-black text-red-600 tracking-tight">
+                        {formatBDT(item.flashPrice)}
+                      </span>
+                      <span className="font-price text-xs text-slate-400 line-through">
+                        {formatBDT(item.originalPrice)}
+                      </span>
+                    </div>
+
+                    {/* Elite Reward Points Cashback Chip */}
+                    {storeSettings?.rewardPointsEnabled !== false && (
+                      <div className="flex items-center">
+                        <span className="inline-flex items-center gap-1 text-[8.5px] xs:text-[9.5px] sm:text-[10.5px] font-extrabold text-amber-800 bg-amber-50/90 border border-amber-200/90 px-1.5 py-0.5 rounded-md shadow-2xs">
+                          <span>🪙</span>
+                          <span>+{Math.max(1, Math.floor(item.flashPrice / (storeSettings?.rewardPointsEarnRate || 100)))} pts Cashback</span>
+                        </span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Stock Availability Indicator Bar */}
@@ -375,16 +391,16 @@ export default function FlashSaleSection() {
                 </div>
 
                 {/* Dual Action Buttons */}
-                <div className="flex items-center gap-1.5 sm:grid sm:grid-cols-2 sm:gap-2 pt-2">
+                <div className="flex items-center gap-1 sm:grid sm:grid-cols-2 sm:gap-2 pt-1.5 sm:pt-2">
                   <button
                     type="button"
                     disabled={isSoldOut}
                     onClick={handleAddToCart}
                     aria-label={isSoldOut ? 'Sold Out' : 'Cart'}
                     title={isSoldOut ? 'Sold Out' : 'Cart'}
-                    className="w-9 h-9 sm:w-full py-2 px-2 sm:px-3 bg-slate-100 hover:bg-slate-200 text-slate-900 text-xs font-bold rounded-xl transition active:scale-95 disabled:opacity-40 disabled:pointer-events-none flex items-center justify-center gap-1 shrink-0 sm:shrink"
+                    className="w-8 h-8 sm:w-full py-1.5 sm:py-2 px-1.5 sm:px-3 bg-slate-100 hover:bg-slate-200 text-slate-900 text-xs font-bold rounded-lg sm:rounded-xl transition active:scale-95 disabled:opacity-40 disabled:pointer-events-none flex items-center justify-center gap-1 shrink-0 sm:shrink"
                   >
-                    <ShoppingBag className="w-4 h-4 sm:w-3.5 sm:h-3.5 shrink-0" />
+                    <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
                     <span className="hidden sm:inline whitespace-nowrap">{isSoldOut ? 'Sold Out' : 'Cart'}</span>
                   </button>
 
@@ -394,10 +410,10 @@ export default function FlashSaleSection() {
                     onClick={handleBuyNow}
                     aria-label={isSoldOut ? 'Sold Out' : 'Buy Now'}
                     title={isSoldOut ? 'Sold Out' : 'Buy Now'}
-                    className="flex-1 sm:w-full py-2 px-2 sm:px-3 h-9 sm:h-auto bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white text-[11px] sm:text-xs font-black uppercase tracking-wider rounded-xl shadow-xs transition active:scale-95 disabled:opacity-40 disabled:pointer-events-none flex items-center justify-center gap-1"
+                    className="flex-1 sm:w-full py-1.5 sm:py-2 px-1 sm:px-3 h-8 sm:h-auto bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white text-[9.5px] xs:text-[10.5px] sm:text-xs font-black uppercase tracking-tight rounded-lg sm:rounded-xl shadow-xs transition active:scale-95 disabled:opacity-40 disabled:pointer-events-none flex items-center justify-center gap-0.5 sm:gap-1"
                   >
-                    <Zap className="w-3.5 h-3.5 fill-white shrink-0" />
-                    <span className="truncate">Buy Now</span>
+                    <Zap className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-white shrink-0" />
+                    <span className="whitespace-nowrap">Buy Now</span>
                   </button>
                 </div>
               </div>

@@ -26,6 +26,7 @@ export default function AdminIntegrationsPage() {
 
   // Telegram state
   const [telegramTesting, setTelegramTesting] = useState(false);
+  const [telegramSaving, setTelegramSaving] = useState(false);
   const [telegramResult, setTelegramResult] = useState<any>(null);
   const [customBotToken, setCustomBotToken] = useState('');
   const [customChatId, setCustomChatId] = useState('');
@@ -52,9 +53,59 @@ export default function AdminIntegrationsPage() {
     }
   };
 
+  const fetchStoreSettings = async () => {
+    try {
+      const res = await fetch('/api/settings');
+      const data = await res.json();
+      if (data?.settings) {
+        if (data.settings.telegramBotToken) {
+          setCustomBotToken(data.settings.telegramBotToken);
+        }
+        if (data.settings.telegramChatId) {
+          setCustomChatId(data.settings.telegramChatId);
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   useEffect(() => {
     fetchSheetsStatus();
+    fetchStoreSettings();
   }, []);
+
+  const handleSaveTelegram = async () => {
+    setTelegramSaving(true);
+    setTelegramResult(null);
+    try {
+      const res = await fetch('/api/settings', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          telegramBotToken: customBotToken.trim(),
+          telegramChatId: customChatId.trim(),
+          telegramEnableAlerts: true,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setTelegramResult({
+          success: true,
+          message: 'Telegram credentials saved successfully to store settings! All new orders will now alert this bot.',
+        });
+      } else {
+        setTelegramResult({
+          success: false,
+          error: data.error || 'Failed to save Telegram credentials',
+        });
+      }
+    } catch {
+      setTelegramResult({ success: false, error: 'Network error saving settings' });
+    } finally {
+      setTelegramSaving(false);
+    }
+  };
 
   const handleSyncGoogleSheets = async () => {
     setSyncing(true);
@@ -348,25 +399,46 @@ export default function AdminIntegrationsPage() {
               </div>
             </div>
 
-            {/* Test Button */}
+            {/* Action Buttons */}
             <div className="pt-2 space-y-3">
-              <button
-                type="submit"
-                disabled={telegramTesting}
-                className="w-full py-3 bg-sky-600 hover:bg-sky-700 disabled:bg-slate-300 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-md transition"
-              >
-                {telegramTesting ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Dispatching Test Message...</span>
-                  </>
-                ) : (
-                  <>
-                    <Send className="w-4 h-4" />
-                    <span>Send Test Notification to Telegram</span>
-                  </>
-                )}
-              </button>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <button
+                  type="button"
+                  onClick={handleSaveTelegram}
+                  disabled={telegramSaving || (!customBotToken && !customChatId)}
+                  className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-sm transition"
+                >
+                  {telegramSaving ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Saving Bot Settings...</span>
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="w-4 h-4" />
+                      <span>Save Bot Credentials</span>
+                    </>
+                  )}
+                </button>
+
+                <button
+                  type="submit"
+                  disabled={telegramTesting}
+                  className="w-full py-3 bg-sky-600 hover:bg-sky-700 disabled:bg-slate-300 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-sm transition"
+                >
+                  {telegramTesting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Dispatching Test...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4" />
+                      <span>Send Test Message</span>
+                    </>
+                  )}
+                </button>
+              </div>
 
               {telegramResult && (
                 <div
@@ -377,7 +449,7 @@ export default function AdminIntegrationsPage() {
                   }`}
                 >
                   {telegramResult.success ? (
-                    <span>✅ Test notification delivered to your Telegram channel successfully!</span>
+                    <span>✅ {telegramResult.message || 'Test notification delivered to your Telegram channel successfully!'}</span>
                   ) : (
                     <span>
                       ⚠️ {telegramResult.error} (Ensure valid TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID)

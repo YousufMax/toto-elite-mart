@@ -47,6 +47,10 @@ export async function PATCH(req: Request) {
       fraudHighRiskAdvanceFeeRequired: body.fraudHighRiskAdvanceFeeRequired !== undefined ? Boolean(body.fraudHighRiskAdvanceFeeRequired) : undefined,
       blacklistedPhones: Array.isArray(body.blacklistedPhones) ? body.blacklistedPhones : undefined,
       whitelistedPhones: Array.isArray(body.whitelistedPhones) ? body.whitelistedPhones : undefined,
+      // Telegram Bot settings
+      telegramBotToken: body.telegramBotToken !== undefined ? String(body.telegramBotToken).trim() : undefined,
+      telegramChatId: body.telegramChatId !== undefined ? String(body.telegramChatId).trim() : undefined,
+      telegramEnableAlerts: body.telegramEnableAlerts !== undefined ? Boolean(body.telegramEnableAlerts) : undefined,
     });
 
     await logAudit({

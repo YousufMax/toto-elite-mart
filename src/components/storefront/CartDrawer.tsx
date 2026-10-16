@@ -94,6 +94,10 @@ export default function CartDrawer() {
                       <img
                         src={item.imageUrl || '/placeholder.png'}
                         alt={item.name}
+                        width={80}
+                        height={80}
+                        loading="lazy"
+                        decoding="async"
                         onError={(e) => {
                           (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80';
                         }}

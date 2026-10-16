@@ -985,6 +985,87 @@
   ],
   "orders": [
     {
+      "id": "ord-1792174724213",
+      "orderNumber": "TEM-2026-30443",
+      "customerName": "Yusuf Ali",
+      "customerPhone": "01407752016",
+      "deliveryAddress": "Benapole",
+      "deliveryCity": "jashore",
+      "deliveryZone": "Inside Dhaka",
+      "subtotal": 3895,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 0,
+      "totalAmount": 3895,
+      "paymentMethod": "COD",
+      "paymentStatus": "UNPAID",
+      "orderStatus": "PENDING",
+      "notes": null,
+      "rewardPointsRedeemed": 0,
+      "rewardDiscount": 0,
+      "fraudRiskScore": 25,
+      "fraudRiskTier": "MEDIUM",
+      "fraudRiskFlags": [
+        "Delivery address is dangerously short (< 10 characters)"
+      ],
+      "items": [
+        {
+          "productId": "prod-3",
+          "productName": "20000mAh 22.5W Fast Charging Power Bank",
+          "sku": "TEM-PB-003",
+          "selectedColor": null,
+          "variantId": null,
+          "unitPrice": 1399,
+          "purchaseCost": 950,
+          "quantity": 1,
+          "totalPrice": 1399,
+          "isFlashSale": false,
+          "flashCampaignId": null
+        },
+        {
+          "productId": "prod-1791834001382",
+          "productName": "Laptop",
+          "sku": "LAP:89",
+          "selectedColor": "Black",
+          "variantId": "var-prod-1791834001382-1791836668261-2",
+          "unitPrice": 98,
+          "purchaseCost": 700,
+          "quantity": 1,
+          "totalPrice": 98,
+          "isFlashSale": false,
+          "flashCampaignId": null
+        },
+        {
+          "productId": "prod-2",
+          "productName": "AMOLED Smart Watch with BT Calling",
+          "sku": "TEM-SWT-002",
+          "selectedColor": "Space Black",
+          "variantId": "var-swt-1",
+          "unitPrice": 799,
+          "purchaseCost": 1800,
+          "quantity": 1,
+          "totalPrice": 799,
+          "isFlashSale": true,
+          "flashCampaignId": "fsc-seed-1"
+        },
+        {
+          "productId": "prod-4",
+          "productName": "Premium Semi-Pure Silk Designer Panjabi",
+          "sku": "TEM-PAN-004",
+          "selectedColor": "Royal Navy",
+          "variantId": "var-pan-1",
+          "unitPrice": 1599,
+          "purchaseCost": 1400,
+          "quantity": 1,
+          "totalPrice": 1599,
+          "isFlashSale": true,
+          "flashCampaignId": "fsc-seed-1"
+        }
+      ],
+      "createdAt": "2026-10-16T18:18:44.213Z",
+      "updatedAt": "2026-10-16T18:18:44.213Z"
+    },
+    {
       "id": "ord-1792051171138",
       "orderNumber": "TEM-2026-65840",
       "customerName": "Flash Sale Test Buyer",
@@ -3473,33 +3554,23 @@
     }
   ],
   "settings": {
-    "freeDeliveryEnabled": true,
-    "freeDeliveryThreshold": 2000,
-    "freeDeliveryOutsideThreshold": 2000,
-    "freeDeliveryBannerText": "Add ৳{remaining} more for FREE Delivery! 🚚",
-    "freeDeliveryUnlockedText": "🎉 You have unlocked FREE Delivery!",
-    "freeDeliveryBarColor": "emerald",
-    "minOrderAmount": 0,
-    "cardStepperEnabled": true,
-    "cardShowDiscountBadge": true,
-    "cardShowRating": true,
-    "cardShowStockWarning": true,
-    "reviewAutoApprove": true,
-    "reviewAllowImages": true,
-    "reviewMinCharacters": 5,
-    "rewardPointsEnabled": true,
-    "rewardPointsEarnRate": 100,
-    "rewardPointValueBdt": 1,
-    "rewardMinRedeemPoints": 50,
-    "fraudDetectionEnabled": true,
-    "fraudMaxCodAmount": 4000,
-    "fraudHighRiskAdvanceFeeRequired": true,
-    "blacklistedPhones": [],
-    "whitelistedPhones": [
-      "01623363623"
-    ]
+    "telegramBotToken": "8963074873:AAHlrlB_H5VHNY6oTsa-5XnQE4N2enrHMvI",
+    "telegramChatId": "7426322515",
+    "telegramEnableAlerts": true
   },
   "reviews": [
+    {
+      "id": "rev-1792174421081-955",
+      "productId": "prod-4",
+      "customerName": "Samima",
+      "customerPhone": null,
+      "rating": 5,
+      "comment": "Very good product",
+      "images": [],
+      "isVerified": true,
+      "status": "APPROVED",
+      "createdAt": "2026-10-16T18:13:41.095Z"
+    },
     {
       "id": "rev-1792126245475-29",
       "productId": "prod-1791700536997",
@@ -3750,6 +3821,14 @@
         }
       ],
       "updatedAt": "2026-10-15T06:47:16.651Z"
+    },
+    "01407752016": {
+      "phone": "01407752016",
+      "points": 0,
+      "totalEarned": 0,
+      "totalRedeemed": 0,
+      "history": [],
+      "updatedAt": "2026-10-16T18:18:23.687Z"
     }
   },
   "fraudBlacklist": [],

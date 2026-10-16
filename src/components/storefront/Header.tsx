@@ -66,52 +66,58 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-sm">
       {/* Top Header Row */}
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3.5 flex items-center justify-between gap-3">
+      <div className="max-w-7xl mx-auto px-2 xs:px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3.5 flex items-center justify-between gap-1 xs:gap-2 sm:gap-3">
         {/* Left: Mobile Menu Toggle + Brand Logo */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-1.5 xs:gap-2.5 sm:gap-3 min-w-0">
           {/* Mobile Menu Toggle Button */}
           <button
             onClick={() => setMobileMenuOpen(true)}
             aria-label="Open Navigation Menu"
-            className="md:hidden p-2 rounded-xl text-slate-700 hover:text-slate-950 hover:bg-slate-100 transition focus:outline-none"
+            className="md:hidden p-1 xs:p-1.5 rounded-xl text-slate-800 hover:text-slate-950 hover:bg-slate-100 transition focus:outline-none min-h-[38px] min-w-[38px] flex items-center justify-center shrink-0 active:scale-95"
           >
-            <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
+            <Menu className="w-6 h-6 sm:w-7 sm:h-7 stroke-[2.2]" />
           </button>
 
           {/* Brand Logo & Company Name */}
-          <Link href="/" className="flex items-center gap-2 sm:gap-2.5 shrink-0 group">
+          <Link href="/" className="flex items-center gap-1.5 xs:gap-2 sm:gap-2.5 min-w-0 group">
             <img
-              src="https://cdn.jsdelivr.net/gh/YousufMax/image-server-001@main/toto%20elite%20mart%20logo%20final%20(1).png"
+              src="/logo.png"
               alt="TOTO ELITE MART"
-              height={44}
+              width={54}
+              height={54}
+              decoding="async"
               style={{ maxHeight: '48px', width: 'auto' }}
-              className="h-9 sm:h-11 md:h-12 w-auto object-contain shrink-0 transition-transform duration-200 group-hover:scale-102"
+              className="h-9 xs:h-10 sm:h-12 md:h-13 w-auto object-contain shrink-0 transition-transform duration-200 group-hover:scale-102"
               onError={(e) => {
                 const target = e.currentTarget;
+                if (!target.src.includes('cdn.jsdelivr.net')) {
+                  target.src = 'https://cdn.jsdelivr.net/gh/YousufMax/image-server-001@main/toto%20elite%20mart%20logo%20final%20(1).png';
+                  return;
+                }
                 target.style.display = 'none';
                 const fallback = target.nextElementSibling as HTMLElement | null;
                 if (fallback) fallback.style.display = 'flex';
               }}
             />
             {/* Fallback Symbol Mark */}
-            <div className="hidden w-10 h-10 bg-red-600 rounded-xl items-center justify-center text-white font-black text-xl shadow-md shrink-0">
+            <div className="hidden w-9 h-9 bg-red-600 rounded-xl items-center justify-center text-white font-black text-lg shadow-md shrink-0">
               T
             </div>
             {/* Professional Mart Typography */}
             <div className="flex flex-col justify-center leading-none select-none">
-              <div className="flex items-center gap-1 sm:gap-1.5 font-brand">
-                <span className="text-[17px] sm:text-xl md:text-2xl font-black text-slate-950 uppercase tracking-tighter">
+              <div className="flex items-center gap-0.5 xs:gap-1 sm:gap-1.5 font-brand whitespace-nowrap">
+                <span className="text-[15px] xs:text-[17px] sm:text-xl md:text-2xl font-black text-slate-950 uppercase tracking-tight">
                   TOTO
                 </span>
-                <span className="text-[17px] sm:text-xl md:text-2xl font-black text-red-600 uppercase tracking-tighter">
+                <span className="text-[15px] xs:text-[17px] sm:text-xl md:text-2xl font-black text-red-600 uppercase tracking-tight">
                   ELITE
                 </span>
-                <span className="bg-slate-950 text-white font-black text-[9px] sm:text-[11px] md:text-xs px-1.5 sm:px-2 py-0.5 rounded sm:rounded-md tracking-wider uppercase shadow-xs">
+                <span className="bg-slate-950 text-white font-black text-[8px] xs:text-[9px] sm:text-[11px] md:text-xs px-1 xs:px-1.5 sm:px-2 py-0.5 rounded sm:rounded-md tracking-wider uppercase shadow-xs ml-0.5">
                   MART
                 </span>
               </div>
-              <div className="flex items-center gap-1 sm:gap-1.5 mt-0.5 sm:mt-1">
-                <span className="text-[7.5px] sm:text-[9px] md:text-[9.5px] font-black uppercase tracking-[0.22em] text-slate-400">
+              <div className="flex items-center gap-1 mt-0.5 xs:mt-1">
+                <span className="text-[7px] xs:text-[8px] sm:text-[9px] md:text-[9.5px] font-black uppercase tracking-[0.16em] text-slate-400 whitespace-nowrap">
                   ONLINE SHOPPING
                 </span>
                 <span className="hidden sm:inline-block w-1 h-1 rounded-full bg-slate-300" />
@@ -129,16 +135,16 @@ export default function Header() {
         </div>
 
         {/* Actions (Track Order, Cart) */}
-        <div className="flex items-center gap-1.5 sm:gap-3">
-          {/* Track Order Button - Visible on Mobile & Desktop */}
+        <div className="flex items-center gap-1 xs:gap-1.5 sm:gap-3 shrink-0">
+          {/* Track Order Button */}
           <Link
             href="/track-order"
             aria-label="Track Order"
             title="Track Order"
-            className="flex items-center justify-center gap-1.5 p-2 sm:px-3 sm:py-2 rounded-xl text-slate-700 hover:text-amber-600 bg-slate-100 hover:bg-slate-200/80 border border-slate-200/70 transition active:scale-95"
+            className="flex items-center justify-center p-1.5 xs:p-2 sm:px-3 sm:py-2 rounded-xl text-slate-700 hover:text-amber-600 bg-slate-100 hover:bg-slate-200/80 border border-slate-200/70 transition active:scale-95 h-9 w-9 xs:h-10 xs:w-10 sm:h-auto sm:w-auto"
           >
-            <PackageCheck className="w-4 h-4 sm:w-4 sm:h-4 text-amber-500 shrink-0" />
-            <span className="hidden md:inline text-xs font-semibold">Track Order</span>
+            <PackageCheck className="w-4 h-4 xs:w-[18px] xs:h-[18px] sm:w-4 sm:h-4 text-amber-500 shrink-0" />
+            <span className="hidden md:inline text-xs font-semibold ml-1.5">Track Order</span>
           </Link>
 
           {/* Cart Button */}
@@ -146,12 +152,12 @@ export default function Header() {
             onClick={() => setIsDrawerOpen(true)}
             aria-label="Shopping Cart"
             title="Shopping Cart"
-            className="relative flex items-center justify-center gap-1.5 sm:gap-2 bg-amber-500 hover:bg-amber-600 text-slate-950 p-2 sm:px-4 sm:py-2 rounded-xl font-bold text-xs sm:text-sm shadow-md shadow-amber-500/20 transition active:scale-95"
+            className="relative flex items-center justify-center gap-1 bg-amber-500 hover:bg-amber-600 text-slate-950 px-2 xs:px-2.5 sm:px-4 py-1.5 xs:py-2 rounded-xl font-bold text-xs sm:text-sm shadow-md shadow-amber-500/20 transition active:scale-95 h-9 xs:h-10 sm:h-auto min-w-[42px] xs:min-w-[48px]"
           >
-            <ShoppingBag className="w-4 h-4 shrink-0" />
+            <ShoppingBag className="w-4 h-4 xs:w-[18px] xs:h-[18px] sm:w-4 sm:h-4 shrink-0" />
             <span className="hidden sm:inline">Cart</span>
             {itemCount > 0 && (
-              <span className="bg-slate-950 text-white text-[10px] sm:text-[11px] font-black rounded-full px-1.5 py-0.2 sm:px-2 sm:py-0.5 ml-0.5 sm:ml-1 leading-tight">
+              <span className="bg-slate-950 text-white text-[9px] xs:text-[10px] sm:text-[11px] font-black rounded-full px-1.5 py-0.2 sm:px-2 sm:py-0.5 leading-tight">
                 {itemCount}
               </span>
             )}
@@ -218,11 +224,19 @@ export default function Header() {
                 className="flex items-center gap-2 group"
               >
                 <img
-                  src="https://cdn.jsdelivr.net/gh/YousufMax/image-server-001@main/toto%20elite%20mart%20logo%20final%20(1).png"
+                  src="/logo.png"
                   alt="TOTO ELITE MART"
+                  width={34}
                   height={34}
+                  decoding="async"
                   style={{ maxHeight: '34px', width: 'auto' }}
                   className="h-8.5 w-auto object-contain rounded-md"
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    if (!target.src.includes('cdn.jsdelivr.net')) {
+                      target.src = 'https://cdn.jsdelivr.net/gh/YousufMax/image-server-001@main/toto%20elite%20mart%20logo%20final%20(1).png';
+                    }
+                  }}
                 />
                 <div className="flex flex-col leading-none select-none">
                   <div className="flex items-center gap-1 font-brand">
