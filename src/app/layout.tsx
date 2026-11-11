@@ -10,10 +10,9 @@ export const metadata: Metadata = {
   keywords: 'e-commerce bangladesh, online shopping bd, smart gadgets, toto elite mart, cash on delivery dhaka, online shop bangladesh',
   icons: {
     icon: [
-      { url: '/favicon.ico', type: 'image/x-icon' },
       { url: '/logo.png', type: 'image/png' },
     ],
-    shortcut: '/favicon.ico',
+    shortcut: '/logo.png',
     apple: '/logo.png',
   },
   openGraph: {
